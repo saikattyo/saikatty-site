@@ -4,104 +4,132 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 import { getCollection } from 'astro:content';
+import FormattedDate from '../components/FormattedDate.astro';
 
-// 最新の5件の記事を取得
 const blogPosts = await getCollection('blog');
-const latestPosts = blogPosts
-  .sort((a, b) => {
-    const dateA = new Date(a.data.pubDate).getTime();
-    const dateB = new Date(b.data.pubDate).getTime();
-    return dateB - dateA;
-  })
-  .slice(0, 5);
-
-// 日付を yyyy/mm/dd 形式にフォーマットする関数
-const formatDate = (dateString: string): string => {
-  const date = new Date(dateString);
-  return `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`;
-};
+const latestPosts = blogPosts.filter((post) => post.data.published == true) // published が true を取得
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 4);
 ---
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
-		<main>
-			<section class="blog-posts">
-				<h1>Saikattyoの掃き溜め</h1>
-				<p>ここは、Saikattyoが日常でふと思ったことをつらつらと書き留める場所です。</p>
-				<h2>最近思ったことたち</h2>
-				<ul class="post-list">
-					{latestPosts.map((post) => (
-						<li class="post-item">
-							<a href={`/blog/${post.id}`}>
-								<span class="post-title">{post.data.title}</span>
-								<span class="post-date">{formatDate(post.data.pubDate.toISOString())}</span>
-							</a>
-						</li>
-					))}
-				</ul>
-			</section>
-		</main>
-		<Footer />
-	</body>
+<head>
+  <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+  <style>
+    :root {
+      --black: 0, 0, 0;   /* 例: rgb(var(--black)) で使う */
+      --gray: 100, 100, 100;
+      --accent: 60, 120, 200;
+      --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    main {
+      width: 960px;
+      margin: 0 auto;
+    }
+
+    .post-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      list-style: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    .post-list li {
+      width: calc(50% - 1rem);
+      list-style: none;
+    }
+
+    /* 画像 */
+    .post-list li img {
+      width: 100%;
+      height: auto;
+      max-width: 100%;
+      margin-bottom: 0.5rem;
+      border-radius: 12px;
+      object-fit: cover;
+    }
+
+    .post-list li .title {
+      margin: 0;
+      color: rgb(var(--black));
+      line-height: 1;
+      font-size: 1.2rem;
+      transition: 0.2s ease;
+    }
+
+    .post-list li .date {
+      margin: 0;
+      color: rgb(var(--gray));
+      transition: 0.2s ease;
+    }
+
+    .post-list li a {
+      display: block;
+      text-decoration: none;
+    }
+
+    /* hover時の演出 */
+    .post-list li a:hover .title,
+    .post-list li a:hover .date {
+      color: rgb(var(--accent));
+    }
+    .post-list li a:hover img {
+      box-shadow: var(--box-shadow);
+    }
+
+    @media (max-width: 720px) {
+      main {
+        width: 100%;
+        padding: 0 1rem;
+      }
+      .post-list {
+        gap: 0.5rem;
+      }
+      .post-list li {
+        width: 100%;
+        text-align: center;
+      }
+      .post-list li:first-child {
+        margin-bottom: 0;
+      }
+      .post-list li:first-child .title {
+        font-size: 1.563rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <Header />
+  <main>
+    <section>
+      <h1>Saikattyoの掃き溜め</h1>
+      <p>ここは、Saikattyoが日常でふと思ったことをつらつらと書き留める場所です。</p>
+      <h3>最近思ったことたち</h3>
+	  <p>最新4件くらい</p>
+      <ul class="post-list">
+        {latestPosts.map((post) => (
+          <li>
+            <a href={`/blog/${post.id}`}>
+              <img
+                width="720"
+                height="360"
+                src={post.data.heroImage || '/placeholder.png'}
+                alt=""
+              />
+              <h4 class="title">{post.data.title}</h4>
+              <p class="date">
+                <FormattedDate date={post.data.pubDate} />
+              </p>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  </main>
+  <Footer />
+</body>
 </html>
-
-<style>
-	.blog-posts {
-		padding: 2rem;
-		background: white;
-		margin: 2rem auto;
-		max-width: 800px;
-		border-radius: 8px;
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-	}
-
-	.blog-posts h2 {
-		font-size: 1.5rem;
-		color: #333;
-		margin-bottom: 1rem;
-	}
-
-	.post-list {
-		list-style: none;
-		padding: 0;
-		margin: 0;
-	}
-
-	.post-item {
-		margin: 0.5rem 0;
-		background: #f4f4f4;
-		border: 1px solid #ddd;
-		border-radius: 6px;
-		transition: transform 0.2s, box-shadow 0.2s;
-	}
-
-	.post-item:hover {
-		transform: scale(1.02);
-		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-	}
-
-	.post-item a {
-		text-decoration: none;
-		color: #333;
-		padding: 1rem;
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		border-radius: 6px;
-	}
-
-	.post-title {
-		font-weight: bold;
-		font-size: 1.2rem;
-	}
-
-	.post-date {
-		font-size: 0.9rem;
-		color: #666;
-	}
-</style>
