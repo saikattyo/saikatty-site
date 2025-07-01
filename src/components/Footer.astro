@@ -65,11 +65,13 @@ const today = new Date();
 
 <style>
 	footer {
-		background: rgba(var(--primary), 0.95);
+		background: linear-gradient(135deg, #1e293b 0%, #2d3748 100%);
 		backdrop-filter: blur(20px);
-		color: rgba(var(--white), 0.9);
+		color: rgba(var(--white), 0.95);
 		position: relative;
 		overflow: hidden;
+		border-top: 1px solid rgba(var(--white), 0.1);
+		box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.1);
 	}
 
 	footer::before {
