@@ -3,55 +3,232 @@ const today = new Date();
 ---
 
 <footer>
-	&copy; {today.getFullYear()} Katsuya Saito. All rights reserved.
-	<div class="social-links">
-		<a href="https://x.com/katsuyakat" target="_blank">
-			<span class="sr-only">Follow on Twitter</span>
-			<svg viewBox="0 0 16 16" aria-hidden="true" width="32" height="32">
-				<path
-					fill="currentColor"
-					d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334 0-.14 0-.282-.006-.422A6.685 6.685 0 0 0 16 3.542a6.658 6.658 0 0 1-1.889.518 3.301 3.301 0 0 0 1.447-1.817 6.533 6.533 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.325 9.325 0 0 1-6.767-3.429 3.289 3.289 0 0 0 1.018 4.382A3.323 3.323 0 0 1 .64 6.575v.045a3.288 3.288 0 0 0 2.632 3.218 3.203 3.203 0 0 1-.865.115 3.23 3.23 0 0 1-.614-.057 3.283 3.283 0 0 0 3.067 2.277A6.588 6.588 0 0 1 .78 13.58a6.32 6.32 0 0 1-.78-.045A9.344 9.344 0 0 0 5.026 15z"
-				></path>
-			</svg>
-		</a>
-		<a href="https://github.com/saikattyo" target="_blank">
-			<span class="sr-only">Go to GitHub</span>
-			<svg viewBox="0 0 16 16" aria-hidden="true" width="32" height="32">
-				<path
-					fill="currentColor"
-					d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"
-				></path>
-			</svg>
-		</a>
-		<a href="https://www.linkedin.com/in/saito-katsuya-842b37296/" target="_blank">
-			<span class="sr-only">Connect on LinkedIn</span>
-			<svg viewBox="0 0 24 24" aria-hidden="true" width="32" height="32">
-				<path
-					fill="currentColor"
-					d="M22.23 0H1.77C.792 0 0 .774 0 1.728v20.544C0 23.226.792 24 1.77 24h20.46C23.208 24 24 23.226 24 22.272V1.728C24 .774 23.208 0 22.23 0zM7.08 20.452H3.56V9h3.52v11.452zM5.32 7.58c-1.12 0-2.032-.91-2.032-2.03s.912-2.03 2.03-2.03c1.122 0 2.032.91 2.032 2.03S6.44 7.58 5.32 7.58zm15.12 12.872h-3.518v-5.594c0-1.332-.026-3.044-1.852-3.044-1.852 0-2.136 1.447-2.136 2.942v5.696H9.44V9h3.375v1.56h.048c.472-.89 1.628-1.824 3.352-1.824 3.584 0 4.248 2.36 4.248 5.436v6.28z"
-				></path>
-			</svg>
-		</a>
+	<div class="footer-content">
+		<div class="footer-section">
+			<h3 class="footer-title">Saikattyo</h3>
+			<p class="footer-description">
+				日々の思考と学びを記録する場所。技術、哲学、日常のすべてがここに。
+			</p>
+		</div>
+		
+		<div class="footer-section">
+			<h4>ナビゲーション</h4>
+			<nav class="footer-nav">
+				<a href="/">ホーム</a>
+				<a href="/blog">ブログ</a>
+				<a href="/about">プロフィール</a>
+			</nav>
+		</div>
+		
+		<div class="footer-section">
+			<h4>つながり</h4>
+			<div class="social-links">
+				<a href="https://x.com/katsuyakat" target="_blank" class="social-link">
+					<span class="sr-only">Twitter</span>
+					<svg viewBox="0 0 16 16" aria-hidden="true" width="20" height="20">
+						<path
+							fill="currentColor"
+							d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334 0-.14 0-.282-.006-.422A6.685 6.685 0 0 0 16 3.542a6.658 6.658 0 0 1-1.889.518 3.301 3.301 0 0 0 1.447-1.817 6.533 6.533 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.325 9.325 0 0 1-6.767-3.429 3.289 3.289 0 0 0 1.018 4.382A3.323 3.323 0 0 1 .64 6.575v.045a3.288 3.288 0 0 0 2.632 3.218 3.203 3.203 0 0 1-.865.115 3.23 3.23 0 0 1-.614-.057 3.283 3.283 0 0 0 3.067 2.277A6.588 6.588 0 0 1 .78 13.58a6.32 6.32 0 0 1-.78-.045A9.344 9.344 0 0 0 5.026 15z"
+						></path>
+					</svg>
+				</a>
+				<a href="https://github.com/saikattyo" target="_blank" class="social-link">
+					<span class="sr-only">GitHub</span>
+					<svg viewBox="0 0 16 16" aria-hidden="true" width="20" height="20">
+						<path
+							fill="currentColor"
+							d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+						></path>
+					</svg>
+				</a>
+				<a href="https://www.linkedin.com/in/saito-katsuya-842b37296/" target="_blank" class="social-link">
+					<span class="sr-only">LinkedIn</span>
+					<svg viewBox="0 0 24 24" aria-hidden="true" width="20" height="20">
+						<path
+							fill="currentColor"
+							d="M22.23 0H1.77C.792 0 0 .774 0 1.728v20.544C0 23.226.792 24 1.77 24h20.46C23.208 24 24 23.226 24 22.272V1.728C24 .774 23.208 0 22.23 0zM7.08 20.452H3.56V9h3.52v11.452zM5.32 7.58c-1.12 0-2.032-.91-2.032-2.03s.912-2.03 2.03-2.03c1.122 0 2.032.91 2.032 2.03S6.44 7.58 5.32 7.58zm15.12 12.872h-3.518v-5.594c0-1.332-.026-3.044-1.852-3.044-1.852 0-2.136 1.447-2.136 2.942v5.696H9.44V9h3.375v1.56h.048c.472-.89 1.628-1.824 3.352-1.824 3.584 0 4.248 2.36 4.248 5.436v6.28z"
+						></path>
+					</svg>
+				</a>
+			</div>
+		</div>
+	</div>
+	
+	<div class="footer-bottom">
+		<div class="footer-divider"></div>
+		<div class="footer-bottom-content">
+			<p>&copy; {today.getFullYear()} Katsuya Saito. All rights reserved.</p>
+			<p class="footer-note">心を込めて作られました ✨</p>
+		</div>
 	</div>
 </footer>
+
 <style>
 	footer {
-		padding: 2em 1em 6em 1em;
-		background: linear-gradient(var(--gray-gradient)) no-repeat;
-		color: rgb(var(--gray));
-		text-align: center;
+		background: rgba(var(--primary), 0.95);
+		backdrop-filter: blur(20px);
+		color: rgba(var(--white), 0.9);
+		position: relative;
+		overflow: hidden;
 	}
+
+	footer::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: var(--gradient-primary);
+		opacity: 0.1;
+		z-index: -1;
+	}
+
+	.footer-content {
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 4rem 2rem 2rem;
+		display: grid;
+		grid-template-columns: 2fr 1fr 1fr;
+		gap: 3rem;
+	}
+
+	.footer-section h3,
+	.footer-section h4 {
+		color: white;
+		margin-bottom: 1.5rem;
+		font-weight: 700;
+	}
+
+	.footer-title {
+		font-size: 2rem;
+		background: var(--gradient-accent);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-clip: text;
+		margin-bottom: 1rem;
+	}
+
+	.footer-description {
+		line-height: 1.6;
+		color: rgba(var(--white), 0.8);
+		font-size: 1.1rem;
+	}
+
+	.footer-nav {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.footer-nav a {
+		color: rgba(var(--white), 0.8);
+		text-decoration: none;
+		transition: var(--transition-normal);
+		font-weight: 500;
+	}
+
+	.footer-nav a:hover {
+		color: white;
+		transform: translateX(4px);
+	}
+
+	.footer-nav a::after {
+		display: none;
+	}
+
 	.social-links {
 		display: flex;
+		gap: 1rem;
+		margin-top: 1rem;
+	}
+
+	.social-link {
+		display: flex;
+		align-items: center;
 		justify-content: center;
-		gap: 1em;
-		margin-top: 1em;
-	}
-	.social-links a {
+		width: 44px;
+		height: 44px;
+		background: rgba(var(--white), 0.1);
+		border: 1px solid rgba(var(--white), 0.2);
+		border-radius: 12px;
+		color: rgba(var(--white), 0.8);
 		text-decoration: none;
-		color: rgb(var(--gray));
+		transition: var(--transition-normal);
 	}
-	.social-links a:hover {
-		color: rgb(var(--gray-dark));
+
+	.social-link:hover {
+		background: rgba(var(--white), 0.2);
+		color: white;
+		transform: translateY(-2px);
+		box-shadow: var(--shadow-md);
+	}
+
+	.social-link::after {
+		display: none;
+	}
+
+	.footer-bottom {
+		border-top: 1px solid rgba(var(--white), 0.1);
+		padding: 2rem;
+	}
+
+	.footer-divider {
+		height: 1px;
+		background: linear-gradient(
+			90deg,
+			transparent,
+			rgba(var(--white), 0.2),
+			transparent
+		);
+		margin-bottom: 2rem;
+	}
+
+	.footer-bottom-content {
+		max-width: 1200px;
+		margin: 0 auto;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		color: rgba(var(--white), 0.7);
+		font-size: 0.9rem;
+	}
+
+	.footer-note {
+		font-style: italic;
+		color: rgba(var(--white), 0.6);
+	}
+
+	/* Responsive Design */
+	@media (max-width: 768px) {
+		.footer-content {
+			grid-template-columns: 1fr;
+			gap: 2rem;
+			padding: 3rem 1rem 2rem;
+		}
+
+		.footer-bottom-content {
+			flex-direction: column;
+			gap: 1rem;
+			text-align: center;
+		}
+
+		.social-links {
+			justify-content: flex-start;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.footer-content {
+			padding: 2rem 1rem;
+		}
+
+		.footer-title {
+			font-size: 1.5rem;
+		}
+
+		.social-links {
+			justify-content: flex-start;
+		}
 	}
 </style>
