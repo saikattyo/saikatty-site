@@ -7,9 +7,10 @@ import { getCollection } from 'astro:content';
 import FormattedDate from '../components/FormattedDate.astro';
 
 const blogPosts = await getCollection('blog');
-const latestPosts = blogPosts.filter((post) => post.data.published == true) // published が true を取得
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 4);
+const latestPosts = blogPosts
+  .filter((post) => post.data.published === true) // published が true のものを取得
+  .sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime())
+  .slice(0, 6); // 6件に増やして、より多くの記事を表示
 ---
 
 <!DOCTYPE html>
@@ -51,35 +52,42 @@ const latestPosts = blogPosts.filter((post) => post.data.published == true) // p
     <!-- Latest Posts Section -->
     <section class="latest-posts">
       <div class="section-header">
-        <h2 class="section-title">最近思ったことたち</h2>
-        <p class="section-description">最新の投稿をお楽しみください</p>
+        <h2 class="section-title">📝 最近思ったことたち</h2>
+        <p class="section-description">日々の気づきと学びを共有しています・最新の{latestPosts.length}件をお楽しみください</p>
       </div>
       
       <div class="posts-grid">
-        {latestPosts.map((post, index) => (
-          <article class="post-card fade-in-up" style={`animation-delay: ${index * 0.1}s`}>
-            <a href={`/blog/${post.id}`} class="post-link">
-              <div class="post-image">
-                <img
-                  src={post.data.heroImage || '/placeholder.png'}
-                  alt={post.data.title}
-                  loading="lazy"
-                />
-                <div class="post-overlay">
-                  <span class="read-more">続きを読む</span>
+        {latestPosts.length > 0 ? (
+          latestPosts.map((post, index) => (
+            <article class="post-card fade-in-up" style={`animation-delay: ${index * 0.1}s`}>
+              <a href={`/blog/${post.id}`} class="post-link">
+                <div class="post-image">
+                  <img
+                    src={post.data.heroImage || '/blog-placeholder-1.jpg'}
+                    alt={post.data.title}
+                    loading="lazy"
+                  />
+                  <div class="post-overlay">
+                    <span class="read-more">続きを読む</span>
+                  </div>
                 </div>
-              </div>
-              <div class="post-content">
-                <h3 class="post-title">{post.data.title}</h3>
-                <p class="post-excerpt">{post.data.description || '興味深い話題について書きました。'}</p>
-                <div class="post-meta">
-                  <FormattedDate date={post.data.pubDate} />
-                  <span class="post-category">思考</span>
+                <div class="post-content">
+                  <h3 class="post-title">{post.data.title}</h3>
+                  <p class="post-excerpt">{post.data.description || '興味深い話題について書きました。'}</p>
+                  <div class="post-meta">
+                    <FormattedDate date={post.data.pubDate} />
+                    <span class="post-category">思考</span>
+                  </div>
                 </div>
-              </div>
-            </a>
-          </article>
-        ))}
+              </a>
+            </article>
+          ))
+        ) : (
+          <div class="no-posts">
+            <h3>🚧 記事を準備中...</h3>
+            <p>もうしばらくお待ちください。素敵な記事をお届けします！</p>
+          </div>
+        )}
       </div>
       
       <div class="section-footer">
@@ -137,7 +145,119 @@ const latestPosts = blogPosts.filter((post) => post.data.published == true) // p
   </main>
   
   <Footer />
+  
+  <!-- Interactive Elements -->
+  <div id="cursor-trail"></div>
+  <div id="particle-container"></div>
 </body>
+
+<script>
+  // マウストレイルエフェクト
+  class CursorTrail {
+    constructor() {
+      this.trail = [];
+      this.container = document.getElementById('cursor-trail');
+      this.maxTrail = 20;
+      this.init();
+    }
+
+    init() {
+      document.addEventListener('mousemove', (e) => {
+        this.addTrailPoint(e.clientX, e.clientY);
+      });
+      this.animate();
+    }
+
+    addTrailPoint(x, y) {
+      const point = document.createElement('div');
+      point.className = 'trail-point';
+      point.style.left = x + 'px';
+      point.style.top = y + 'px';
+      this.container.appendChild(point);
+      this.trail.push(point);
+
+      if (this.trail.length > this.maxTrail) {
+        const oldPoint = this.trail.shift();
+        oldPoint.remove();
+      }
+    }
+
+    animate() {
+      this.trail.forEach((point, index) => {
+        const life = index / this.maxTrail;
+        point.style.transform = `scale(${life})`;
+        point.style.opacity = life;
+      });
+      requestAnimationFrame(() => this.animate());
+    }
+  }
+
+  // パーティクルエフェクト
+  class ParticleSystem {
+    constructor() {
+      this.container = document.getElementById('particle-container');
+      this.particles = [];
+      this.createParticles();
+      this.animate();
+    }
+
+    createParticles() {
+      for (let i = 0; i < 50; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'floating-particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.top = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 10 + 's';
+        particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+        this.container.appendChild(particle);
+        this.particles.push(particle);
+      }
+    }
+
+    animate() {
+      this.particles.forEach(particle => {
+        const rect = particle.getBoundingClientRect();
+        if (rect.top > window.innerHeight) {
+          particle.style.top = '-10px';
+          particle.style.left = Math.random() * 100 + '%';
+        }
+      });
+      requestAnimationFrame(() => this.animate());
+    }
+  }
+
+  // ダイナミック背景効果
+  class DynamicBackground {
+    constructor() {
+      this.init();
+    }
+
+    init() {
+      window.addEventListener('scroll', () => {
+        const scrolled = window.pageYOffset;
+        const rate = scrolled * -0.5;
+        document.body.style.setProperty('--scroll-offset', rate + 'px');
+      });
+
+      // マウス位置に応じた背景の変化
+      document.addEventListener('mousemove', (e) => {
+        const x = e.clientX / window.innerWidth;
+        const y = e.clientY / window.innerHeight;
+        
+        document.body.style.setProperty('--mouse-x', x.toString());
+        document.body.style.setProperty('--mouse-y', y.toString());
+      });
+    }
+  }
+
+  // 初期化
+  document.addEventListener('DOMContentLoaded', () => {
+    new CursorTrail();
+    new ParticleSystem();
+    new DynamicBackground();
+  });
+</script>
+
 </html>
 
 <style>
@@ -402,6 +522,27 @@ const latestPosts = blogPosts.filter((post) => post.data.published == true) // p
     font-weight: 500;
   }
 
+  .no-posts {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4rem 2rem;
+    background: rgba(var(--white), 0.9);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 2px dashed rgba(var(--accent), 0.3);
+  }
+
+  .no-posts h3 {
+    color: var(--accent);
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+  }
+
+  .no-posts p {
+    color: rgb(var(--secondary));
+    font-size: 1.1rem;
+  }
+
   .section-footer {
     text-align: center;
   }
@@ -539,6 +680,132 @@ const latestPosts = blogPosts.filter((post) => post.data.published == true) // p
 
     .feature-card {
       padding: 2rem 1.5rem;
+    }
+  }
+
+  /* Interactive Elements Styles */
+  #cursor-trail {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9998;
+  }
+
+  .trail-point {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    animation: trail-fade 1s ease-out forwards;
+  }
+
+  @keyframes trail-fade {
+    to {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0);
+    }
+  }
+
+  #particle-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -2;
+    overflow: hidden;
+  }
+
+  .floating-particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: rgba(var(--accent), 0.3);
+    border-radius: 50%;
+    animation: particle-float linear infinite;
+  }
+
+  @keyframes particle-float {
+    0% {
+      transform: translateY(100vh) rotate(0deg);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-10vh) rotate(360deg);
+      opacity: 0;
+    }
+  }
+
+  /* Dynamic background effects */
+  body {
+    background: var(--gradient-background);
+    background-attachment: fixed;
+    background-size: 200% 200%;
+    animation: gradient-shift 15s ease infinite;
+  }
+
+  @keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Enhanced hover effects for blog cards */
+  .post-card {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .post-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(var(--accent), 0.1), transparent);
+    transform: rotate(45deg) translateY(100%);
+    transition: var(--transition-slow);
+    opacity: 0;
+  }
+
+  .post-card:hover::before {
+    transform: rotate(45deg) translateY(-100%);
+    opacity: 1;
+  }
+
+  /* Parallax scroll effects */
+  .floating-cards {
+    transform: translateY(var(--scroll-offset, 0px));
+  }
+
+  /* Enhanced feature cards with subtle glow */
+  .feature-card:hover {
+    box-shadow: var(--shadow-lg), 0 0 30px rgba(var(--accent), 0.2);
+  }
+
+  /* Disable effects on mobile for performance */
+  @media (max-width: 768px) {
+    #cursor-trail,
+    #particle-container {
+      display: none;
+    }
+    
+    .post-card::before {
+      display: none;
     }
   }
 </style>
