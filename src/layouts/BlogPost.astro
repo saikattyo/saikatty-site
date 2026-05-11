@@ -10,77 +10,29 @@ type Props = CollectionEntry<'blog'>['data'];
 const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 ---
 
-<html lang="en">
+<html lang="ja">
 	<head>
-		<BaseHead title={title} description={description} />
-		<style>
-			main {
-				width: calc(100% - 2em);
-				max-width: 100%;
-				margin: 0;
-			}
-			.hero-image {
-				width: 100%;
-				max-width: 1020px;
-				margin: 0 auto;
-			}
-			.hero-image img {
-				display: block;
-				width: 100%;
-				height: auto;
-				margin: 0 auto;
-				border-radius: 12px;
-				box-shadow: var(--box-shadow);
-				object-fit: cover;
-			}
-			.prose {
-				width: 720px;
-				max-width: calc(100% - 2em);
-				margin: auto;
-				padding: 1em;
-				color: rgb(var(--gray-dark));
-			}
-			.title {
-				margin-bottom: 1em;
-				padding: 1em 0;
-				text-align: center;
-				line-height: 1;
-			}
-			.title h1 {
-				margin: 0 0 0.5em 0;
-			}
-			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
-			}
-			.last-updated-on {
-				font-style: italic;
-			}
-		</style>
+		<BaseHead title={title} description={description} image={heroImage} />
 	</head>
-
 	<body>
 		<Header />
-		<main>
-			<article>
-				<div class="hero-image">
-					{heroImage && <img src={heroImage} alt="" />}
-				</div>
-				<div class="prose">
-					<div class="title">
-						<div class="date">
-							<FormattedDate date={pubDate} />
-							{
-								updatedDate && (
-									<div class="last-updated-on">
-										Last updated on <FormattedDate date={updatedDate} />
-									</div>
-								)
-							}
-						</div>
-						<h1>{title}</h1>
-						<hr />
+		<main class="post-main">
+			<article class="post-article">
+				<header class="post-header">
+					<a class="back-link" href="/blog">← Journalへ戻る</a>
+					<div class="date">
+						<FormattedDate date={pubDate} />
+						{updatedDate && <span>Updated <FormattedDate date={updatedDate} /></span>}
 					</div>
+					<h1>{title}</h1>
+					<p>{description}</p>
+				</header>
+				{heroImage && (
+					<div class="hero-image">
+						<img src={heroImage} alt="" />
+					</div>
+				)}
+				<div class="prose content-shell">
 					<slot />
 				</div>
 			</article>
@@ -88,3 +40,75 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 		<Footer />
 	</body>
 </html>
+
+<style>
+	.post-main {
+		width: min(980px, calc(100% - 40px));
+	}
+
+	.post-header {
+		padding: clamp(3rem, 8vw, 6rem) 0 2rem;
+		text-align: center;
+	}
+
+	.back-link {
+		display: inline-flex;
+		margin-bottom: 1.5rem;
+		color: var(--accent);
+		font-weight: 700;
+		text-decoration: none;
+	}
+
+	.date {
+		display: flex;
+		justify-content: center;
+		gap: 0.7rem;
+		flex-wrap: wrap;
+		margin-bottom: 1rem;
+		color: var(--accent-2);
+		font-size: 0.9rem;
+		font-weight: 700;
+	}
+
+	.post-header h1 {
+		font-size: clamp(2.7rem, 7vw, 6rem);
+	}
+
+	.post-header p {
+		max-width: 700px;
+		margin-inline: auto;
+		font-size: 1.18rem;
+	}
+
+	.hero-image {
+		margin: 1rem 0 3rem;
+		border: 1px solid var(--line);
+		border-radius: var(--radius-lg);
+		overflow: hidden;
+		box-shadow: var(--shadow);
+	}
+
+	.hero-image img {
+		display: block;
+		width: 100%;
+		max-height: 560px;
+		object-fit: cover;
+		border-radius: 0;
+	}
+
+	.content-shell {
+		max-width: 760px;
+		margin: 0 auto;
+		padding: clamp(1.4rem, 4vw, 3rem);
+		border: 1px solid var(--line);
+		border-radius: var(--radius-lg);
+		background: rgba(255, 250, 241, 0.68);
+		box-shadow: var(--shadow-soft);
+	}
+
+	@media (max-width: 720px) {
+		.post-main {
+			width: min(100% - 28px, 980px);
+		}
+	}
+</style>
