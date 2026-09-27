@@ -4,11 +4,9 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
-import { getCollection } from 'astro:content';
+import { getPublishedBlogPosts, postSlug } from '../../lib/blog';
 
-const posts = (await getCollection('blog'))
-	.filter((post) => post.data.published === true)
-	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const posts = await getPublishedBlogPosts();
 
 const postThemes: Record<string, string> = {
 	'1': 'Thought',
@@ -40,19 +38,22 @@ const postThemes: Record<string, string> = {
 			</section>
 
 			<section class="archive-list" aria-label="ブログ記事一覧">
-				{posts.map((post, index) => (
+				{posts.map((post, index) => {
+					const slug = postSlug(post);
+					return (
 					<article class="archive-row">
-						<a href={`/blog/${post.id}/`}>
+						<a href={`/blog/${slug}/`}>
 							<span class="index">{String(index + 1).padStart(2, '0')}</span>
 							<div class="meta">
 								<FormattedDate date={post.data.pubDate} />
-								<span>{postThemes[post.id] || 'Note'}</span>
+								<span>{postThemes[slug] || 'Note'}</span>
 							</div>
 							<h2>{post.data.title}</h2>
 							<p>{post.data.description || '日々の思考を書き留めた投稿です。'}</p>
 						</a>
 					</article>
-				))}
+					);
+				})}
 			</section>
 		</main>
 		<Footer />
