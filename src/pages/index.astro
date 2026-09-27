@@ -3,77 +3,135 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
-import { getCollection } from 'astro:content';
+import { PROFILE, SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { getPublishedBlogPosts, postSlug } from '../lib/blog';
 
-const blogPosts = await getCollection('blog');
-const latestPosts = blogPosts
-	.filter((post) => post.data.published === true)
-	.sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime())
-	.slice(0, 5);
+const latestPosts = (await getPublishedBlogPosts()).slice(0, 5);
 
-const notes = [
-	{ label: 'Thoughts', value: '日々の違和感' },
-	{ label: 'Craft', value: '技術とプロダクト' },
-	{ label: 'Future', value: 'エネルギーと繁栄' },
+const postThemes: Record<string, string> = {
+	'1': 'Thought',
+	'2': 'Craft',
+	'3': 'Reflection',
+	'4': 'Mission',
+	'5': 'Mission',
+	'6': 'Portrait',
+	'7': 'Craft',
+	'8': 'Craft',
+};
+
+const nowItems = [
+	{
+		label: 'Building',
+		title: 'NanoFrontier',
+		body: '東北大学発のナノ粒子化技術で、環境・エネルギー・医療の課題に取り組む。共同創業者。',
+		href: PROFILE.companyUrl,
+	},
+	{
+		label: 'Mission',
+		title: '資源が循環する社会',
+		body: '限られた資源をなめらかに循環させ、誰もが使える技術として社会に届ける。',
+	},
+	{
+		label: 'Base',
+		title: PROFILE.location,
+		body: '仙台の研究室と東京を行き来しながら、事業と開発のあいだを繋いでいる。',
+	},
+];
+
+const pathItems = [
+	{ year: '〜2019', title: '鳥取大学工学部', note: 'アプリ / SaaS開発の現場へ' },
+	{ year: 'DeNA', title: 'Anyca', note: 'iOS / Android / サーバー / PdM' },
+	{ year: 'Catalis', title: 'AIアプリケーション', note: '事業づくりと実装を横断' },
+	{ year: '2025〜', title: 'NanoFrontier', note: '共同創業・社会実装' },
 ];
 ---
 
 <!doctype html>
 <html lang="ja">
 	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} image="/profile_image.jpg" />
 	</head>
 	<body>
 		<Header />
-		<main>
+		<main class="home-main">
 			<section class="hero" aria-label="サイト紹介">
-				<div class="hero-copy">
-					<p class="kicker">Personal journal / field notes</p>
-					<h1>散らかった思考に、余白と輪郭を。</h1>
+				<div class="hero-media" aria-hidden="true">
+					<img src="/profile_image.jpg" alt="" />
+					<div class="hero-veil"></div>
+				</div>
+				<div class="hero-copy rise">
+					<p class="brand-signal">{PROFILE.handle}</p>
+					<h1>思考を掃き溜めて、<br />次の社会実装へ。</h1>
 					<p class="hero-description">
-						Saikattyoが日常で拾った問い、技術の試行錯誤、社会や未来について考えたことを置いていく場所です。
-						きれいに結論を出すより、考え続けるためのメモとして残しています。
+						{PROFILE.name}。{PROFILE.company}共同創業者。ナノ粒子、エネルギー、プロダクト、日々の違和感をここに残しています。
 					</p>
 					<div class="hero-actions">
-						<a class="button primary" href="/blog">最新の記事を読む</a>
-						<a class="button secondary" href="/about">書いている人</a>
+						<a class="button primary" href="/blog">Journalを読む</a>
+						<a class="button secondary" href="/about">いまの自分へ</a>
 					</div>
 				</div>
-				<aside class="hero-panel" aria-label="このサイトのテーマ">
-					<div class="panel-topline"></div>
-					<p class="panel-label">Current themes</p>
-					<div class="theme-stack">
-						{notes.map((note) => (
-							<div class="theme-card">
-								<span>{note.label}</span>
-								<strong>{note.value}</strong>
+			</section>
+
+			<section class="now-section" aria-labelledby="now-title">
+				<div class="section-heading">
+					<p class="kicker">Now</p>
+					<h2 id="now-title">いまの立ち位置</h2>
+					<p>肩書きより、いま何に手を伸ばしているかを先に置く。</p>
+				</div>
+				<div class="now-list">
+					{nowItems.map((item) => (
+						<div class="now-row">
+							<span class="now-label">{item.label}</span>
+							<div class="now-body">
+								{item.href ? (
+									<a href={item.href} target="_blank" rel="noopener noreferrer">
+										<strong>{item.title}</strong>
+									</a>
+								) : (
+									<strong>{item.title}</strong>
+								)}
+								<p>{item.body}</p>
 							</div>
-						))}
-					</div>
-				</aside>
+						</div>
+					))}
+				</div>
+			</section>
+
+			<section class="path-section" aria-labelledby="path-title">
+				<div class="section-heading compact">
+					<p class="kicker">Path</p>
+					<h2 id="path-title">ここまでの線</h2>
+				</div>
+				<ol class="path-line">
+					{pathItems.map((item) => (
+						<li>
+							<span class="path-year">{item.year}</span>
+							<span class="path-title">{item.title}</span>
+							<span class="path-note">{item.note}</span>
+						</li>
+					))}
+				</ol>
 			</section>
 
 			<section class="latest-section" aria-labelledby="latest-title">
 				<div class="section-heading">
-					<p class="kicker">Latest entries</p>
+					<p class="kicker">Journal</p>
 					<h2 id="latest-title">最近の投稿</h2>
-					<p>公開中の記事から新しいものをピックアップ。気になったタイトルからどうぞ。</p>
+					<p>思考・クラフト・ミッション。公開中の記事から新しいものをピックアップ。</p>
 				</div>
 
 				<div class="post-list">
 					{latestPosts.length > 0 ? (
-						latestPosts.map((post, index) => (
+						latestPosts.map((post, index) => {
+							const slug = postSlug(post);
+							return (
 							<article class="post-row">
-								<a href={`/blog/${post.id}`} class="post-row-link">
+								<a href={`/blog/${slug}`} class="post-row-link">
 									<span class="post-number">{String(index + 1).padStart(2, '0')}</span>
-									<div class="post-thumb">
-										<img src={post.data.heroImage || '/blog-placeholder-1.jpg'} alt="" loading="lazy" />
-									</div>
 									<div class="post-summary">
 										<div class="post-meta">
 											<FormattedDate date={post.data.pubDate} />
-											<span>Essay</span>
+											<span>{postThemes[slug] || 'Note'}</span>
 										</div>
 										<h3>{post.data.title}</h3>
 										<p>{post.data.description || '日々の思考を書き留めた投稿です。'}</p>
@@ -81,7 +139,8 @@ const notes = [
 									<span class="read-indicator">読む</span>
 								</a>
 							</article>
-						))
+							);
+						})
 					) : (
 						<div class="empty-state">
 							<h3>記事を準備中です</h3>
@@ -94,48 +153,86 @@ const notes = [
 					<a class="button secondary" href="/blog">すべての投稿を見る</a>
 				</div>
 			</section>
-
-			<section class="about-strip" aria-label="サイトの方向性">
-				<div>
-					<p class="kicker">What this place is for</p>
-					<h2>未完成な考えを、そのまま進めるために。</h2>
-				</div>
-				<p>
-					日々の記録、技術の探索、エネルギーや人類の繁栄についてのメモを横断して残します。
-					読みやすさと余白を大切に、古いノートをめくるようなサイトにしました。
-				</p>
-			</section>
 		</main>
 		<Footer />
 	</body>
 </html>
 
 <style>
-	.hero {
-		min-height: calc(100vh - 142px);
-		display: grid;
-		grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
-		gap: clamp(2rem, 6vw, 5rem);
-		align-items: center;
-		padding: 48px 0 80px;
+	.home-main {
+		width: 100%;
+		max-width: none;
+		padding: 0 0 64px;
 	}
 
-	.kicker {
-		margin-bottom: 1rem;
-		color: var(--accent);
-		font-size: 0.78rem;
-		font-weight: 700;
-		letter-spacing: 0.2em;
-		text-transform: uppercase;
+	.hero {
+		position: relative;
+		isolation: isolate;
+		min-height: calc(100svh - 88px);
+		display: grid;
+		align-items: end;
+		padding: clamp(3rem, 10vw, 7rem) max(20px, calc((100% - var(--container)) / 2));
+		overflow: hidden;
+		color: var(--bg-soft);
+	}
+
+	.hero-media {
+		position: absolute;
+		inset: 0;
+		z-index: -2;
+	}
+
+	.hero-media img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		object-position: center 28%;
+		border-radius: 0;
+		animation: soft-zoom 18s var(--ease-out) both;
+	}
+
+	.hero-veil {
+		position: absolute;
+		inset: 0;
+		background:
+			linear-gradient(105deg, rgba(16, 24, 32, 0.88) 8%, rgba(16, 24, 32, 0.55) 48%, rgba(13, 58, 60, 0.35) 100%),
+			linear-gradient(to top, rgba(16, 24, 32, 0.72), transparent 42%);
+	}
+
+	.hero-copy {
+		max-width: 760px;
+		padding-bottom: 1rem;
+	}
+
+	.rise {
+		animation: rise-in 900ms var(--ease-out) both;
+	}
+
+	.brand-signal {
+		margin: 0 0 1.1rem;
+		font-family: var(--font-brand);
+		font-size: clamp(2.4rem, 8vw, 5.4rem);
+		font-weight: 800;
+		letter-spacing: -0.05em;
+		line-height: 0.95;
+		color: #e8fffb;
+		text-shadow:
+			0 0 1px rgba(16, 24, 32, 0.55),
+			0 12px 40px rgba(16, 24, 32, 0.45);
 	}
 
 	.hero h1 {
-		max-width: 840px;
+		margin-bottom: 1.2rem;
+		color: var(--bg-soft);
+		font-size: clamp(2.1rem, 5.4vw, 4rem);
+		letter-spacing: -0.03em;
 	}
 
 	.hero-description {
-		max-width: 700px;
-		font-size: clamp(1.05rem, 1.5vw, 1.3rem);
+		max-width: 560px;
+		margin-bottom: 0;
+		color: rgba(247, 249, 251, 0.78);
+		font-size: clamp(1.02rem, 1.5vw, 1.2rem);
 	}
 
 	.hero-actions,
@@ -146,111 +243,128 @@ const notes = [
 		margin-top: 2rem;
 	}
 
-	.button {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		min-height: 50px;
-		padding: 0.85rem 1.25rem;
-		border: 1px solid var(--ink);
-		border-radius: 999px;
-		font-weight: 700;
-		text-decoration: none;
-	}
-
-	.button.primary {
-		background: var(--ink);
+	.hero .button.secondary {
+		border-color: rgba(247, 249, 251, 0.35);
+		background: rgba(247, 249, 251, 0.1);
 		color: var(--bg-soft);
-		box-shadow: 0 14px 30px rgba(23, 19, 13, 0.18);
 	}
 
-	.button.secondary {
-		background: rgba(255, 250, 241, 0.45);
-		color: var(--ink);
+	.hero .button.secondary:hover {
+		background: rgba(247, 249, 251, 0.2);
+		color: var(--bg-soft);
 	}
 
-	.button:hover {
-		transform: translateY(-2px);
-	}
-
-	.hero-panel {
-		position: relative;
-		padding: 28px;
-		border: 1px solid var(--line);
-		border-radius: var(--radius-lg);
-		background:
-			linear-gradient(160deg, rgba(255, 250, 241, 0.86), rgba(255, 250, 241, 0.54)),
-			url('/profile_image.jpg') center / cover;
-		box-shadow: var(--shadow);
-		overflow: hidden;
-	}
-
-	.hero-panel::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		background: linear-gradient(to bottom, rgba(246, 240, 230, 0.24), rgba(246, 240, 230, 0.92));
-	}
-
-	.hero-panel > * {
-		position: relative;
-	}
-
-	.panel-topline {
-		width: 100%;
-		height: 280px;
-		border: 1px solid rgba(23, 19, 13, 0.16);
-		border-radius: 24px;
-		background: rgba(255, 250, 241, 0.24);
-		backdrop-filter: blur(2px);
-	}
-
-	.panel-label {
-		margin: 1.5rem 0 0.8rem;
-		color: var(--ink);
-		font-weight: 700;
-	}
-
-	.theme-stack {
-		display: grid;
-		gap: 0.7rem;
-	}
-
-	.theme-card {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 1rem;
-		padding: 1rem;
-		border: 1px solid var(--line);
-		border-radius: 18px;
-		background: rgba(255, 250, 241, 0.76);
-		backdrop-filter: blur(10px);
-	}
-
-	.theme-card span {
-		color: var(--muted);
-		font-size: 0.8rem;
-		font-weight: 700;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
-	}
-
-	.latest-section,
-	.about-strip {
-		padding: clamp(3rem, 8vw, 7rem) 0;
+	.now-section,
+	.path-section,
+	.latest-section {
+		width: min(var(--container), calc(100% - 40px));
+		margin: 0 auto;
+		padding: clamp(3.5rem, 8vw, 6.5rem) 0 0;
 	}
 
 	.section-heading {
 		display: grid;
-		grid-template-columns: minmax(0, 0.95fr) minmax(280px, 0.55fr);
-		gap: 2rem;
+		grid-template-columns: minmax(0, 0.95fr) minmax(240px, 0.55fr);
+		gap: 1.5rem 2rem;
 		align-items: end;
 		margin-bottom: 2rem;
 	}
 
+	.section-heading.compact {
+		grid-template-columns: 1fr;
+	}
+
 	.section-heading p:last-child {
 		margin-bottom: 0;
+	}
+
+	.now-list {
+		border-top: 1px solid var(--line);
+	}
+
+	.now-row {
+		display: grid;
+		grid-template-columns: 120px minmax(0, 1fr);
+		gap: 1.2rem;
+		padding: 1.45rem 0;
+		border-bottom: 1px solid var(--line);
+	}
+
+	.now-label {
+		padding-top: 0.2rem;
+		color: var(--accent);
+		font-family: var(--font-brand);
+		font-size: 0.82rem;
+		font-weight: 700;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+	}
+
+	.now-body strong {
+		display: block;
+		margin-bottom: 0.45rem;
+		font-family: var(--font-display);
+		font-size: clamp(1.35rem, 2.4vw, 1.8rem);
+		font-weight: 600;
+	}
+
+	.now-body a {
+		text-decoration: none;
+	}
+
+	.now-body p {
+		margin: 0;
+		max-width: 640px;
+	}
+
+	.path-line {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 1rem;
+		counter-reset: path;
+	}
+
+	.path-line li {
+		position: relative;
+		padding: 1.2rem 0 0;
+		border-top: 2px solid var(--ink);
+	}
+
+	.path-line li::before {
+		content: '';
+		position: absolute;
+		top: -6px;
+		left: 0;
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		background: var(--accent);
+	}
+
+	.path-year {
+		display: block;
+		margin-bottom: 0.55rem;
+		color: var(--accent);
+		font-family: var(--font-brand);
+		font-size: 0.78rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+	}
+
+	.path-title {
+		display: block;
+		margin-bottom: 0.35rem;
+		font-family: var(--font-display);
+		font-size: 1.25rem;
+		font-weight: 600;
+	}
+
+	.path-note {
+		color: var(--muted);
+		font-size: 0.95rem;
 	}
 
 	.post-list {
@@ -263,60 +377,49 @@ const notes = [
 
 	.post-row-link {
 		display: grid;
-		grid-template-columns: 54px 180px minmax(0, 1fr) auto;
-		gap: 1.4rem;
+		grid-template-columns: 54px minmax(0, 1fr) auto;
+		gap: 1.2rem;
 		align-items: center;
-		padding: 1.25rem 0;
+		padding: 1.35rem 0;
 		text-decoration: none;
 	}
 
+	.post-row-link:hover h3 {
+		color: var(--accent);
+	}
+
 	.post-number {
-		color: rgba(23, 19, 13, 0.34);
+		color: rgba(16, 24, 32, 0.28);
+		font-family: var(--font-brand);
 		font-weight: 700;
 	}
 
-	.post-thumb {
-		aspect-ratio: 4 / 3;
-		overflow: hidden;
-		border-radius: 20px;
-		background: var(--bg-soft);
-	}
-
-	.post-thumb img {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		transition: transform 300ms ease;
-	}
-
-	.post-row-link:hover .post-thumb img {
-		transform: scale(1.05);
-	}
-
 	.post-summary h3 {
-		margin-bottom: 0.6rem;
+		margin-bottom: 0.5rem;
 	}
 
 	.post-summary p {
-		max-width: 620px;
+		max-width: 640px;
 		margin: 0;
 	}
 
 	.post-meta {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.6rem;
-		margin-bottom: 0.6rem;
-		color: var(--accent-2);
-		font-size: 0.85rem;
+		gap: 0.65rem;
+		margin-bottom: 0.55rem;
+		color: var(--accent);
+		font-family: var(--font-brand);
+		font-size: 0.82rem;
 		font-weight: 700;
 	}
 
 	.read-indicator {
-		padding: 0.65rem 0.85rem;
+		padding: 0.6rem 0.9rem;
 		border: 1px solid var(--line);
 		border-radius: 999px;
-		font-size: 0.9rem;
+		font-family: var(--font-brand);
+		font-size: 0.86rem;
 		font-weight: 700;
 	}
 
@@ -327,46 +430,37 @@ const notes = [
 		background: var(--card);
 	}
 
-	.about-strip {
-		display: grid;
-		grid-template-columns: minmax(0, 0.9fr) minmax(280px, 0.7fr);
-		gap: 2rem;
-		align-items: start;
-		margin-top: 3rem;
-		padding: clamp(2rem, 5vw, 4rem);
-		border: 1px solid var(--line);
-		border-radius: var(--radius-lg);
-		background: rgba(255, 250, 241, 0.58);
-		box-shadow: var(--shadow-soft);
-	}
-
-	.about-strip p:last-child {
-		margin-bottom: 0;
-	}
-
-	@media (max-width: 860px) {
-		.hero,
+	@media (max-width: 900px) {
 		.section-heading,
-		.about-strip {
+		.path-line {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+
+	@media (max-width: 720px) {
+		.hero {
+			min-height: calc(100svh - 120px);
+			align-items: end;
+			padding-bottom: 3rem;
+		}
+
+		.now-section,
+		.path-section,
+		.latest-section {
+			width: min(100% - 28px, var(--container));
+		}
+
+		.section-heading,
+		.path-line,
+		.now-row,
+		.post-row-link {
 			grid-template-columns: 1fr;
 		}
 
-		.hero {
-			min-height: auto;
-			padding-top: 32px;
-		}
-
-		.post-row-link {
-			grid-template-columns: 42px minmax(0, 1fr);
-		}
-
-		.post-thumb,
 		.read-indicator {
 			display: none;
 		}
-	}
 
-	@media (max-width: 520px) {
 		.hero-actions,
 		.section-actions {
 			flex-direction: column;
