@@ -15,23 +15,25 @@
 }
 
 :root {
-	--bg: #f6f0e6;
-	--bg-soft: #fffaf1;
-	--ink: #17130d;
-	--muted: #6f675b;
-	--line: rgba(23, 19, 13, 0.14);
-	--accent: #c6552f;
-	--accent-2: #1f6f78;
-	--accent-3: #d9a441;
-	--card: rgba(255, 250, 241, 0.78);
-	--shadow: 0 24px 70px rgba(68, 45, 23, 0.13);
-	--shadow-soft: 0 14px 35px rgba(68, 45, 23, 0.09);
-	--radius-lg: 30px;
-	--radius-md: 22px;
-	--radius-sm: 14px;
+	--bg: #edf1f4;
+	--bg-soft: #f7f9fb;
+	--ink: #101820;
+	--muted: #5a6570;
+	--line: rgba(16, 24, 32, 0.12);
+	--accent: #0d7377;
+	--accent-soft: rgba(13, 115, 119, 0.12);
+	--accent-2: #c83e4d;
+	--card: rgba(247, 249, 251, 0.78);
+	--shadow: 0 28px 80px rgba(16, 24, 32, 0.12);
+	--shadow-soft: 0 12px 36px rgba(16, 24, 32, 0.08);
+	--radius-lg: 28px;
+	--radius-md: 18px;
+	--radius-sm: 12px;
 	--container: 1120px;
-	--font-body: 'Atkinson', 'Hiragino Sans', 'Yu Gothic', system-ui, sans-serif;
-	--font-display: 'Atkinson', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+	--font-body: 'IBM Plex Sans JP', 'Atkinson', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+	--font-display: 'Shippori Mincho', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+	--font-brand: 'Syne', 'IBM Plex Sans JP', sans-serif;
+	--ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 * {
@@ -46,13 +48,13 @@ body {
 	margin: 0;
 	min-height: 100vh;
 	font-family: var(--font-body);
-	font-size: 18px;
-	line-height: 1.8;
+	font-size: 17px;
+	line-height: 1.85;
 	color: var(--ink);
 	background:
-		radial-gradient(circle at top left, rgba(217, 164, 65, 0.3), transparent 34rem),
-		radial-gradient(circle at 88% 18%, rgba(31, 111, 120, 0.2), transparent 30rem),
-		linear-gradient(135deg, var(--bg), #efe2cf 52%, #f8f1e7);
+		radial-gradient(ellipse 70% 50% at 12% -10%, rgba(13, 115, 119, 0.16), transparent 55%),
+		radial-gradient(ellipse 55% 40% at 92% 8%, rgba(200, 62, 77, 0.1), transparent 50%),
+		linear-gradient(165deg, #e8eef2 0%, var(--bg) 42%, #e4eaef 100%);
 	background-attachment: fixed;
 	text-align: left;
 	word-wrap: break-word;
@@ -65,17 +67,47 @@ body::before {
 	inset: 0;
 	z-index: -1;
 	pointer-events: none;
+	opacity: 0.45;
 	background-image:
-		linear-gradient(rgba(23, 19, 13, 0.035) 1px, transparent 1px),
-		linear-gradient(90deg, rgba(23, 19, 13, 0.035) 1px, transparent 1px);
-	background-size: 44px 44px;
-	mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.75), transparent 82%);
+		radial-gradient(rgba(16, 24, 32, 0.05) 0.6px, transparent 0.6px),
+		linear-gradient(rgba(16, 24, 32, 0.03) 1px, transparent 1px);
+	background-size: 3px 3px, 56px 56px;
+	animation: grain-drift 28s linear infinite;
+}
+
+@keyframes grain-drift {
+	from {
+		transform: translate3d(0, 0, 0);
+	}
+	to {
+		transform: translate3d(-24px, -36px, 0);
+	}
+}
+
+@keyframes rise-in {
+	from {
+		opacity: 0;
+		transform: translateY(18px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes soft-zoom {
+	from {
+		transform: scale(1.06);
+	}
+	to {
+		transform: scale(1);
+	}
 }
 
 main {
 	width: min(var(--container), calc(100% - 40px));
 	margin: 0 auto;
-	padding: 48px 0 88px;
+	padding: 32px 0 96px;
 }
 
 h1,
@@ -86,35 +118,40 @@ h5,
 h6 {
 	margin: 0 0 1rem;
 	font-family: var(--font-display);
-	font-weight: 700;
-	line-height: 1.12;
-	letter-spacing: -0.04em;
+	font-weight: 600;
+	line-height: 1.18;
+	letter-spacing: -0.02em;
 	color: var(--ink);
 }
 
 h1 {
-	font-size: clamp(3rem, 8vw, 6.8rem);
+	font-size: clamp(2.8rem, 7.5vw, 5.8rem);
 }
 
 h2 {
-	font-size: clamp(2.1rem, 5vw, 4.2rem);
+	font-size: clamp(2rem, 4.8vw, 3.6rem);
 }
 
 h3 {
-	font-size: clamp(1.45rem, 3vw, 2rem);
+	font-size: clamp(1.35rem, 2.8vw, 1.85rem);
 }
 
 p {
-	margin: 0 0 1.4rem;
+	margin: 0 0 1.35rem;
 	color: var(--muted);
 }
 
 a {
 	color: inherit;
-	text-decoration-color: rgba(198, 85, 47, 0.35);
-	text-decoration-thickness: 0.09em;
+	text-decoration-color: rgba(13, 115, 119, 0.4);
+	text-decoration-thickness: 0.08em;
 	text-underline-offset: 0.22em;
-	transition: color 180ms ease, border-color 180ms ease, transform 180ms ease, background 180ms ease;
+	transition:
+		color 180ms ease,
+		border-color 180ms ease,
+		transform 180ms var(--ease-out),
+		background 180ms ease,
+		opacity 180ms ease;
 }
 
 a:hover {
@@ -141,10 +178,10 @@ b {
 }
 
 code {
-	padding: 0.18rem 0.42rem;
-	border: 1px solid rgba(198, 85, 47, 0.22);
-	border-radius: 0.55rem;
-	background: rgba(255, 250, 241, 0.8);
+	padding: 0.16rem 0.4rem;
+	border: 1px solid rgba(13, 115, 119, 0.2);
+	border-radius: 0.45rem;
+	background: var(--accent-soft);
 	color: var(--accent);
 	font-size: 0.92em;
 }
@@ -152,8 +189,8 @@ code {
 pre {
 	padding: 1.25rem;
 	border-radius: var(--radius-sm);
-	background: #1b1711;
-	color: #fff4dd;
+	background: #101820;
+	color: #e8eef2;
 	overflow-x: auto;
 	box-shadow: var(--shadow-soft);
 }
@@ -165,9 +202,9 @@ pre > code {
 blockquote {
 	margin: 2rem 0;
 	padding: 1.2rem 1.4rem;
-	border-left: 4px solid var(--accent);
+	border-left: 3px solid var(--accent);
 	border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-	background: rgba(255, 250, 241, 0.62);
+	background: rgba(247, 249, 251, 0.7);
 }
 
 .sr-only {
@@ -183,18 +220,77 @@ blockquote {
 }
 
 .prose {
-	font-size: 1.05rem;
+	font-size: 1.04rem;
 }
 
 .prose a {
 	color: var(--accent);
-	font-weight: 700;
+	font-weight: 600;
 }
 
 .prose ul,
 .prose ol {
 	padding-left: 1.35rem;
 	color: var(--muted);
+}
+
+.kicker {
+	margin: 0 0 1rem;
+	color: var(--accent);
+	font-family: var(--font-brand);
+	font-size: 0.78rem;
+	font-weight: 700;
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+}
+
+.button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 48px;
+	padding: 0.8rem 1.3rem;
+	border: 1px solid var(--ink);
+	border-radius: 999px;
+	font-family: var(--font-brand);
+	font-weight: 700;
+	letter-spacing: 0.02em;
+	text-decoration: none;
+}
+
+.button.primary {
+	background: var(--ink);
+	color: var(--bg-soft);
+	box-shadow: 0 16px 36px rgba(16, 24, 32, 0.18);
+}
+
+.button.secondary {
+	background: rgba(247, 249, 251, 0.55);
+	color: var(--ink);
+	backdrop-filter: blur(8px);
+}
+
+.button:hover {
+	transform: translateY(-2px);
+	color: inherit;
+}
+
+.button.primary:hover {
+	color: var(--bg-soft);
+	background: var(--accent);
+	border-color: var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+
+	body::before,
+	.rise,
+	.hero-media img {
+		animation: none !important;
+	}
 }
 
 @media (max-width: 720px) {
@@ -204,6 +300,6 @@ blockquote {
 
 	main {
 		width: min(100% - 28px, var(--container));
-		padding-top: 28px;
+		padding-top: 20px;
 	}
 }

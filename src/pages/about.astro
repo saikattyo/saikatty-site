@@ -1,30 +1,125 @@
 ---
 import Layout from '../layouts/AboutLayout.astro';
+import { PROFILE } from '../consts';
 ---
 <Layout
-    title="About Me"
-    description="エネルギー分野と人類の繁栄に挑む私の経歴と目標"
-    pubDate={new Date('December 29 2024')}
-    heroImage="/profile_image_about.jpg"
+	title={`${PROFILE.name} / ${PROFILE.handle}`}
+	description="NanoFrontier共同創業者。エンジニアから事業へ。人類の繁栄に資する技術を社会に届ける。"
+	pubDate={new Date('September 27 2026')}
+	heroImage="/profile_image_about.jpg"
 >
-    <p>
-        こんにちは、Saikattyoと申します。Catalis Partners Groupで取締役を務め、人類の繁栄を目指す革新的なプロジェクトに取り組んでいます。私の目標は、エネルギー分野における課題を解決し、温室効果ガスの排出をゼロにすることで、持続可能な未来を実現することです。
-        詳しくは<a href="https://catalis-p.com" target="_blank" rel="noopener noreferrer">Catalis Partners Group</a>をご覧ください。
-    </p>
+	<section class="block">
+		<p class="label">Now</p>
+		<h2>いまやっていること</h2>
+		<p>
+			こんにちは、{PROFILE.name}（{PROFILE.handle}）です。2025年4月に東北大学発の
+			<a href={PROFILE.companyUrl} target="_blank" rel="noopener noreferrer">NanoFrontier</a>
+			を共同創業し、独自のナノ粒子化技術で環境・エネルギー・医療の課題に取り組んでいます。
+			拠点は{PROFILE.location}。研究室の技術と、プロダクトとしての実装をつなぐ役割を担っています。
+		</p>
+		<p>
+			以前はAIアプリケーション開発を行う
+			<a href="https://catalis-p.com" target="_blank" rel="noopener noreferrer">Catalis Partners Group</a>
+			に関わり、ソフトウェアと事業づくりの両面で動いてきました。いまの軸は「誰もが使える技術を、商業化できる形で届けること」です。
+		</p>
+	</section>
 
-    <p>
-        私のキャリアの原点は、ソフトウェアエンジニアとしての経験にあります。鳥取大学工学部を卒業後、新卒でDeNAに入社し、カーシェアサービスAnycaの開発チームで多岐にわたる役割を担いました。iOSやAndroidアプリケーションの開発、サーバーサイドの設計・実装、プロダクトマネジメント、さらには採用業務まで幅広く経験しました。この経験は、フルスタックエンジニアとしてのスキルを深めると同時に、プロジェクトを俯瞰して管理する能力を育む重要な基盤となりました。
-    </p>
+	<section class="block">
+		<p class="label">Path</p>
+		<h2>これまでの道筋</h2>
+		<ul class="timeline">
+			<li>
+				<strong>鳥取大学工学部</strong>
+				<span>在学中からアプリ・SaaS開発のリーダーを経験し、ものづくりの現場感覚を身につける。</span>
+			</li>
+			<li>
+				<strong>DeNA / Anyca</strong>
+				<span>カーシェアサービスでiOS・Android・サーバーサイド開発とプロダクトマネジメントを担当。フルスタックと推進の両方を経験。</span>
+			</li>
+			<li>
+				<strong>Catalis Partners Group</strong>
+				<span>AIアプリケーション開発と事業づくりに携わり、技術と社会実装のあいだを横断。</span>
+			</li>
+			<li>
+				<strong>NanoFrontier（2025〜）</strong>
+				<span>共同創業者として、ナノ粒子化技術の研究開発・事業化・社会実装に取り組む。</span>
+			</li>
+		</ul>
+	</section>
 
-    <p>
-        現在は、エネルギー分野における課題解決に注力し、再生可能エネルギーの活用や電化の推進、グリーンな送電インフラの構築に取り組んでいます。特に、発電から消費に至るまでのプロセスを効率化し、社会全体でエネルギーを最大限に活用できる仕組みを作ることを目指しています。私の仕事の核にあるのは、「後世に続く繁栄の基盤を築く」という理念です。
-    </p>
+	<section class="block">
+		<p class="label">Focus</p>
+		<h2>いま見ている景色</h2>
+		<p>
+			仕事の核にあるのは「後世に続く繁栄の基盤を築く」という感覚です。PFAS検出、次世代蓄電池、冷却・潤滑といった応用領域を含め、
+			資源が循環し、エネルギーが無駄なく使われる仕組みづくりに関心があります。短期の派手さより、長く残る実装を優先したいです。
+		</p>
+		<p>
+			並行して、CursorやObsidianを使った記録・執筆のワークフローも試しています。考えたことを消えにくい場所に残し、次の判断に使える形にする。
+			このサイト「掃き溜め」はそのための個人用の場所です。
+		</p>
+	</section>
 
-    <p>
-        プロフェッショナルとして、私が最も重視するのは「持続可能なイノベーション」です。短期的な利益にとらわれるのではなく、長期的に人類の繁栄を支える仕組みを作ることに全力を注いでいます。また、読書や他分野の学びを通じて、新たな視点を得ることを大切にしています。最近感銘を受けた本には、『繁栄――明日を切り拓くための人類10万年史』や『地球の未来のため僕が決断したこと』があります。
-    </p>
-
-    <p>
-        今後も、温暖化やエネルギー問題を含むグローバルな課題を解決するために挑戦を続けます。そして、次世代のリーダーたちとともに、持続可能な社会を築いていきたいと考えています。もし私のビジョンやプロジェクトに興味がありましたら、ぜひお気軽にご連絡ください。一緒に未来を創りましょう。
-    </p>
+	<section class="block">
+		<p class="label">Contact</p>
+		<h2>つながる</h2>
+		<p>
+			ビジョンやプロジェクトに興味がある方は、気軽に連絡ください。
+			X（<a href={PROFILE.x} target="_blank" rel="noopener noreferrer">@katsuyakat</a>）、
+			<a href={PROFILE.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>、
+			または
+			<a href={PROFILE.github} target="_blank" rel="noopener noreferrer">GitHub</a>
+			からどうぞ。会社としての話は
+			<a href={PROFILE.companyUrl} target="_blank" rel="noopener noreferrer">NanoFrontier</a>
+			へ。
+		</p>
+	</section>
 </Layout>
+
+<style>
+	.block {
+		margin-bottom: 2.8rem;
+	}
+
+	.block:last-child {
+		margin-bottom: 0;
+	}
+
+	.label {
+		margin-bottom: 0.55rem;
+		color: var(--accent);
+		font-family: var(--font-brand);
+		font-size: 0.78rem;
+		font-weight: 700;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+	}
+
+	.block h2 {
+		font-size: clamp(1.6rem, 3vw, 2.2rem);
+		margin-bottom: 1rem;
+	}
+
+	.timeline {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		border-top: 1px solid var(--line);
+	}
+
+	.timeline li {
+		display: grid;
+		gap: 0.35rem;
+		padding: 1.1rem 0;
+		border-bottom: 1px solid var(--line);
+	}
+
+	.timeline strong {
+		font-family: var(--font-display);
+		font-size: 1.15rem;
+	}
+
+	.timeline span {
+		color: var(--muted);
+	}
+</style>

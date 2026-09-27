@@ -1,3 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
-    <text x="50%" y="50%" font-size="64" text-anchor="middle" dominant-baseline="middle">💭</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+	<rect width="64" height="64" rx="16" fill="#101820"/>
+	<circle cx="32" cy="32" r="10" fill="#0D7377"/>
+	<circle cx="32" cy="32" r="18" stroke="#7FD4D6" stroke-width="2" opacity="0.55"/>
 </svg>
