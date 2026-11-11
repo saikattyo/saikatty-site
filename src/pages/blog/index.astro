@@ -28,8 +28,8 @@ const postThemes: Record<string, string> = {
 	<body>
 		<Header />
 		<main>
-			<section class="archive-hero">
-				<p class="kicker">Journal</p>
+			<section class="archive-hero rise">
+				<p class="kicker">Journal // Archive</p>
 				<h1>書き留めたこと</h1>
 				<p>
 					思考の断片、技術の試行、ミッションのメモ。公開中の投稿を新しい順に並べています。
@@ -41,17 +41,20 @@ const postThemes: Record<string, string> = {
 				{posts.map((post, index) => {
 					const slug = postSlug(post);
 					return (
-					<article class="archive-row">
-						<a href={`/blog/${slug}/`}>
-							<span class="index">{String(index + 1).padStart(2, '0')}</span>
-							<div class="meta">
-								<FormattedDate date={post.data.pubDate} />
-								<span>{postThemes[slug] || 'Note'}</span>
-							</div>
-							<h2>{post.data.title}</h2>
-							<p>{post.data.description || '日々の思考を書き留めた投稿です。'}</p>
-						</a>
-					</article>
+						<article class="archive-row">
+							<a href={`/blog/${slug}/`}>
+								<span class="index">{String(index + 1).padStart(2, '0')}</span>
+								<div class="body">
+									<div class="meta">
+										<FormattedDate date={post.data.pubDate} />
+										<span class="pill">{postThemes[slug] || 'Note'}</span>
+									</div>
+									<h2>{post.data.title}</h2>
+									<p>{post.data.description || '日々の思考を書き留めた投稿です。'}</p>
+								</div>
+								<span class="arrow" aria-hidden="true">→</span>
+							</a>
+						</article>
 					);
 				})}
 			</section>
@@ -62,70 +65,115 @@ const postThemes: Record<string, string> = {
 
 <style>
 	.archive-hero {
-		padding: clamp(2.5rem, 7vw, 5.5rem) 0 clamp(1.5rem, 4vw, 2.5rem);
+		padding: clamp(2.2rem, 6vw, 4.5rem) 0 clamp(1.8rem, 4vw, 2.8rem);
 		max-width: 760px;
 	}
 
+	.rise {
+		animation: rise-in 800ms var(--ease-out) both;
+	}
+
 	.archive-hero p:last-child {
-		font-size: 1.12rem;
+		font-size: 1.08rem;
+		color: #cbd5e1;
 		margin-bottom: 0;
 	}
 
 	.archive-list {
-		border-top: 1px solid var(--line);
+		padding: 0.4rem 1.6rem;
+		border: 1px solid var(--line);
+		border-radius: var(--radius-lg);
+		background: var(--surface-strong);
+		box-shadow: var(--shadow);
+		backdrop-filter: blur(18px);
 	}
 
 	.archive-row {
 		border-bottom: 1px solid var(--line);
 	}
 
+	.archive-row:last-child {
+		border-bottom: 0;
+	}
+
 	.archive-row a {
 		display: grid;
-		grid-template-columns: 56px minmax(0, 1fr);
-		gap: 0.35rem 1.2rem;
-		padding: 1.5rem 0;
+		grid-template-columns: 52px minmax(0, 1fr) auto;
+		gap: 1.2rem;
+		align-items: center;
+		padding: 1.55rem 0;
 		text-decoration: none;
 	}
 
-	.archive-row a:hover h2 {
+	.archive-row a:hover h2,
+	.archive-row a:hover .arrow {
 		color: var(--accent);
 	}
 
+	.archive-row a:hover .arrow {
+		transform: translateX(4px);
+	}
+
 	.index {
-		grid-row: span 3;
-		padding-top: 0.35rem;
-		color: rgba(16, 24, 32, 0.28);
-		font-family: var(--font-brand);
-		font-weight: 700;
+		color: var(--dim);
+		font-family: var(--font-mono);
+		font-size: 0.86rem;
+		font-weight: 600;
 	}
 
 	.meta {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.65rem;
+		align-items: center;
+		gap: 0.6rem;
+		margin-bottom: 0.45rem;
+		color: var(--muted);
+		font-family: var(--font-mono);
+		font-size: 0.78rem;
+	}
+
+	.pill {
+		padding: 0.14rem 0.55rem;
+		border: 1px solid rgba(94, 234, 212, 0.28);
+		border-radius: 999px;
+		background: rgba(94, 234, 212, 0.08);
 		color: var(--accent);
-		font-family: var(--font-brand);
-		font-size: 0.82rem;
-		font-weight: 700;
+		font-size: 0.7rem;
+		font-weight: 600;
 	}
 
 	.archive-row h2 {
-		margin: 0;
-		font-size: clamp(1.35rem, 2.8vw, 2rem);
+		margin: 0 0 0.45rem;
+		font-size: clamp(1.3rem, 2.5vw, 1.85rem);
 	}
 
 	.archive-row p {
 		margin: 0;
-		max-width: 640px;
+		max-width: 650px;
+		font-size: 0.96rem;
 	}
 
-	@media (max-width: 560px) {
-		.archive-row a {
-			grid-template-columns: 1fr;
+	.arrow {
+		color: var(--muted);
+		font-family: var(--font-brand);
+		font-size: 1.2rem;
+		transition:
+			transform 180ms ease,
+			color 180ms ease;
+	}
+
+	@media (max-width: 640px) {
+		.archive-list {
+			padding: 0.2rem 1rem;
 		}
 
-		.index {
-			grid-row: auto;
+		.archive-row a {
+			grid-template-columns: 1fr;
+			gap: 0.4rem;
+		}
+
+		.arrow {
+			display: none;
 		}
 	}
 </style>

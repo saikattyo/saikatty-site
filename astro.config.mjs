@@ -5,11 +5,26 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://example.com',
+	site: 'https://saikattyo.com',
 	integrations: [mdx(), sitemap()],
-	// Use legacy content collections so getCollection() does not depend on
-	// `.astro/data-store.json`, which can be left empty by content-layer write races in Astro 5.1.
 	legacy: {
 		collections: true,
+	},
+	vite: {
+		build: {
+			rollupOptions: {
+				output: {
+					manualChunks(id) {
+						if (id.includes('node_modules/three/examples')) {
+							return 'three-addons';
+						}
+						if (id.includes('node_modules/three')) {
+							return 'three-core';
+						}
+					},
+				},
+			},
+			chunkSizeWarningLimit: 600,
+		},
 	},
 });

@@ -3,6 +3,7 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
+import NanoStage from '../components/NanoStage.astro';
 import { PROFILE, SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 import { getPublishedBlogPosts, postSlug } from '../lib/blog';
 
@@ -21,28 +22,34 @@ const postThemes: Record<string, string> = {
 
 const nowItems = [
 	{
-		label: 'Building',
+		label: '01 / Building',
+		mode: 'nano',
 		title: 'NanoFrontier',
-		body: '東北大学発のナノ粒子化技術で、環境・エネルギー・医療の課題に取り組む。共同創業者。',
+		tag: 'DeepTech · Co-founder',
+		body: '東北大学発の独自ナノ粒子化技術で、水中PFAS検出・次世代蓄電池・冷却効率などの課題に挑む。共同創業者として研究開発と事業実装をつなぐ。',
 		href: PROFILE.companyUrl,
 	},
 	{
-		label: 'Mission',
-		title: '資源が循環する社会',
-		body: '限られた資源をなめらかに循環させ、誰もが使える技術として社会に届ける。',
+		label: '02 / Mission',
+		mode: 'flux',
+		title: '資源がなめらかに循環する社会',
+		tag: 'Energy · Sustainability',
+		body: '限られた人だけの高価な技術ではなく、誰もがアクセスできる低コストな仕組みとして社会に実装し、後世に続く繁栄の基盤をつくる。',
 	},
 	{
-		label: 'Base',
-		title: PROFILE.location,
-		body: '仙台の研究室と東京を行き来しながら、事業と開発のあいだを繋いでいる。',
+		label: '03 / Craft & Base',
+		mode: 'matrix',
+		title: `${PROFILE.location} / Software & AI`,
+		tag: 'Engineering · Field Notes',
+		body: '仙台の研究室と東京を行き来しながら、フルスタック開発・AIワークフロー・日々の思考実験をこの場所に掃き溜めている。',
 	},
 ];
 
 const pathItems = [
-	{ year: '〜2019', title: '鳥取大学工学部', note: 'アプリ / SaaS開発の現場へ' },
+	{ year: '〜2019', title: '鳥取大学工学部', note: '在学中からアプリ / SaaS開発を牽引' },
 	{ year: 'DeNA', title: 'Anyca', note: 'iOS / Android / サーバー / PdM' },
-	{ year: 'Catalis', title: 'AIアプリケーション', note: '事業づくりと実装を横断' },
-	{ year: '2025〜', title: 'NanoFrontier', note: '共同創業・社会実装' },
+	{ year: 'Catalis', title: 'AI Applications', note: 'AIプロダクト開発と事業づくりを横断' },
+	{ year: '2025〜', title: 'NanoFrontier', note: '共同創業・ナノ粒子技術の社会実装', current: true },
 ];
 ---
 
@@ -52,61 +59,115 @@ const pathItems = [
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} image="/profile_image.jpg" />
 	</head>
 	<body>
+		<NanoStage variant="home" />
 		<Header />
+
 		<main class="home-main">
-			<section class="hero" aria-label="サイト紹介">
-				<div class="hero-media" aria-hidden="true">
-					<img src="/profile_image.jpg" alt="" />
-					<div class="hero-veil"></div>
-				</div>
+			<section class="hero" aria-label="サイト紹介と3Dモデルステージ">
 				<div class="hero-copy rise">
+					<p class="kicker">Co-founder @ NanoFrontier // Personal Lab</p>
 					<p class="brand-signal">{PROFILE.handle}</p>
 					<h1>思考を掃き溜めて、<br />次の社会実装へ。</h1>
 					<p class="hero-description">
-						{PROFILE.name}。{PROFILE.company}共同創業者。ナノ粒子、エネルギー、プロダクト、日々の違和感をここに残しています。
+						{PROFILE.name}。東北大学発 <strong>{PROFILE.company}</strong> 共同創業者。
+						ナノ粒子、エネルギー、プロダクト、日々の違和感を立体的に残していく個人アーカイブ。
 					</p>
 					<div class="hero-actions">
-						<a class="button primary" href="/blog">Journalを読む</a>
+						<a class="button primary" href="/blog">Journalを読む →</a>
 						<a class="button secondary" href="/about">いまの自分へ</a>
+					</div>
+				</div>
+
+				<div class="stage-frame rise" aria-label="インタラクティブ3Dモデルコントロール">
+					<div class="stage-hud-top">
+						<div class="hud-left">
+							<span class="hud-dot" aria-hidden="true"></span>
+							<span class="hud-status" data-stage-status>LOADING GLB</span>
+							<span class="hud-divider">/</span>
+							<span class="hud-mode" data-stage-mode-label>01 / NANO CLUSTER</span>
+						</div>
+						<span class="hud-telemetry" data-stage-telemetry>AZ 340° / EL +08°</span>
+					</div>
+
+					<div
+						class="stage-Interactive-window"
+						data-stage-anchor
+						data-stage-drag
+						role="region"
+						aria-label="ドラッグして3Dモデルを回転"
+					>
+						<span class="corner tl" aria-hidden="true"></span>
+						<span class="corner tr" aria-hidden="true"></span>
+						<span class="corner bl" aria-hidden="true"></span>
+						<span class="corner br" aria-hidden="true"></span>
+						<span class="orbit-hint">DRAG TO ORBIT 360°</span>
+					</div>
+
+					<div class="stage-hud-bottom">
+						<p class="stage-caption" data-stage-caption>数十nm制御・有機ナノ粒子クラスター</p>
+						<div class="stage-controls" role="toolbar" aria-label="3Dモデル表示モード切替">
+							<div class="mode-pills">
+								<button type="button" class="stage-btn is-active" data-stage-mode="nano" aria-pressed="true">
+									01 NANO
+								</button>
+								<button type="button" class="stage-btn" data-stage-mode="flux" aria-pressed="false">
+									02 FLUX
+								</button>
+								<button type="button" class="stage-btn" data-stage-mode="matrix" aria-pressed="false">
+									03 MATRIX
+								</button>
+							</div>
+							<button type="button" class="stage-btn explode-btn" data-stage-explode aria-pressed="false">
+								EXPLODE / 分解
+							</button>
+						</div>
 					</div>
 				</div>
 			</section>
 
 			<section class="now-section" aria-labelledby="now-title">
 				<div class="section-heading">
-					<p class="kicker">Now</p>
-					<h2 id="now-title">いまの立ち位置</h2>
-					<p>肩書きより、いま何に手を伸ばしているかを先に置く。</p>
+					<div>
+						<p class="kicker">Now // Current Focus</p>
+						<h2 id="now-title">いまの立ち位置</h2>
+					</div>
+					<p>肩書きより、いま何に手を伸ばしているかを先に置く。項目に触れると背後の3D構造も連動します。</p>
 				</div>
-				<div class="now-list">
+
+				<div class="now-grid">
 					{nowItems.map((item) => (
-						<div class="now-row">
-							<span class="now-label">{item.label}</span>
-							<div class="now-body">
+						<article class="now-card" data-sync-mode={item.mode}>
+							<div class="now-card-top">
+								<span class="now-label">{item.label}</span>
+								<span class="now-tag">{item.tag}</span>
+							</div>
+							<h3>
 								{item.href ? (
 									<a href={item.href} target="_blank" rel="noopener noreferrer">
-										<strong>{item.title}</strong>
+										{item.title} <span class="ext">↗</span>
 									</a>
 								) : (
-									<strong>{item.title}</strong>
+									item.title
 								)}
-								<p>{item.body}</p>
-							</div>
-						</div>
+							</h3>
+							<p>{item.body}</p>
+						</article>
 					))}
 				</div>
 			</section>
 
 			<section class="path-section" aria-labelledby="path-title">
 				<div class="section-heading compact">
-					<p class="kicker">Path</p>
-					<h2 id="path-title">ここまでの線</h2>
+					<div>
+						<p class="kicker">Path // Trajectory</p>
+						<h2 id="path-title">ここまでの線</h2>
+					</div>
 				</div>
 				<ol class="path-line">
 					{pathItems.map((item) => (
-						<li>
+						<li class:list={[{ 'is-current': item.current }]}>
 							<span class="path-year">{item.year}</span>
-							<span class="path-title">{item.title}</span>
+							<strong class="path-title">{item.title}</strong>
 							<span class="path-note">{item.note}</span>
 						</li>
 					))}
@@ -115,30 +176,32 @@ const pathItems = [
 
 			<section class="latest-section" aria-labelledby="latest-title">
 				<div class="section-heading">
-					<p class="kicker">Journal</p>
-					<h2 id="latest-title">最近の投稿</h2>
-					<p>思考・クラフト・ミッション。公開中の記事から新しいものをピックアップ。</p>
+					<div>
+						<p class="kicker">Journal // Field Notes</p>
+						<h2 id="latest-title">最近の投稿</h2>
+					</div>
+					<p>思考・クラフト・ミッション。きれいにまとめすぎず、公開中の記事を新しい順に並べています。</p>
 				</div>
 
-				<div class="post-list">
+				<div class="post-list glass-panel">
 					{latestPosts.length > 0 ? (
 						latestPosts.map((post, index) => {
 							const slug = postSlug(post);
 							return (
-							<article class="post-row">
-								<a href={`/blog/${slug}`} class="post-row-link">
-									<span class="post-number">{String(index + 1).padStart(2, '0')}</span>
-									<div class="post-summary">
-										<div class="post-meta">
-											<FormattedDate date={post.data.pubDate} />
-											<span>{postThemes[slug] || 'Note'}</span>
+								<article class="post-row">
+									<a href={`/blog/${slug}`} class="post-row-link">
+										<span class="post-number">{String(index + 1).padStart(2, '0')}</span>
+										<div class="post-summary">
+											<div class="post-meta">
+												<FormattedDate date={post.data.pubDate} />
+												<span class="theme-pill">{postThemes[slug] || 'Note'}</span>
+											</div>
+											<h3>{post.data.title}</h3>
+											<p>{post.data.description || '日々の思考を書き留めた投稿です。'}</p>
 										</div>
-										<h3>{post.data.title}</h3>
-										<p>{post.data.description || '日々の思考を書き留めた投稿です。'}</p>
-									</div>
-									<span class="read-indicator">読む</span>
-								</a>
-							</article>
+										<span class="read-indicator">読む →</span>
+									</a>
+								</article>
 							);
 						})
 					) : (
@@ -150,89 +213,76 @@ const pathItems = [
 				</div>
 
 				<div class="section-actions">
-					<a class="button secondary" href="/blog">すべての投稿を見る</a>
+					<a class="button secondary" href="/blog">すべての投稿を見る →</a>
 				</div>
 			</section>
 		</main>
+
 		<Footer />
 	</body>
 </html>
 
+<script>
+	// Sync Now cards hover/click with 3D model modes
+	const syncCards = document.querySelectorAll<HTMLElement>('[data-sync-mode]');
+	syncCards.forEach((card) => {
+		const trigger = () => {
+			const mode = card.dataset.syncMode;
+			if (!mode) return;
+			const btn = document.querySelector<HTMLButtonElement>(`[data-stage-mode="${mode}"]`);
+			btn?.click();
+		};
+		card.addEventListener('mouseenter', trigger);
+	});
+</script>
+
 <style>
 	.home-main {
-		width: 100%;
-		max-width: none;
-		padding: 0 0 64px;
+		width: min(var(--container), calc(100% - 40px));
+		margin: 0 auto;
+		padding: 0 0 84px;
 	}
 
 	.hero {
-		position: relative;
-		isolation: isolate;
-		min-height: calc(100svh - 88px);
+		min-height: calc(100svh - 86px);
 		display: grid;
-		align-items: end;
-		padding: clamp(3rem, 10vw, 7rem) max(20px, calc((100% - var(--container)) / 2));
-		overflow: hidden;
-		color: var(--bg-soft);
-	}
-
-	.hero-media {
-		position: absolute;
-		inset: 0;
-		z-index: -2;
-	}
-
-	.hero-media img {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		object-position: center 28%;
-		border-radius: 0;
-		animation: soft-zoom 18s var(--ease-out) both;
-	}
-
-	.hero-veil {
-		position: absolute;
-		inset: 0;
-		background:
-			linear-gradient(105deg, rgba(16, 24, 32, 0.88) 8%, rgba(16, 24, 32, 0.55) 48%, rgba(13, 58, 60, 0.35) 100%),
-			linear-gradient(to top, rgba(16, 24, 32, 0.72), transparent 42%);
-	}
-
-	.hero-copy {
-		max-width: 760px;
-		padding-bottom: 1rem;
+		grid-template-columns: minmax(0, 1.04fr) minmax(360px, 0.96fr);
+		gap: clamp(1.8rem, 4vw, 3.6rem);
+		align-items: center;
+		padding: clamp(1.8rem, 5vw, 4rem) 0 clamp(2.5rem, 6vw, 4.5rem);
 	}
 
 	.rise {
-		animation: rise-in 900ms var(--ease-out) both;
+		animation: rise-in 850ms var(--ease-out) both;
 	}
 
 	.brand-signal {
-		margin: 0 0 1.1rem;
+		margin: 0 0 0.9rem;
 		font-family: var(--font-brand);
-		font-size: clamp(2.4rem, 8vw, 5.4rem);
+		font-size: clamp(2.5rem, 5.2vw, 4.4rem);
 		font-weight: 800;
-		letter-spacing: -0.05em;
-		line-height: 0.95;
-		color: #e8fffb;
-		text-shadow:
-			0 0 1px rgba(16, 24, 32, 0.55),
-			0 12px 40px rgba(16, 24, 32, 0.45);
+		letter-spacing: -0.045em;
+		line-height: 0.98;
+		white-space: nowrap;
+		background: linear-gradient(125deg, #ffffff 15%, #99f6e4 58%, #38bdf8 100%);
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
+		filter: drop-shadow(0 12px 34px rgba(20, 184, 166, 0.22));
 	}
 
 	.hero h1 {
-		margin-bottom: 1.2rem;
-		color: var(--bg-soft);
-		font-size: clamp(2.1rem, 5.4vw, 4rem);
-		letter-spacing: -0.03em;
+		margin-bottom: 1.25rem;
+		font-size: clamp(2rem, 4.5vw, 3.55rem);
+		line-height: 1.22;
+		letter-spacing: -0.025em;
 	}
 
 	.hero-description {
-		max-width: 560px;
+		max-width: 540px;
 		margin-bottom: 0;
-		color: rgba(247, 249, 251, 0.78);
-		font-size: clamp(1.02rem, 1.5vw, 1.2rem);
+		color: #cbd5e1;
+		font-size: clamp(1rem, 1.35vw, 1.14rem);
 	}
 
 	.hero-actions,
@@ -243,80 +293,308 @@ const pathItems = [
 		margin-top: 2rem;
 	}
 
-	.hero .button.secondary {
-		border-color: rgba(247, 249, 251, 0.35);
-		background: rgba(247, 249, 251, 0.1);
-		color: var(--bg-soft);
+	/* 3D Interactive HUD Frame */
+	.stage-frame {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		min-height: clamp(420px, 58svh, 560px);
+		padding: 1rem;
+		border: 1px solid rgba(148, 163, 184, 0.22);
+		border-radius: var(--radius-lg);
+		background: linear-gradient(
+			160deg,
+			rgba(12, 20, 32, 0.28) 0%,
+			rgba(8, 13, 22, 0.06) 50%,
+			rgba(12, 20, 32, 0.36) 100%
+		);
+		box-shadow:
+			0 26px 80px rgba(0, 0, 0, 0.42),
+			inset 0 1px 0 rgba(255, 255, 255, 0.08);
 	}
 
-	.hero .button.secondary:hover {
-		background: rgba(247, 249, 251, 0.2);
-		color: var(--bg-soft);
+	.stage-hud-top {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem;
+		padding: 0.45rem 0.7rem;
+		border: 1px solid rgba(148, 163, 184, 0.14);
+		border-radius: 999px;
+		background: rgba(6, 10, 17, 0.68);
+		font-family: var(--font-mono);
+		font-size: 0.7rem;
+		letter-spacing: 0.08em;
+		backdrop-filter: blur(12px);
 	}
 
+	.hud-left {
+		display: flex;
+		align-items: center;
+		gap: 0.45rem;
+		min-width: 0;
+	}
+
+	.hud-dot {
+		width: 7px;
+		height: 7px;
+		flex-shrink: 0;
+		border-radius: 50%;
+		background: var(--accent);
+		box-shadow: 0 0 10px var(--accent);
+	}
+
+	.hud-status {
+		color: var(--accent);
+		font-weight: 600;
+	}
+
+	.hud-divider {
+		color: var(--dim);
+	}
+
+	.hud-mode {
+		color: var(--ink);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.hud-telemetry {
+		color: var(--muted);
+		white-space: nowrap;
+	}
+
+	.stage-Interactive-window {
+		position: relative;
+		flex: 1;
+		min-height: 290px;
+		margin: 0.75rem 0;
+		cursor: grab;
+		touch-action: pan-y;
+		user-select: none;
+	}
+
+	.stage-Interactive-window.is-dragging {
+		cursor: grabbing;
+	}
+
+	.corner {
+		position: absolute;
+		width: 14px;
+		height: 14px;
+		border-color: rgba(94, 234, 212, 0.55);
+		border-style: solid;
+		pointer-events: none;
+	}
+
+	.corner.tl {
+		top: 4px;
+		left: 4px;
+		border-width: 1.5px 0 0 1.5px;
+	}
+
+	.corner.tr {
+		top: 4px;
+		right: 4px;
+		border-width: 1.5px 1.5px 0 0;
+	}
+
+	.corner.bl {
+		bottom: 4px;
+		left: 4px;
+		border-width: 0 0 1.5px 1.5px;
+	}
+
+	.corner.br {
+		bottom: 4px;
+		right: 4px;
+		border-width: 0 1.5px 1.5px 0;
+	}
+
+	.orbit-hint {
+		position: absolute;
+		right: 12px;
+		bottom: 10px;
+		padding: 0.24rem 0.58rem;
+		border: 1px solid rgba(148, 163, 184, 0.18);
+		border-radius: 999px;
+		background: rgba(6, 10, 17, 0.62);
+		color: var(--muted);
+		font-family: var(--font-mono);
+		font-size: 0.66rem;
+		letter-spacing: 0.12em;
+		pointer-events: none;
+	}
+
+	.stage-hud-bottom {
+		display: grid;
+		gap: 0.65rem;
+		padding: 0.75rem 0.85rem;
+		border: 1px solid rgba(148, 163, 184, 0.16);
+		border-radius: 18px;
+		background: rgba(6, 10, 17, 0.74);
+		backdrop-filter: blur(14px);
+	}
+
+	.stage-caption {
+		margin: 0;
+		color: #cbd5e1;
+		font-size: 0.84rem;
+		line-height: 1.4;
+	}
+
+	.stage-controls {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem;
+	}
+
+	.mode-pills {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.35rem;
+	}
+
+	.stage-btn {
+		padding: 0.42rem 0.74rem;
+		border: 1px solid rgba(148, 163, 184, 0.22);
+		border-radius: 999px;
+		background: rgba(15, 23, 42, 0.65);
+		color: var(--muted);
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+		font-weight: 600;
+		letter-spacing: 0.06em;
+		cursor: pointer;
+		transition:
+			background 160ms ease,
+			color 160ms ease,
+			border-color 160ms ease,
+			transform 160ms ease;
+	}
+
+	.stage-btn:hover {
+		color: var(--ink);
+		border-color: rgba(94, 234, 212, 0.45);
+	}
+
+	.stage-btn.is-active {
+		border-color: var(--accent);
+		background: rgba(94, 234, 212, 0.18);
+		color: var(--accent);
+		box-shadow: 0 0 18px rgba(94, 234, 212, 0.2);
+	}
+
+	.explode-btn.is-active {
+		border-color: var(--accent-3);
+		background: rgba(251, 191, 36, 0.18);
+		color: var(--accent-3);
+		box-shadow: 0 0 18px rgba(251, 191, 36, 0.2);
+	}
+
+	/* Content Sections */
 	.now-section,
 	.path-section,
 	.latest-section {
-		width: min(var(--container), calc(100% - 40px));
-		margin: 0 auto;
-		padding: clamp(3.5rem, 8vw, 6.5rem) 0 0;
+		padding: clamp(4rem, 8vw, 6.8rem) 0 0;
 	}
 
 	.section-heading {
 		display: grid;
-		grid-template-columns: minmax(0, 0.95fr) minmax(240px, 0.55fr);
-		gap: 1.5rem 2rem;
+		grid-template-columns: minmax(0, 1fr) minmax(260px, 0.65fr);
+		gap: 1.2rem 2.4rem;
 		align-items: end;
-		margin-bottom: 2rem;
+		margin-bottom: 2.2rem;
 	}
 
 	.section-heading.compact {
 		grid-template-columns: 1fr;
 	}
 
-	.section-heading p:last-child {
+	.section-heading h2 {
 		margin-bottom: 0;
 	}
 
-	.now-list {
-		border-top: 1px solid var(--line);
+	.section-heading > p {
+		margin: 0;
 	}
 
-	.now-row {
+	.now-grid {
 		display: grid;
-		grid-template-columns: 120px minmax(0, 1fr);
-		gap: 1.2rem;
-		padding: 1.45rem 0;
-		border-bottom: 1px solid var(--line);
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 1.15rem;
+	}
+
+	.now-card {
+		padding: 1.55rem;
+		border: 1px solid var(--line);
+		border-radius: var(--radius-md);
+		background: var(--surface);
+		box-shadow: var(--shadow-soft);
+		backdrop-filter: blur(18px);
+		transition:
+			border-color 220ms ease,
+			transform 220ms var(--ease-out),
+			background 220ms ease;
+	}
+
+	.now-card:hover {
+		transform: translateY(-4px);
+		border-color: var(--line-bright);
+		background: rgba(14, 24, 38, 0.84);
+	}
+
+	.now-card-top {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem;
+		margin-bottom: 1rem;
 	}
 
 	.now-label {
-		padding-top: 0.2rem;
 		color: var(--accent);
-		font-family: var(--font-brand);
-		font-size: 0.82rem;
-		font-weight: 700;
-		letter-spacing: 0.14em;
+		font-family: var(--font-mono);
+		font-size: 0.74rem;
+		font-weight: 600;
+		letter-spacing: 0.12em;
 		text-transform: uppercase;
 	}
 
-	.now-body strong {
-		display: block;
-		margin-bottom: 0.45rem;
-		font-family: var(--font-display);
-		font-size: clamp(1.35rem, 2.4vw, 1.8rem);
-		font-weight: 600;
+	.now-tag {
+		padding: 0.2rem 0.55rem;
+		border: 1px solid rgba(148, 163, 184, 0.18);
+		border-radius: 999px;
+		color: var(--muted);
+		font-family: var(--font-mono);
+		font-size: 0.68rem;
 	}
 
-	.now-body a {
+	.now-card h3 {
+		margin-bottom: 0.75rem;
+		font-size: clamp(1.3rem, 2.1vw, 1.62rem);
+	}
+
+	.now-card h3 a {
 		text-decoration: none;
 	}
 
-	.now-body p {
-		margin: 0;
-		max-width: 640px;
+	.ext {
+		color: var(--accent);
+		font-family: var(--font-brand);
+		font-size: 0.95em;
 	}
 
+	.now-card p {
+		margin: 0;
+		font-size: 0.96rem;
+		line-height: 1.78;
+	}
+
+	/* Path Trajectory */
 	.path-line {
 		list-style: none;
 		margin: 0;
@@ -324,63 +602,73 @@ const pathItems = [
 		display: grid;
 		grid-template-columns: repeat(4, minmax(0, 1fr));
 		gap: 1rem;
-		counter-reset: path;
 	}
 
 	.path-line li {
 		position: relative;
-		padding: 1.2rem 0 0;
-		border-top: 2px solid var(--ink);
+		padding: 1.35rem 1.25rem;
+		border: 1px solid var(--line);
+		border-top: 2px solid rgba(94, 234, 212, 0.45);
+		border-radius: 0 0 var(--radius-md) var(--radius-md);
+		background: var(--surface);
+		backdrop-filter: blur(16px);
 	}
 
-	.path-line li::before {
-		content: '';
-		position: absolute;
-		top: -6px;
-		left: 0;
-		width: 10px;
-		height: 10px;
-		border-radius: 50%;
-		background: var(--accent);
+	.path-line li.is-current {
+		border-top-color: var(--accent);
+		background: linear-gradient(180deg, rgba(20, 184, 166, 0.14) 0%, rgba(12, 19, 30, 0.8) 100%);
+		box-shadow: 0 18px 44px rgba(0, 0, 0, 0.35);
 	}
 
 	.path-year {
 		display: block;
-		margin-bottom: 0.55rem;
+		margin-bottom: 0.5rem;
 		color: var(--accent);
-		font-family: var(--font-brand);
-		font-size: 0.78rem;
-		font-weight: 700;
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		font-weight: 600;
 		letter-spacing: 0.08em;
 	}
 
 	.path-title {
 		display: block;
-		margin-bottom: 0.35rem;
+		margin-bottom: 0.4rem;
 		font-family: var(--font-display);
-		font-size: 1.25rem;
+		font-size: 1.22rem;
 		font-weight: 600;
 	}
 
 	.path-note {
+		display: block;
 		color: var(--muted);
-		font-size: 0.95rem;
+		font-size: 0.92rem;
+		line-height: 1.65;
 	}
 
-	.post-list {
-		border-top: 1px solid var(--line);
+	/* Journal Panel */
+	.glass-panel {
+		padding: 0.4rem 1.5rem;
+		border: 1px solid var(--line);
+		border-radius: var(--radius-lg);
+		background: var(--surface-strong);
+		box-shadow: var(--shadow);
+		backdrop-filter: blur(20px);
 	}
 
 	.post-row {
 		border-bottom: 1px solid var(--line);
 	}
 
+	.post-row:last-child {
+		border-bottom: 0;
+	}
+
 	.post-row-link {
 		display: grid;
-		grid-template-columns: 54px minmax(0, 1fr) auto;
+		grid-template-columns: 52px minmax(0, 1fr) auto;
 		gap: 1.2rem;
 		align-items: center;
-		padding: 1.35rem 0;
+		padding: 1.4rem 0;
 		text-decoration: none;
 	}
 
@@ -388,73 +676,124 @@ const pathItems = [
 		color: var(--accent);
 	}
 
+	.post-row-link:hover .read-indicator {
+		border-color: var(--accent);
+		color: var(--accent);
+		transform: translateX(3px);
+	}
+
 	.post-number {
-		color: rgba(16, 24, 32, 0.28);
-		font-family: var(--font-brand);
-		font-weight: 700;
+		color: var(--dim);
+		font-family: var(--font-mono);
+		font-size: 0.86rem;
+		font-weight: 600;
 	}
 
 	.post-summary h3 {
-		margin-bottom: 0.5rem;
+		margin-bottom: 0.45rem;
 	}
 
 	.post-summary p {
-		max-width: 640px;
+		max-width: 650px;
 		margin: 0;
+		font-size: 0.96rem;
 	}
 
 	.post-meta {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.65rem;
-		margin-bottom: 0.55rem;
+		align-items: center;
+		gap: 0.6rem;
+		margin-bottom: 0.5rem;
+		color: var(--muted);
+		font-family: var(--font-mono);
+		font-size: 0.78rem;
+	}
+
+	.theme-pill {
+		padding: 0.14rem 0.55rem;
+		border: 1px solid rgba(94, 234, 212, 0.28);
+		border-radius: 999px;
+		background: rgba(94, 234, 212, 0.08);
 		color: var(--accent);
-		font-family: var(--font-brand);
-		font-size: 0.82rem;
-		font-weight: 700;
+		font-size: 0.7rem;
+		font-weight: 600;
 	}
 
 	.read-indicator {
-		padding: 0.6rem 0.9rem;
+		padding: 0.55rem 0.95rem;
 		border: 1px solid var(--line);
 		border-radius: 999px;
+		color: #cbd5e1;
 		font-family: var(--font-brand);
-		font-size: 0.86rem;
+		font-size: 0.84rem;
 		font-weight: 700;
+		transition:
+			color 180ms ease,
+			border-color 180ms ease,
+			transform 180ms ease;
 	}
 
 	.empty-state {
 		padding: 2rem;
-		border: 1px solid var(--line);
-		border-radius: var(--radius-md);
-		background: var(--card);
 	}
 
-	@media (max-width: 900px) {
-		.section-heading,
+	@media (max-width: 980px) {
+		.now-grid {
+			grid-template-columns: 1fr;
+		}
+
 		.path-line {
-			grid-template-columns: 1fr 1fr;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
 		}
 	}
 
-	@media (max-width: 720px) {
-		.hero {
-			min-height: calc(100svh - 120px);
-			align-items: end;
-			padding-bottom: 3rem;
-		}
-
-		.now-section,
-		.path-section,
-		.latest-section {
+	@media (max-width: 860px) {
+		.home-main {
 			width: min(100% - 28px, var(--container));
 		}
 
-		.section-heading,
-		.path-line,
-		.now-row,
+		.hero {
+			min-height: auto;
+			grid-template-columns: 1fr;
+			padding-top: 1.1rem;
+			gap: 1.4rem;
+		}
+
+		/* Place interactive 3D model stage first on mobile so it sits cleanly in upper viewport */
+		.stage-frame {
+			order: -1;
+			min-height: 340px;
+			padding: 0.75rem;
+		}
+
+		.stage-Interactive-window {
+			min-height: 205px;
+			margin: 0.45rem 0;
+		}
+
+		.hud-status,
+		.hud-divider {
+			display: none;
+		}
+
+		.section-heading {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (max-width: 640px) {
+		.path-line {
+			grid-template-columns: 1fr;
+		}
+
+		.glass-panel {
+			padding: 0.2rem 1rem;
+		}
+
 		.post-row-link {
 			grid-template-columns: 1fr;
+			gap: 0.45rem;
 		}
 
 		.read-indicator {

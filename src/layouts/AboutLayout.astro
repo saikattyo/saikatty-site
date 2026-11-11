@@ -2,6 +2,7 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import NanoStage from '../components/NanoStage.astro';
 
 export interface Props {
 	title: string;
@@ -23,17 +24,20 @@ const { title, description, heroImage } = Astro.props;
 		<main class="about-main">
 			<article>
 				<header class="about-hero">
-					{heroImage && (
-						<div class="hero-plane" aria-hidden="true">
-							<img src={heroImage} alt="" />
-							<div class="hero-veil"></div>
+					<NanoStage variant="compact" />
+					<div class="about-hero-inner rise">
+						<div class="about-copy">
+							<p class="kicker">About // Profile</p>
+							<div class="identity-row">
+								{heroImage && (
+									<img class="avatar" src={heroImage} alt="斎藤 克哉 プロフィール" width="76" height="76" />
+								)}
+								<p class="brand-signal">Saikattyo</p>
+							</div>
+							<h1>{title}</h1>
+							<p class="lede">{description}</p>
 						</div>
-					)}
-					<div class="about-copy rise">
-						<p class="kicker">About</p>
-						<p class="brand-signal">Saikattyo</p>
-						<h1>{title}</h1>
-						<p class="lede">{description}</p>
+						<div class="about-stage-anchor" data-stage-anchor data-stage-drag aria-hidden="true"></div>
 					</div>
 				</header>
 				<div class="prose about-content">
@@ -49,89 +53,104 @@ const { title, description, heroImage } = Astro.props;
 	.about-main {
 		width: 100%;
 		max-width: none;
-		padding: 0 0 64px;
+		padding: 0 0 72px;
 	}
 
 	.about-hero {
 		position: relative;
 		isolation: isolate;
-		min-height: min(72svh, 720px);
+		min-height: min(64svh, 580px);
 		display: grid;
-		align-items: end;
-		padding: clamp(4rem, 10vw, 7rem) max(20px, calc((100% - 1040px) / 2)) 3rem;
+		align-items: center;
+		padding: clamp(2.5rem, 7vw, 5rem) max(20px, calc((100% - var(--container)) / 2));
 		overflow: hidden;
-		color: var(--bg-soft);
 	}
 
-	.hero-plane {
-		position: absolute;
-		inset: 0;
-		z-index: -2;
-	}
-
-	.hero-plane img {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		object-position: center 20%;
-		border-radius: 0;
-		animation: soft-zoom 16s var(--ease-out) both;
-	}
-
-	.hero-veil {
-		position: absolute;
-		inset: 0;
-		background:
-			linear-gradient(115deg, rgba(16, 24, 32, 0.9) 10%, rgba(16, 24, 32, 0.5) 55%, rgba(13, 58, 60, 0.28) 100%),
-			linear-gradient(to top, rgba(16, 24, 32, 0.75), transparent 48%);
+	.about-hero-inner {
+		position: relative;
+		z-index: 2;
+		display: grid;
+		grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+		gap: 2rem;
+		align-items: center;
 	}
 
 	.rise {
-		animation: rise-in 900ms var(--ease-out) both;
+		animation: rise-in 850ms var(--ease-out) both;
+	}
+
+	.identity-row {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		margin-bottom: 0.9rem;
+	}
+
+	.avatar {
+		width: 68px;
+		height: 68px;
+		object-fit: cover;
+		border-radius: 20px;
+		border: 1px solid var(--line-bright);
+		box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
 	}
 
 	.brand-signal {
-		margin: 0 0 0.8rem;
+		margin: 0;
 		font-family: var(--font-brand);
-		font-size: clamp(2rem, 6vw, 3.8rem);
+		font-size: clamp(2rem, 5.5vw, 3.6rem);
 		font-weight: 800;
 		letter-spacing: -0.05em;
 		line-height: 0.95;
-		color: #e8fffb;
-		text-shadow:
-			0 0 1px rgba(16, 24, 32, 0.55),
-			0 12px 40px rgba(16, 24, 32, 0.45);
+		background: linear-gradient(125deg, #ffffff 15%, #99f6e4 65%, #38bdf8 100%);
+		-webkit-background-clip: text;
+		background-clip: text;
+		color: transparent;
 	}
 
 	.about-copy h1 {
-		color: var(--bg-soft);
-		font-size: clamp(2rem, 5vw, 3.4rem);
+		font-size: clamp(1.95rem, 4.6vw, 3.2rem);
 	}
 
 	.lede {
-		max-width: 640px;
+		max-width: 620px;
 		margin: 0;
-		color: rgba(247, 249, 251, 0.78);
-		font-size: 1.12rem;
+		color: #cbd5e1;
+		font-size: 1.08rem;
+	}
+
+	.about-stage-anchor {
+		min-height: 300px;
+		cursor: grab;
+		touch-action: pan-y;
 	}
 
 	.about-content {
-		width: min(760px, calc(100% - 40px));
-		margin: -2rem auto 0;
-		padding: clamp(1.6rem, 4vw, 2.8rem);
+		width: min(820px, calc(100% - 40px));
+		margin: -1.2rem auto 0;
+		padding: clamp(1.7rem, 4vw, 3rem);
 		border: 1px solid var(--line);
 		border-radius: var(--radius-lg);
-		background: rgba(247, 249, 251, 0.88);
+		background: var(--surface-strong);
 		box-shadow: var(--shadow);
-		backdrop-filter: blur(10px);
+		backdrop-filter: blur(20px);
 		position: relative;
-		z-index: 1;
+		z-index: 3;
 	}
 
-	@media (max-width: 720px) {
+	@media (max-width: 860px) {
+		.about-hero-inner {
+			grid-template-columns: 1fr;
+		}
+
+		.about-stage-anchor {
+			order: -1;
+			min-height: 210px;
+		}
+
 		.about-content {
-			width: min(100% - 28px, 760px);
-			margin-top: -1.2rem;
+			width: min(100% - 28px, 820px);
+			margin-top: 0;
 		}
 	}
 </style>
