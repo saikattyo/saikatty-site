@@ -7,17 +7,6 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
 import { getPublishedBlogPosts, postSlug } from '../../lib/blog';
 
 const posts = await getPublishedBlogPosts();
-
-const postThemes: Record<string, string> = {
-	'1': 'Thought',
-	'2': 'Craft',
-	'3': 'Reflection',
-	'4': 'Mission',
-	'5': 'Mission',
-	'6': 'Portrait',
-	'7': 'Craft',
-	'8': 'Craft',
-};
 ---
 
 <!doctype html>
@@ -28,30 +17,29 @@ const postThemes: Record<string, string> = {
 	<body>
 		<Header />
 		<main>
-			<section class="archive-hero">
-				<p class="kicker">Journal</p>
-				<h1>書き留めたこと</h1>
+			<section class="sx-archive-hero rise">
+				<p class="sx-overline">PERSONAL ARCHIVE</p>
+				<h1>JOURNAL</h1>
 				<p>
 					思考の断片、技術の試行、ミッションのメモ。公開中の投稿を新しい順に並べています。
 					きれいに整える前の言葉も、あえて残しています。
 				</p>
 			</section>
 
-			<section class="archive-list" aria-label="ブログ記事一覧">
-				{posts.map((post, index) => {
+			<section class="sx-archive-list" aria-label="ブログ記事一覧">
+				{posts.map((post) => {
 					const slug = postSlug(post);
 					return (
-					<article class="archive-row">
-						<a href={`/blog/${slug}/`}>
-							<span class="index">{String(index + 1).padStart(2, '0')}</span>
-							<div class="meta">
-								<FormattedDate date={post.data.pubDate} />
-								<span>{postThemes[slug] || 'Note'}</span>
-							</div>
-							<h2>{post.data.title}</h2>
-							<p>{post.data.description || '日々の思考を書き留めた投稿です。'}</p>
-						</a>
-					</article>
+						<article class="sx-archive-row">
+							<a href={`/blog/${slug}/`}>
+								<span class="date"><FormattedDate date={post.data.pubDate} /></span>
+								<div class="summary">
+									<h2>{post.data.title}</h2>
+									<p>{post.data.description || '日々の思考を書き留めた投稿です。'}</p>
+								</div>
+								<span class="cta">READ</span>
+							</a>
+						</article>
 					);
 				})}
 			</section>
@@ -61,71 +49,96 @@ const postThemes: Record<string, string> = {
 </html>
 
 <style>
-	.archive-hero {
-		padding: clamp(2.5rem, 7vw, 5.5rem) 0 clamp(1.5rem, 4vw, 2.5rem);
-		max-width: 760px;
+	.sx-archive-hero {
+		padding: clamp(2rem, 5vw, 3.6rem) 0 clamp(2.2rem, 4vw, 3.2rem);
+		max-width: 680px;
 	}
 
-	.archive-hero p:last-child {
-		font-size: 1.12rem;
-		margin-bottom: 0;
+	.rise {
+		animation: sx-fade-up 800ms var(--ease-sx) both;
 	}
 
-	.archive-list {
+	.sx-archive-hero h1 {
+		margin-bottom: 1rem;
+		font-family: var(--font-sx);
+		font-size: clamp(2.8rem, 6vw, 4.6rem);
+		letter-spacing: 0.05em;
+	}
+
+	.sx-archive-hero p:last-child {
+		margin: 0;
+		color: var(--muted);
+		font-size: 0.98rem;
+	}
+
+	.sx-archive-list {
 		border-top: 1px solid var(--line);
 	}
 
-	.archive-row {
-		border-bottom: 1px solid var(--line);
+	.sx-archive-row {
+		border-bottom: 1px solid var(--line-subtle);
 	}
 
-	.archive-row a {
+	.sx-archive-row a {
 		display: grid;
-		grid-template-columns: 56px minmax(0, 1fr);
-		gap: 0.35rem 1.2rem;
-		padding: 1.5rem 0;
+		grid-template-columns: 150px minmax(0, 1fr) auto;
+		gap: 1.5rem;
+		align-items: center;
+		padding: 1.75rem 0;
 		text-decoration: none;
 	}
 
-	.archive-row a:hover h2 {
-		color: var(--accent);
+	.date {
+		color: var(--muted);
+		font-family: var(--font-sx);
+		font-size: 0.92rem;
+		font-weight: 600;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
 	}
 
-	.index {
-		grid-row: span 3;
-		padding-top: 0.35rem;
-		color: rgba(16, 24, 32, 0.28);
-		font-family: var(--font-brand);
+	.summary h2 {
+		margin: 0 0 0.35rem;
+		font-family: var(--font-body);
+		font-size: clamp(1.15rem, 2.1vw, 1.38rem);
 		font-weight: 700;
+		letter-spacing: -0.01em;
 	}
 
-	.meta {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.65rem;
-		color: var(--accent);
-		font-family: var(--font-brand);
-		font-size: 0.82rem;
+	.summary p {
+		margin: 0;
+		color: var(--muted);
+		font-size: 0.9rem;
+	}
+
+	.cta {
+		padding: 0.55rem 1.2rem;
+		border: 1px solid rgba(255, 255, 255, 0.38);
+		color: #ffffff;
+		font-family: var(--font-sx);
+		font-size: 0.78rem;
 		font-weight: 700;
+		letter-spacing: 0.16em;
+		transition:
+			background 220ms var(--ease-sx),
+			color 220ms var(--ease-sx),
+			border-color 220ms var(--ease-sx);
 	}
 
-	.archive-row h2 {
-		margin: 0;
-		font-size: clamp(1.35rem, 2.8vw, 2rem);
+	.sx-archive-row a:hover .cta {
+		background: #ffffff;
+		border-color: #ffffff;
+		color: #000000;
 	}
 
-	.archive-row p {
-		margin: 0;
-		max-width: 640px;
-	}
-
-	@media (max-width: 560px) {
-		.archive-row a {
+	@media (max-width: 760px) {
+		.sx-archive-row a {
 			grid-template-columns: 1fr;
+			gap: 0.45rem;
 		}
 
-		.index {
-			grid-row: auto;
+		.cta {
+			display: none;
 		}
 	}
 </style>

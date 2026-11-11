@@ -3,46 +3,19 @@ import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
+import NanoStage from '../components/NanoStage.astro';
 import { PROFILE, SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 import { getPublishedBlogPosts, postSlug } from '../lib/blog';
 
 const latestPosts = (await getPublishedBlogPosts()).slice(0, 5);
 
-const postThemes: Record<string, string> = {
-	'1': 'Thought',
-	'2': 'Craft',
-	'3': 'Reflection',
-	'4': 'Mission',
-	'5': 'Mission',
-	'6': 'Portrait',
-	'7': 'Craft',
-	'8': 'Craft',
-};
-
-const nowItems = [
-	{
-		label: 'Building',
-		title: 'NanoFrontier',
-		body: '東北大学発のナノ粒子化技術で、環境・エネルギー・医療の課題に取り組む。共同創業者。',
-		href: PROFILE.companyUrl,
-	},
-	{
-		label: 'Mission',
-		title: '資源が循環する社会',
-		body: '限られた資源をなめらかに循環させ、誰もが使える技術として社会に届ける。',
-	},
-	{
-		label: 'Base',
-		title: PROFILE.location,
-		body: '仙台の研究室と東京を行き来しながら、事業と開発のあいだを繋いでいる。',
-	},
-];
-
-const pathItems = [
-	{ year: '〜2019', title: '鳥取大学工学部', note: 'アプリ / SaaS開発の現場へ' },
-	{ year: 'DeNA', title: 'Anyca', note: 'iOS / Android / サーバー / PdM' },
-	{ year: 'Catalis', title: 'AIアプリケーション', note: '事業づくりと実装を横断' },
-	{ year: '2025〜', title: 'NanoFrontier', note: '共同創業・社会実装' },
+const overviewSpecs = [
+	{ label: 'ROLE', value: '共同創業者 / NanoFrontier' },
+	{ label: 'BASE', value: 'Tokyo / Sendai' },
+	{ label: 'PREVIOUS', value: 'Catalis Partners Group' },
+	{ label: 'ENGINEERING', value: 'DeNA / Anyca (iOS · Android · Server · PdM)' },
+	{ label: 'EDUCATION', value: '鳥取大学 工学部' },
+	{ label: 'FOCUS', value: 'Nanoparticles · Energy · Software' },
 ];
 ---
 
@@ -52,422 +25,312 @@ const pathItems = [
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} image="/profile_image.jpg" />
 	</head>
 	<body>
+		<NanoStage variant="home" />
 		<Header />
-		<main class="home-main">
-			<section class="hero" aria-label="サイト紹介">
-				<div class="hero-media" aria-hidden="true">
-					<img src="/profile_image.jpg" alt="" />
-					<div class="hero-veil"></div>
-				</div>
-				<div class="hero-copy rise">
-					<p class="brand-signal">{PROFILE.handle}</p>
-					<h1>思考を掃き溜めて、<br />次の社会実装へ。</h1>
-					<p class="hero-description">
-						{PROFILE.name}。{PROFILE.company}共同創業者。ナノ粒子、エネルギー、プロダクト、日々の違和感をここに残しています。
+
+		<main class="sx-home">
+			<!-- SECTION 01: FULL-BLEED HERO -->
+			<section class="sx-panel sx-panel--hero" aria-label="ヒーロー">
+				<div class="sx-block rise">
+					<p class="sx-overline">KATSUYA SAITO // CO-FOUNDER @ NANOFRONTIER</p>
+					<h1 class="jp-headline">思考を掃き溜めて、<br />次の社会実装へ。</h1>
+					<p class="sx-sub">
+						ナノ粒子、エネルギー、プロダクト、日々の違和感をそのまま残していく個人アーカイブ。
 					</p>
-					<div class="hero-actions">
-						<a class="button primary" href="/blog">Journalを読む</a>
-						<a class="button secondary" href="/about">いまの自分へ</a>
-					</div>
+					<a class="sx-btn" href="/blog">READ JOURNAL</a>
+				</div>
+
+				<a class="sx-scroll-cue" href="#mission" aria-label="次のセクションへスクロール">
+					<svg width="30" height="20" viewBox="0 0 30 20" fill="none" aria-hidden="true">
+						<path d="M2 2L15 15L28 2" stroke="#FFFFFF" stroke-width="2" />
+					</svg>
+				</a>
+			</section>
+
+			<!-- SECTION 02: NANOFRONTIER -->
+			<section id="mission" class="sx-panel" aria-labelledby="mission-heading">
+				<div class="sx-block">
+					<p class="sx-overline">CURRENT MISSION // 2025 — PRESENT</p>
+					<h2 id="mission-heading" class="en-headline">NANOFRONTIER</h2>
+					<p class="sx-sub">
+						東北大学発の独自ナノ粒子化技術で、水中PFASのリアルタイム検出・次世代蓄電池・高効率冷却の社会実装に挑む。誰もが手にできる低コストな技術で、資源がなめらかに循環する基盤をつくる。
+					</p>
+					<a class="sx-btn" href={PROFILE.companyUrl} target="_blank" rel="noopener noreferrer">
+						LEARN MORE
+					</a>
 				</div>
 			</section>
 
-			<section class="now-section" aria-labelledby="now-title">
-				<div class="section-heading">
-					<p class="kicker">Now</p>
-					<h2 id="now-title">いまの立ち位置</h2>
-					<p>肩書きより、いま何に手を伸ばしているかを先に置く。</p>
-				</div>
-				<div class="now-list">
-					{nowItems.map((item) => (
-						<div class="now-row">
-							<span class="now-label">{item.label}</span>
-							<div class="now-body">
-								{item.href ? (
-									<a href={item.href} target="_blank" rel="noopener noreferrer">
-										<strong>{item.title}</strong>
-									</a>
-								) : (
-									<strong>{item.title}</strong>
-								)}
-								<p>{item.body}</p>
+			<!-- SECTION 03: OVERVIEW SPECS (AUTHENTIC SPACEX SPEC TABLE) -->
+			<section class="sx-panel sx-panel--overview" aria-labelledby="overview-heading">
+				<div class="sx-overview-col">
+					<p class="sx-overline">KATSUYA SAITO</p>
+					<h2 id="overview-heading" class="en-headline">OVERVIEW</h2>
+
+					<dl class="sx-spec-table">
+						{overviewSpecs.map((row) => (
+							<div class="sx-spec-row">
+								<dt>{row.label}</dt>
+								<dd>{row.value}</dd>
 							</div>
-						</div>
-					))}
+						))}
+					</dl>
+
+					<a class="sx-btn" href="/about">ABOUT ME</a>
 				</div>
 			</section>
 
-			<section class="path-section" aria-labelledby="path-title">
-				<div class="section-heading compact">
-					<p class="kicker">Path</p>
-					<h2 id="path-title">ここまでの線</h2>
-				</div>
-				<ol class="path-line">
-					{pathItems.map((item) => (
-						<li>
-							<span class="path-year">{item.year}</span>
-							<span class="path-title">{item.title}</span>
-							<span class="path-note">{item.note}</span>
-						</li>
-					))}
-				</ol>
-			</section>
-
-			<section class="latest-section" aria-labelledby="latest-title">
-				<div class="section-heading">
-					<p class="kicker">Journal</p>
-					<h2 id="latest-title">最近の投稿</h2>
-					<p>思考・クラフト・ミッション。公開中の記事から新しいものをピックアップ。</p>
+			<!-- SECTION 04: JOURNAL ARCHIVE -->
+			<section class="sx-journal-section" aria-labelledby="journal-heading">
+				<div class="sx-journal-head">
+					<div>
+						<p class="sx-overline">PERSONAL ARCHIVE</p>
+						<h2 id="journal-heading" class="en-headline">JOURNAL</h2>
+					</div>
+					<a class="sx-btn" href="/blog">ALL POSTS</a>
 				</div>
 
-				<div class="post-list">
-					{latestPosts.length > 0 ? (
-						latestPosts.map((post, index) => {
-							const slug = postSlug(post);
-							return (
-							<article class="post-row">
-								<a href={`/blog/${slug}`} class="post-row-link">
-									<span class="post-number">{String(index + 1).padStart(2, '0')}</span>
-									<div class="post-summary">
-										<div class="post-meta">
-											<FormattedDate date={post.data.pubDate} />
-											<span>{postThemes[slug] || 'Note'}</span>
-										</div>
+				<div class="sx-post-list">
+					{latestPosts.map((post) => {
+						const slug = postSlug(post);
+						return (
+							<article class="sx-post-item">
+								<a href={`/blog/${slug}`} class="sx-post-link">
+									<span class="sx-post-date">
+										<FormattedDate date={post.data.pubDate} />
+									</span>
+									<div class="sx-post-main">
 										<h3>{post.data.title}</h3>
-										<p>{post.data.description || '日々の思考を書き留めた投稿です。'}</p>
+										<p>{post.data.description}</p>
 									</div>
-									<span class="read-indicator">読む</span>
+									<span class="sx-post-cta">READ</span>
 								</a>
 							</article>
-							);
-						})
-					) : (
-						<div class="empty-state">
-							<h3>記事を準備中です</h3>
-							<p>公開まで少しだけお待ちください。</p>
-						</div>
-					)}
-				</div>
-
-				<div class="section-actions">
-					<a class="button secondary" href="/blog">すべての投稿を見る</a>
+						);
+					})}
 				</div>
 			</section>
 		</main>
+
 		<Footer />
 	</body>
 </html>
 
 <style>
-	.home-main {
-		width: 100%;
-		max-width: none;
-		padding: 0 0 64px;
-	}
-
-	.hero {
-		position: relative;
-		isolation: isolate;
-		min-height: calc(100svh - 88px);
-		display: grid;
-		align-items: end;
-		padding: clamp(3rem, 10vw, 7rem) max(20px, calc((100% - var(--container)) / 2));
-		overflow: hidden;
-		color: var(--bg-soft);
-	}
-
-	.hero-media {
-		position: absolute;
-		inset: 0;
-		z-index: -2;
-	}
-
-	.hero-media img {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		object-position: center 28%;
-		border-radius: 0;
-		animation: soft-zoom 18s var(--ease-out) both;
-	}
-
-	.hero-veil {
-		position: absolute;
-		inset: 0;
-		background:
-			linear-gradient(105deg, rgba(16, 24, 32, 0.88) 8%, rgba(16, 24, 32, 0.55) 48%, rgba(13, 58, 60, 0.35) 100%),
-			linear-gradient(to top, rgba(16, 24, 32, 0.72), transparent 42%);
-	}
-
-	.hero-copy {
-		max-width: 760px;
-		padding-bottom: 1rem;
+	.sx-home {
+		width: min(var(--container), calc(100% - 64px));
+		margin: 0 auto;
+		padding: 0 0 110px !important;
 	}
 
 	.rise {
-		animation: rise-in 900ms var(--ease-out) both;
+		animation: sx-fade-up 900ms var(--ease-sx) both;
 	}
 
-	.brand-signal {
-		margin: 0 0 1.1rem;
-		font-family: var(--font-brand);
-		font-size: clamp(2.4rem, 8vw, 5.4rem);
-		font-weight: 800;
-		letter-spacing: -0.05em;
-		line-height: 0.95;
-		color: #e8fffb;
-		text-shadow:
-			0 0 1px rgba(16, 24, 32, 0.55),
-			0 12px 40px rgba(16, 24, 32, 0.45);
-	}
-
-	.hero h1 {
-		margin-bottom: 1.2rem;
-		color: var(--bg-soft);
-		font-size: clamp(2.1rem, 5.4vw, 4rem);
-		letter-spacing: -0.03em;
-	}
-
-	.hero-description {
-		max-width: 560px;
-		margin-bottom: 0;
-		color: rgba(247, 249, 251, 0.78);
-		font-size: clamp(1.02rem, 1.5vw, 1.2rem);
-	}
-
-	.hero-actions,
-	.section-actions {
+	/* Authentic spacex.com Full-Screen 100svh Stacked Sections */
+	.sx-panel {
+		position: relative;
+		min-height: 100svh;
 		display: flex;
-		flex-wrap: wrap;
-		gap: 0.85rem;
-		margin-top: 2rem;
+		align-items: flex-end;
+		padding: 96px 0 clamp(3.2rem, 9vh, 6rem);
 	}
 
-	.hero .button.secondary {
-		border-color: rgba(247, 249, 251, 0.35);
-		background: rgba(247, 249, 251, 0.1);
-		color: var(--bg-soft);
+	.sx-panel--overview {
+		align-items: center;
+		padding: 110px 0;
 	}
 
-	.hero .button.secondary:hover {
-		background: rgba(247, 249, 251, 0.2);
-		color: var(--bg-soft);
+	.sx-block {
+		max-width: 540px;
 	}
 
-	.now-section,
-	.path-section,
-	.latest-section {
-		width: min(var(--container), calc(100% - 40px));
-		margin: 0 auto;
-		padding: clamp(3.5rem, 8vw, 6.5rem) 0 0;
+	.jp-headline {
+		margin: 0 0 1.15rem;
+		font-family: var(--font-body);
+		font-size: clamp(2.15rem, 4.2vw, 3.35rem);
+		font-weight: 900;
+		line-height: 1.24;
+		letter-spacing: -0.02em;
+		color: #ffffff;
 	}
 
-	.section-heading {
-		display: grid;
-		grid-template-columns: minmax(0, 0.95fr) minmax(240px, 0.55fr);
-		gap: 1.5rem 2rem;
-		align-items: end;
-		margin-bottom: 2rem;
+	.en-headline {
+		margin: 0 0 1.15rem;
+		font-family: var(--font-sx);
+		font-size: clamp(2.8rem, 5.6vw, 4.4rem);
+		font-weight: 700;
+		line-height: 0.98;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: #ffffff;
 	}
 
-	.section-heading.compact {
-		grid-template-columns: 1fr;
+	.sx-sub {
+		max-width: 490px;
+		margin: 0 0 2rem;
+		color: rgba(255, 255, 255, 0.8);
+		font-size: 0.96rem;
+		line-height: 1.8;
 	}
 
-	.section-heading p:last-child {
-		margin-bottom: 0;
+	.sx-scroll-cue {
+		position: absolute;
+		left: 50%;
+		bottom: 28px;
+		transform: translateX(-50%);
+		padding: 8px;
+		animation: sx-chevron 2.4s ease-in-out infinite;
 	}
 
-	.now-list {
+	/* Authentic SpaceX Vehicle Overview Table */
+	.sx-overview-col {
+		width: min(540px, 100%);
+	}
+
+	.sx-spec-table {
+		margin: 1.6rem 0 2.4rem;
 		border-top: 1px solid var(--line);
 	}
 
-	.now-row {
-		display: grid;
-		grid-template-columns: 120px minmax(0, 1fr);
-		gap: 1.2rem;
-		padding: 1.45rem 0;
+	.sx-spec-row {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1.5rem;
+		padding: 1.05rem 0;
 		border-bottom: 1px solid var(--line);
 	}
 
-	.now-label {
-		padding-top: 0.2rem;
-		color: var(--accent);
-		font-family: var(--font-brand);
-		font-size: 0.82rem;
+	.sx-spec-row dt {
+		flex-shrink: 0;
+		color: #ffffff;
+		font-family: var(--font-sx);
+		font-size: 0.86rem;
 		font-weight: 700;
 		letter-spacing: 0.14em;
 		text-transform: uppercase;
 	}
 
-	.now-body strong {
-		display: block;
-		margin-bottom: 0.45rem;
-		font-family: var(--font-display);
-		font-size: clamp(1.35rem, 2.4vw, 1.8rem);
-		font-weight: 600;
-	}
-
-	.now-body a {
-		text-decoration: none;
-	}
-
-	.now-body p {
+	.sx-spec-row dd {
 		margin: 0;
-		max-width: 640px;
+		text-align: right;
+		color: var(--ink-soft);
+		font-size: 0.92rem;
+		font-weight: 500;
 	}
 
-	.path-line {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-		display: grid;
-		grid-template-columns: repeat(4, minmax(0, 1fr));
-		gap: 1rem;
-		counter-reset: path;
+	/* SpaceX Minimal Journal List */
+	.sx-journal-section {
+		padding-top: clamp(4rem, 8vw, 7rem);
 	}
 
-	.path-line li {
-		position: relative;
-		padding: 1.2rem 0 0;
-		border-top: 2px solid var(--ink);
-	}
-
-	.path-line li::before {
-		content: '';
-		position: absolute;
-		top: -6px;
-		left: 0;
-		width: 10px;
-		height: 10px;
-		border-radius: 50%;
-		background: var(--accent);
-	}
-
-	.path-year {
-		display: block;
-		margin-bottom: 0.55rem;
-		color: var(--accent);
-		font-family: var(--font-brand);
-		font-size: 0.78rem;
-		font-weight: 700;
-		letter-spacing: 0.08em;
-	}
-
-	.path-title {
-		display: block;
-		margin-bottom: 0.35rem;
-		font-family: var(--font-display);
-		font-size: 1.25rem;
-		font-weight: 600;
-	}
-
-	.path-note {
-		color: var(--muted);
-		font-size: 0.95rem;
-	}
-
-	.post-list {
-		border-top: 1px solid var(--line);
-	}
-
-	.post-row {
-		border-bottom: 1px solid var(--line);
-	}
-
-	.post-row-link {
-		display: grid;
-		grid-template-columns: 54px minmax(0, 1fr) auto;
-		gap: 1.2rem;
-		align-items: center;
-		padding: 1.35rem 0;
-		text-decoration: none;
-	}
-
-	.post-row-link:hover h3 {
-		color: var(--accent);
-	}
-
-	.post-number {
-		color: rgba(16, 24, 32, 0.28);
-		font-family: var(--font-brand);
-		font-weight: 700;
-	}
-
-	.post-summary h3 {
-		margin-bottom: 0.5rem;
-	}
-
-	.post-summary p {
-		max-width: 640px;
-		margin: 0;
-	}
-
-	.post-meta {
+	.sx-journal-head {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.65rem;
-		margin-bottom: 0.55rem;
-		color: var(--accent);
-		font-family: var(--font-brand);
-		font-size: 0.82rem;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: 1.5rem;
+		margin-bottom: 2.5rem;
+	}
+
+	.sx-journal-head .en-headline {
+		margin-bottom: 0;
+	}
+
+	.sx-post-list {
+		border-top: 1px solid var(--line);
+		background: rgba(0, 0, 0, 0.72);
+		backdrop-filter: blur(8px);
+	}
+
+	.sx-post-item {
+		border-bottom: 1px solid var(--line-subtle);
+	}
+
+	.sx-post-link {
+		display: grid;
+		grid-template-columns: 150px minmax(0, 1fr) auto;
+		gap: 1.5rem;
+		align-items: center;
+		padding: 1.65rem 0;
+		text-decoration: none;
+	}
+
+	.sx-post-date {
+		color: var(--muted);
+		font-family: var(--font-sx);
+		font-size: 0.92rem;
+		font-weight: 600;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+	}
+
+	.sx-post-main h3 {
+		margin: 0 0 0.35rem;
+		font-family: var(--font-body);
+		font-size: 1.15rem;
 		font-weight: 700;
+		letter-spacing: -0.01em;
+		transition: opacity 180ms ease;
 	}
 
-	.read-indicator {
-		padding: 0.6rem 0.9rem;
-		border: 1px solid var(--line);
-		border-radius: 999px;
-		font-family: var(--font-brand);
-		font-size: 0.86rem;
+	.sx-post-main p {
+		margin: 0;
+		color: var(--muted);
+		font-size: 0.9rem;
+	}
+
+	.sx-post-cta {
+		padding: 0.55rem 1.2rem;
+		border: 1px solid rgba(255, 255, 255, 0.38);
+		color: #ffffff;
+		font-family: var(--font-sx);
+		font-size: 0.78rem;
 		font-weight: 700;
+		letter-spacing: 0.16em;
+		transition:
+			background 220ms var(--ease-sx),
+			color 220ms var(--ease-sx),
+			border-color 220ms var(--ease-sx);
 	}
 
-	.empty-state {
-		padding: 2rem;
-		border: 1px solid var(--line);
-		border-radius: var(--radius-md);
-		background: var(--card);
+	.sx-post-link:hover .sx-post-cta {
+		background: #ffffff;
+		border-color: #ffffff;
+		color: #000000;
 	}
 
-	@media (max-width: 900px) {
-		.section-heading,
-		.path-line {
-			grid-template-columns: 1fr 1fr;
-		}
-	}
-
-	@media (max-width: 720px) {
-		.hero {
-			min-height: calc(100svh - 120px);
-			align-items: end;
-			padding-bottom: 3rem;
+	@media (max-width: 860px) {
+		.sx-home {
+			width: calc(100% - 36px);
 		}
 
-		.now-section,
-		.path-section,
-		.latest-section {
-			width: min(100% - 28px, var(--container));
+		.sx-panel--hero {
+			padding-top: 290px;
+			padding-bottom: 4.5rem;
 		}
 
-		.section-heading,
-		.path-line,
-		.now-row,
-		.post-row-link {
-			grid-template-columns: 1fr;
+		.sx-panel {
+			min-height: 92svh;
 		}
 
-		.read-indicator {
-			display: none;
-		}
-
-		.hero-actions,
-		.section-actions {
+		.sx-spec-row {
 			flex-direction: column;
+			gap: 0.25rem;
 		}
 
-		.button {
-			width: 100%;
+		.sx-spec-row dd {
+			text-align: left;
+		}
+
+		.sx-post-link {
+			grid-template-columns: 1fr;
+			gap: 0.45rem;
+		}
+
+		.sx-post-cta {
+			display: none;
 		}
 	}
 </style>

@@ -1,141 +1,83 @@
 ---
-import { PROFILE, SITE_TITLE } from '../consts';
+import { PROFILE } from '../consts';
 
 const today = new Date();
 const links = [
-	{ href: '/', label: 'Home' },
-	{ href: '/blog', label: 'Journal' },
-	{ href: '/about', label: 'About' },
-];
-const socials = [
-	{ href: PROFILE.x, label: 'X' },
-	{ href: PROFILE.github, label: 'GitHub' },
-	{ href: PROFILE.linkedin, label: 'LinkedIn' },
-	{ href: PROFILE.companyUrl, label: 'NanoFrontier' },
+	{ href: PROFILE.x, label: 'X', external: true },
+	{ href: PROFILE.github, label: 'GITHUB', external: true },
+	{ href: PROFILE.linkedin, label: 'LINKEDIN', external: true },
+	{ href: PROFILE.companyUrl, label: 'NANOFRONTIER', external: true },
+	{ href: '/blog', label: 'JOURNAL', external: false },
+	{ href: '/about', label: 'ABOUT', external: false },
 ];
 ---
 
-<footer class="site-footer">
-	<div class="footer-shell">
-		<div class="footer-copy">
-			<p class="eyebrow">{SITE_TITLE}</p>
-			<h2>思考を掃き溜めて、次の一手に変える。</h2>
-			<p>
-				{PROFILE.name} / {PROFILE.handle}。{PROFILE.company}の共同創業者として、ナノ粒子と社会実装のあいだを行き来しながら書いています。
-			</p>
-		</div>
-		<div class="footer-links" aria-label="フッターナビゲーション">
-			{links.map((link) => <a href={link.href}>{link.label}</a>)}
-		</div>
-		<div class="social-links">
-			{socials.map((link) => (
-				<a href={link.href} target="_blank" rel="noopener noreferrer">
-					{link.label}
+<footer class="sx-footer">
+	<div class="sx-footer-inner">
+		<span class="sx-copy">SAIKATTYO &copy; {today.getFullYear()}</span>
+		<div class="sx-footer-links" aria-label="フッターリンク">
+			{links.map((item) => (
+				<a
+					href={item.href}
+					target={item.external ? '_blank' : undefined}
+					rel={item.external ? 'noopener noreferrer' : undefined}
+				>
+					{item.label}
 				</a>
 			))}
 		</div>
 	</div>
-	<div class="footer-bottom">
-		<span>&copy; {today.getFullYear()} {PROFILE.name}</span>
-		<span>{PROFILE.location}</span>
-	</div>
 </footer>
 
 <style>
-	.site-footer {
-		width: min(var(--container), calc(100% - 40px));
-		margin: 0 auto 28px;
-		padding: 36px;
-		border: 1px solid rgba(247, 249, 251, 0.12);
-		border-radius: var(--radius-lg);
-		background:
-			radial-gradient(circle at 18% 0%, rgba(13, 115, 119, 0.35), transparent 40%),
-			linear-gradient(145deg, #101820 0%, #15202b 55%, #0d3a3c 100%);
-		color: var(--bg-soft);
-		box-shadow: var(--shadow);
+	.sx-footer {
+		position: relative;
+		z-index: 2;
+		background: #000000;
+		border-top: 1px solid rgba(255, 255, 255, 0.1);
 	}
 
-	.footer-shell {
-		display: grid;
-		grid-template-columns: minmax(0, 1.5fr) auto auto;
-		gap: 2rem;
-		align-items: end;
+	.sx-footer-inner {
+		width: min(var(--container), calc(100% - 64px));
+		min-height: 88px;
+		margin: 0 auto;
+		padding: 1.5rem 0;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+		gap: 1.2rem 2.4rem;
 	}
 
-	.eyebrow {
-		margin-bottom: 0.85rem;
-		color: rgba(247, 249, 251, 0.55);
-		font-family: var(--font-brand);
+	.sx-copy {
+		color: var(--muted);
+		font-family: var(--font-sx);
 		font-size: 0.78rem;
-		font-weight: 700;
-		letter-spacing: 0.16em;
+		font-weight: 500;
+		letter-spacing: 0.14em;
 		text-transform: uppercase;
 	}
 
-	.footer-copy h2 {
-		max-width: 680px;
-		margin-bottom: 1rem;
-		color: var(--bg-soft);
-		font-size: clamp(1.9rem, 4vw, 3.4rem);
-	}
-
-	.footer-copy p:last-child {
-		max-width: 620px;
-		margin: 0;
-		color: rgba(247, 249, 251, 0.68);
-	}
-
-	.footer-links,
-	.social-links {
+	.sx-footer-links {
 		display: flex;
-		flex-direction: column;
-		gap: 0.55rem;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+		gap: 0.9rem 2.2rem;
 	}
 
-	.footer-links a,
-	.social-links a {
-		color: rgba(247, 249, 251, 0.72);
-		font-family: var(--font-brand);
+	.sx-footer-links a {
+		color: #ffffff;
+		font-family: var(--font-sx);
+		font-size: 0.78rem;
 		font-weight: 700;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
 		text-decoration: none;
+		transition: color 180ms ease;
 	}
 
-	.footer-links a:hover,
-	.social-links a:hover {
-		color: #7fd4d6;
-	}
-
-	.footer-bottom {
-		margin-top: 2.4rem;
-		padding-top: 1rem;
-		display: flex;
-		justify-content: space-between;
-		gap: 1rem;
-		border-top: 1px solid rgba(247, 249, 251, 0.12);
-		color: rgba(247, 249, 251, 0.5);
-		font-size: 0.88rem;
-	}
-
-	@media (max-width: 780px) {
-		.site-footer {
-			width: min(100% - 28px, var(--container));
-			padding: 24px;
-		}
-
-		.footer-shell {
-			grid-template-columns: 1fr;
-			align-items: start;
-		}
-
-		.footer-links,
-		.social-links {
-			flex-direction: row;
-			flex-wrap: wrap;
-			gap: 0.85rem 1.2rem;
-		}
-
-		.footer-bottom {
-			flex-direction: column;
-		}
+	.sx-footer-links a:hover {
+		color: var(--muted);
 	}
 </style>

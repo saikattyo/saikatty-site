@@ -1,113 +1,181 @@
 ---
+import { PROFILE } from '../consts';
+
+const pathname = Astro.url.pathname;
 const navItems = [
-	{ href: '/', label: 'Home' },
-	{ href: '/blog', label: 'Journal' },
-	{ href: '/about', label: 'About' },
+	{ href: '/', label: 'HOME', active: pathname === '/' },
+	{ href: '/about', label: 'ABOUT', active: pathname.startsWith('/about') },
+	{ href: '/blog', label: 'JOURNAL', active: pathname.startsWith('/blog') },
+	{ href: PROFILE.companyUrl, label: 'NANOFRONTIER', external: true, active: false },
 ];
 ---
 
-<header class="site-header">
-	<nav class="nav-shell" aria-label="メインナビゲーション">
-		<a class="brand" href="/" aria-label="Saikattyo ホーム">
-			<span class="brand-mark" aria-hidden="true"></span>
-			<span class="brand-text">Saikattyo</span>
-		</a>
-		<div class="nav-links">
-			{navItems.map((item) => <a href={item.href}>{item.label}</a>)}
+<header class="sx-header">
+	<div class="sx-header-inner">
+		<div class="sx-left">
+			<a class="sx-wordmark" href="/" aria-label="Saikattyo ホーム">
+				<span class="sx-wordmark-text">SAIKATTYO</span>
+				<svg class="sx-wordmark-arc" viewBox="0 0 64 22" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+					<path d="M0 21 C14 10, 34 3.2, 64 1 C40 5.2, 20 12.2, 7 21 Z" fill="#FFFFFF" />
+				</svg>
+			</a>
+
+			<nav class="sx-nav" aria-label="メインナビゲーション">
+				{navItems.map((item) => (
+					<a
+						href={item.href}
+						class:list={[{ 'is-current': item.active }]}
+						target={item.external ? '_blank' : undefined}
+						rel={item.external ? 'noopener noreferrer' : undefined}
+						aria-current={item.active ? 'page' : undefined}
+					>
+						{item.label}
+					</a>
+				))}
+			</nav>
 		</div>
-	</nav>
+
+		<span class="sx-edition-stamp" data-edition-stamp aria-hidden="true"></span>
+	</div>
 </header>
 
 <style>
-	.site-header {
-		position: sticky;
+	.sx-header {
+		position: fixed;
 		top: 0;
-		z-index: 30;
-		padding: 16px 20px 0;
+		left: 0;
+		right: 0;
+		z-index: 100;
+		background: linear-gradient(180deg, rgba(0, 0, 0, 0.86) 0%, rgba(0, 0, 0, 0.42) 65%, transparent 100%);
 	}
 
-	.nav-shell {
-		width: min(var(--container), 100%);
+	.sx-header-inner {
+		width: min(var(--container), calc(100% - 64px));
+		height: 84px;
 		margin: 0 auto;
-		padding: 10px 10px 10px 16px;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		gap: 1rem;
-		border: 1px solid rgba(16, 24, 32, 0.08);
-		border-radius: 999px;
-		background: rgba(247, 249, 251, 0.72);
-		box-shadow: 0 12px 40px rgba(16, 24, 32, 0.08);
-		backdrop-filter: blur(18px);
+		gap: 2rem;
 	}
 
-	.brand,
-	.nav-links a {
+	.sx-left {
+		display: flex;
+		align-items: center;
+		gap: 2.6rem;
+	}
+
+	.sx-wordmark {
+		position: relative;
+		display: inline-flex;
+		align-items: baseline;
+		color: #ffffff;
 		text-decoration: none;
 	}
 
-	.brand {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.7rem;
-		font-family: var(--font-brand);
-		font-weight: 800;
-		letter-spacing: -0.04em;
+	.sx-wordmark-text {
+		font-family: 'Space Grotesk', var(--font-sx);
+		font-size: 1.32rem;
+		font-weight: 700;
+		letter-spacing: 0.28em;
+		line-height: 1;
+		color: #ffffff;
 	}
 
-	.brand-mark {
-		width: 12px;
-		height: 12px;
-		border-radius: 50%;
-		background: var(--accent);
-		box-shadow: 0 0 0 6px var(--accent-soft);
+	.sx-wordmark-arc {
+		width: 44px;
+		height: 16px;
+		margin-left: -10px;
+		transform: translateY(-3px);
+		flex-shrink: 0;
 	}
 
-	.brand-text {
-		font-size: 1.05rem;
-	}
-
-	.nav-links {
+	.sx-nav {
 		display: flex;
 		align-items: center;
-		gap: 0.15rem;
+		gap: 1.75rem;
 	}
 
-	.nav-links a {
-		padding: 0.55rem 0.95rem;
-		border-radius: 999px;
-		font-family: var(--font-brand);
-		font-size: 0.9rem;
+	.sx-nav a {
+		position: relative;
+		padding: 0.35rem 0;
+		color: #ffffff;
+		font-family: var(--font-sx);
+		font-size: 0.86rem;
 		font-weight: 700;
-		color: var(--muted);
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		text-decoration: none;
 	}
 
-	.nav-links a:hover {
-		background: var(--ink);
-		color: var(--bg-soft);
+	.sx-nav a::after {
+		content: '';
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		height: 1px;
+		background: #ffffff;
+		transform: scaleX(0);
+		transform-origin: right center;
+		transition: transform 280ms var(--ease-sx);
 	}
 
-	@media (max-width: 560px) {
-		.site-header {
-			padding-inline: 10px;
+	.sx-nav a:hover::after,
+	.sx-nav a.is-current::after {
+		transform: scaleX(1);
+		transform-origin: left center;
+	}
+
+	.sx-edition-stamp {
+		color: rgba(255, 255, 255, 0.52);
+		font-family: var(--font-mono);
+		font-size: 0.68rem;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		white-space: nowrap;
+	}
+
+	@media (max-width: 980px) {
+		.sx-edition-stamp {
+			display: none;
+		}
+	}
+
+	@media (max-width: 760px) {
+		.sx-header-inner {
+			width: calc(100% - 32px);
+			height: 68px;
 		}
 
-		.nav-shell {
-			border-radius: 22px;
-			flex-direction: column;
-			align-items: stretch;
-		}
-
-		.nav-links {
-			justify-content: space-between;
+		.sx-left {
 			width: 100%;
-			padding-top: 2px;
+			justify-content: space-between;
+			gap: 0.7rem;
 		}
 
-		.nav-links a {
-			flex: 1;
-			text-align: center;
-			padding-inline: 0.4rem;
+		.sx-wordmark-text {
+			font-size: 1rem;
+			letter-spacing: 0.2em;
+		}
+
+		.sx-wordmark-arc {
+			width: 30px;
+			height: 11px;
+			margin-left: -7px;
+		}
+
+		.sx-nav {
+			gap: 0.9rem;
+		}
+
+		.sx-nav a {
+			font-size: 0.78rem;
+			letter-spacing: 0.1em;
+		}
+
+		.sx-nav a[target='_blank'] {
+			display: none;
 		}
 	}
 </style>
