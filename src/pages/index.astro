@@ -7,82 +7,15 @@ import NanoStage from '../components/NanoStage.astro';
 import { PROFILE, SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 import { getPublishedBlogPosts, postSlug } from '../lib/blog';
 
-const allPosts = await getPublishedBlogPosts();
-const latestPosts = allPosts.slice(0, 5);
+const latestPosts = (await getPublishedBlogPosts()).slice(0, 5);
 
-const postThemes: Record<string, string> = {
-	'1': 'THOUGHT',
-	'2': 'PRODUCT',
-	'3': 'REVIEW',
-	'4': 'MISSION',
-	'5': 'MISSION',
-	'6': 'PORTRAIT',
-	'7': 'WORKFLOW',
-	'8': 'WORKFLOW',
-};
-
-const specMetrics = [
-	{ value: '2025.04', unit: 'LAUNCH', label: 'NANOFRONTIER CO-FOUNDED' },
-	{ value: '10¹ NM', unit: 'SCALE', label: 'ORGANIC NANOPARTICLE CONTROL' },
-	{ value: '02 HUBS', unit: 'LINK', label: 'TOKYO ⇄ SENDAI R&D CORRIDOR' },
-	{ value: String(allPosts.length).padStart(2, '0'), unit: 'LOGS', label: 'PUBLIC TRANSMISSIONS' },
-];
-
-const payloadSpecs = [
-	{
-		code: 'SYS-01 // PRIMARY PAYLOAD',
-		mode: 'payload',
-		title: 'NanoFrontier',
-		classification: 'CO-FOUNDER · DEEPTECH',
-		body: '東北大学発の独自ナノ粒子化技術で、水中PFASのリアルタイム検出・次世代レドックスフロー蓄電池・高効率冷却液などの社会実装を推進。研究室の科学と産業スケールを直結させる。',
-		href: PROFILE.companyUrl,
-	},
-	{
-		code: 'SYS-02 // PROPULSION VECTOR',
-		mode: 'burn',
-		title: '資源がなめらかに循環する社会',
-		classification: 'ENERGY · CIVILIZATION',
-		body: '一部の人間しか触れられない高コストな先端技術ではなく、誰もがアクセスできる圧倒的低コストな仕組みとして商業化し、後世に続く人類の繁栄基盤を築く。',
-	},
-	{
-		code: 'SYS-03 // AVIONICS & CRAFT',
-		mode: 'orbit',
-		title: 'Software × AI × Field Notes',
-		classification: 'TOKYO // SENDAI',
-		body: '仙台の研究開発拠点と東京を往復しながら、フルスタック開発・AIエージェント活用・日々の思考の断片をこのミッションログに記録している。',
-	},
-];
-
-const flightStages = [
-	{
-		stage: 'STAGE 01',
-		period: '〜2019',
-		title: '鳥取大学工学部',
-		role: 'ENGINEERING ORIGIN',
-		note: '在学中からアプリ・SaaS開発チームを牽引し、ソフトウェア実装の基礎を確立。',
-	},
-	{
-		stage: 'STAGE 02',
-		period: 'DeNA',
-		title: 'Anyca',
-		role: 'FULL-STACK & PDM',
-		note: 'iOS / Android / サーバー設計からプロダクトマネジメント・採用まで全方位を推進。',
-	},
-	{
-		stage: 'STAGE 03',
-		period: 'CATALIS',
-		title: 'AI Applications',
-		role: 'VENTURE BUILDING',
-		note: 'AIアプリケーション開発と新規事業づくりを横断し、技術から事業への変換速度を磨く。',
-	},
-	{
-		stage: 'STAGE 04',
-		period: '2025〜',
-		title: 'NanoFrontier',
-		role: 'CO-FOUNDER // IN ORBIT',
-		note: '東北大学発ナノ粒子化技術の社会実装へ。環境・エネルギー・医療領域へ展開中。',
-		active: true,
-	},
+const overviewSpecs = [
+	{ label: 'ROLE', value: '共同創業者 / NanoFrontier' },
+	{ label: 'BASE', value: 'Tokyo / Sendai' },
+	{ label: 'PREVIOUS', value: 'Catalis Partners Group' },
+	{ label: 'ENGINEERING', value: 'DeNA / Anyca (iOS · Android · Server · PdM)' },
+	{ label: 'EDUCATION', value: '鳥取大学 工学部' },
+	{ label: 'FOCUS', value: 'Nanoparticles · Energy · Software' },
 ];
 ---
 
@@ -95,190 +28,86 @@ const flightStages = [
 		<NanoStage variant="home" />
 		<Header />
 
-		<main class="flight-deck">
-			<!-- SECTION 00: FULL-VIEWPORT ORBITAL HERO -->
-			<section class="hero-deck" data-orbital-drag aria-label="ミッション概要と3D宇宙機ステージ">
-				<div class="hero-orbital-spacer" aria-hidden="true"></div>
-
-				<div class="hero-content rise">
-					<p class="kicker">MISSION // NFR-01 · KATSUYA SAITO</p>
-					<p class="hero-callsign">{PROFILE.handle.toUpperCase()}</p>
-					<h1>思考を掃き溜めて、<br />次の社会実装へ。</h1>
-					<p class="hero-lead">
-						{PROFILE.name} — 東北大学発 <strong>{PROFILE.company}</strong> 共同創業者。
-						ナノ粒子、エネルギー、ソフトウェア、日々の違和感を軌道上から記録する個人ミッションアーカイブ。
+		<main class="sx-home">
+			<!-- SECTION 01: FULL-BLEED HERO -->
+			<section class="sx-panel sx-panel--hero" aria-label="ヒーロー">
+				<div class="sx-block rise">
+					<p class="sx-overline">KATSUYA SAITO // CO-FOUNDER @ NANOFRONTIER</p>
+					<h1 class="jp-headline">思考を掃き溜めて、<br />次の社会実装へ。</h1>
+					<p class="sx-sub">
+						ナノ粒子、エネルギー、プロダクト、日々の違和感をそのまま残していく個人アーカイブ。
 					</p>
-					<div class="hero-cta">
-						<a class="button primary" href="/blog">TRANSMISSIONS // 記事一覧</a>
-						<a class="button secondary" href="/about">MISSION DOSSIER // 経歴</a>
-					</div>
+					<a class="sx-btn" href="/blog">READ JOURNAL</a>
 				</div>
 
-				<!-- SpaceX Bottom Mission Control Telemetry & Hardware Dock -->
-				<div class="mission-dock" role="region" aria-label="3D宇宙機テレメトリおよび制御コンソール">
-					<div class="telemetry-strip">
-						<div class="tel-cell status-cell">
-							<span class="tel-key">SYSTEM STATUS</span>
-							<span class="tel-val accent" data-stage-status>INITIALIZING ORBITAL GLB...</span>
-						</div>
-						<div class="tel-cell">
-							<span class="tel-key">ALTITUDE (LEO)</span>
-							<span class="tel-val" data-telemetry-alt>418.2 KM</span>
-						</div>
-						<div class="tel-cell">
-							<span class="tel-key">ORBITAL VELOCITY</span>
-							<span class="tel-val" data-telemetry-vel>27,614 KM/H</span>
-						</div>
-						<div class="tel-cell">
-							<span class="tel-key">ATTITUDE // DRAG 360°</span>
-							<span class="tel-val" data-telemetry-att>P +16° / Y 328°</span>
-						</div>
-					</div>
+				<a class="sx-scroll-cue" href="#mission" aria-label="次のセクションへスクロール">
+					<svg width="30" height="20" viewBox="0 0 30 20" fill="none" aria-hidden="true">
+						<path d="M2 2L15 15L28 2" stroke="#FFFFFF" stroke-width="2" />
+					</svg>
+				</a>
+			</section>
 
-					<div class="dock-controls-row">
-						<span class="flight-caption" data-flight-caption>
-							LEO ORBITAL CRUISE // 地球低軌道巡航・姿勢制御中
-						</span>
-						<div class="flight-buttons" role="toolbar" aria-label="3D宇宙機フライトモード切替">
-							<button type="button" class="ctrl-btn is-active" data-flight-mode="orbit" aria-pressed="true">
-								01 ORBIT
-							</button>
-							<button type="button" class="ctrl-btn" data-flight-mode="payload" aria-pressed="false">
-								02 PAYLOAD
-							</button>
-							<button type="button" class="ctrl-btn burn-btn" data-flight-mode="burn" aria-pressed="false">
-								03 STATIC FIRE
-							</button>
-							<button type="button" class="ctrl-btn" data-flight-mode="xray" aria-pressed="false">
-								04 CAD X-RAY
-							</button>
-							<button type="button" class="ctrl-btn sep-btn" data-stage-sep aria-pressed="false">
-								[ STAGE SEP ]
-							</button>
-						</div>
-					</div>
+			<!-- SECTION 02: NANOFRONTIER -->
+			<section id="mission" class="sx-panel" aria-labelledby="mission-heading">
+				<div class="sx-block">
+					<p class="sx-overline">CURRENT MISSION // 2025 — PRESENT</p>
+					<h2 id="mission-heading" class="en-headline">NANOFRONTIER</h2>
+					<p class="sx-sub">
+						東北大学発の独自ナノ粒子化技術で、水中PFASのリアルタイム検出・次世代蓄電池・高効率冷却の社会実装に挑む。誰もが手にできる低コストな技術で、資源がなめらかに循環する基盤をつくる。
+					</p>
+					<a class="sx-btn" href={PROFILE.companyUrl} target="_blank" rel="noopener noreferrer">
+						LEARN MORE
+					</a>
 				</div>
 			</section>
 
-			<!-- ARCHITECTURAL TELEMETRY METRICS -->
-			<section class="spec-strip" aria-label="主要指標">
-				{specMetrics.map((m) => (
-					<div class="spec-cell">
-						<div class="spec-top">
-							<span class="spec-num">{m.value}</span>
-							<span class="spec-unit">{m.unit}</span>
-						</div>
-						<span class="spec-label">{m.label}</span>
-					</div>
-				))}
-			</section>
+			<!-- SECTION 03: OVERVIEW SPECS (AUTHENTIC SPACEX SPEC TABLE) -->
+			<section class="sx-panel sx-panel--overview" aria-labelledby="overview-heading">
+				<div class="sx-overview-col">
+					<p class="sx-overline">KATSUYA SAITO</p>
+					<h2 id="overview-heading" class="en-headline">OVERVIEW</h2>
 
-			<!-- SECTION 01: ACTIVE PAYLOAD (LEFT-FRAMED SO 3D FAIRING DEPLOYMENT SHINES ON RIGHT) -->
-			<section class="mission-section payload-section" aria-labelledby="payload-title">
-				<div class="section-head">
-					<p class="kicker">01 // ACTIVE PAYLOAD</p>
-					<h2 id="payload-title">いまの立ち位置</h2>
-					<p class="section-sub">
-						肩書きではなく、現在軌道に乗せている事業と技術領域。各モジュールに触れると右方の3D機体システムが連動します。
-					</p>
-				</div>
-
-				<div class="payload-stack">
-					{payloadSpecs.map((item) => (
-						<article class="payload-card" data-sync-flight={item.mode}>
-							<span class="crosshair tl" aria-hidden="true">+</span>
-							<span class="crosshair tr" aria-hidden="true">+</span>
-							<div class="payload-meta">
-								<span class="payload-code">{item.code}</span>
-								<span class="payload-class">{item.classification}</span>
+					<dl class="sx-spec-table">
+						{overviewSpecs.map((row) => (
+							<div class="sx-spec-row">
+								<dt>{row.label}</dt>
+								<dd>{row.value}</dd>
 							</div>
-							<h3>
-								{item.href ? (
-									<a href={item.href} target="_blank" rel="noopener noreferrer">
-										{item.title} <span class="ext">↗</span>
-									</a>
-								) : (
-									item.title
-								)}
-							</h3>
-							<p>{item.body}</p>
-						</article>
-					))}
+						))}
+					</dl>
+
+					<a class="sx-btn" href="/about">ABOUT ME</a>
 				</div>
 			</section>
 
-			<!-- SECTION 02: MULTI-STAGE FLIGHT HERITAGE -->
-			<section class="mission-section heritage-section" aria-labelledby="heritage-title">
-				<div class="section-head wide">
+			<!-- SECTION 04: JOURNAL ARCHIVE -->
+			<section class="sx-journal-section" aria-labelledby="journal-heading">
+				<div class="sx-journal-head">
 					<div>
-						<p class="kicker">02 // FLIGHT HERITAGE</p>
-						<h2 id="heritage-title">ここまでの軌道</h2>
+						<p class="sx-overline">PERSONAL ARCHIVE</p>
+						<h2 id="journal-heading" class="en-headline">JOURNAL</h2>
 					</div>
-					<p class="section-sub">
-						ソフトウェアエンジニアリングからプロダクトマネジメント、AI事業開発を経て、ディープテックの社会実装へ至る4段のステージ。
-					</p>
+					<a class="sx-btn" href="/blog">ALL POSTS</a>
 				</div>
 
-				<ol class="stage-grid">
-					{flightStages.map((s) => (
-						<li class:list={['stage-card', { 'is-active': s.active }]}>
-							<div class="stage-header">
-								<span class="stage-num">{s.stage}</span>
-								<span class="stage-period">{s.period}</span>
-							</div>
-							<strong class="stage-title">{s.title}</strong>
-							<span class="stage-role">{s.role}</span>
-							<p class="stage-note">{s.note}</p>
-						</li>
-					))}
-				</ol>
-			</section>
-
-			<!-- SECTION 03: MISSION TRANSMISSIONS (LAUNCH MANIFEST TABLE) -->
-			<section class="mission-section manifest-section" aria-labelledby="manifest-title">
-				<div class="section-head wide">
-					<div>
-						<p class="kicker">03 // MISSION TRANSMISSIONS</p>
-						<h2 id="manifest-title">最近の記録</h2>
-					</div>
-					<p class="section-sub">
-						思考の断片、クラフトの試行錯誤、人類の繁栄に関するフィールドノート。
-					</p>
-				</div>
-
-				<div class="manifest-table">
-					<div class="manifest-thead" aria-hidden="true">
-						<span>FLIGHT</span>
-						<span>DATE (JST)</span>
-						<span>CLASS</span>
-						<span>TRANSMISSION</span>
-						<span>ACTION</span>
-					</div>
-
-					{latestPosts.map((post, idx) => {
+				<div class="sx-post-list">
+					{latestPosts.map((post) => {
 						const slug = postSlug(post);
-						const flightNo = `FLT-${String(allPosts.length - idx).padStart(2, '0')}`;
 						return (
-							<article class="manifest-row">
-								<a href={`/blog/${slug}`} class="manifest-link">
-									<span class="col-flight">{flightNo}</span>
-									<span class="col-date">
+							<article class="sx-post-item">
+								<a href={`/blog/${slug}`} class="sx-post-link">
+									<span class="sx-post-date">
 										<FormattedDate date={post.data.pubDate} />
 									</span>
-									<span class="col-class">{postThemes[slug] || 'NOTE'}</span>
-									<div class="col-main">
+									<div class="sx-post-main">
 										<h3>{post.data.title}</h3>
-										<p>{post.data.description || '日々の思考を書き留めた投稿です。'}</p>
+										<p>{post.data.description}</p>
 									</div>
-									<span class="col-action">READ →</span>
+									<span class="sx-post-cta">READ</span>
 								</a>
 							</article>
 						);
 					})}
-				</div>
-
-				<div class="manifest-footer">
-					<a class="button secondary" href="/blog">ALL TRANSMISSIONS // 全記事一覧 →</a>
 				</div>
 			</section>
 		</main>
@@ -287,645 +116,220 @@ const flightStages = [
 	</body>
 </html>
 
-<script>
-	const syncCards = document.querySelectorAll<HTMLElement>('[data-sync-flight]');
-	syncCards.forEach((card) => {
-		card.addEventListener('mouseenter', () => {
-			const mode = card.dataset.syncFlight;
-			if (!mode) return;
-			const btn = document.querySelector<HTMLButtonElement>(`[data-flight-mode="${mode}"]`);
-			btn?.click();
-		});
-	});
-</script>
-
 <style>
-	.flight-deck {
-		width: min(var(--container), calc(100% - 48px));
+	.sx-home {
+		width: min(var(--container), calc(100% - 64px));
 		margin: 0 auto;
-		padding: 0 0 96px;
+		padding: 0 0 110px !important;
 	}
 
 	.rise {
-		animation: sx-rise 850ms var(--ease-sx) both;
+		animation: sx-fade-up 900ms var(--ease-sx) both;
 	}
 
-	/* SECTION 00: FULL-BLEED ORBITAL HERO */
-	.hero-deck {
-		min-height: calc(100svh - 70px);
+	/* Authentic spacex.com Full-Screen 100svh Stacked Sections */
+	.sx-panel {
+		position: relative;
+		min-height: 100svh;
 		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-		padding: clamp(2.4rem, 6vh, 4.8rem) 0 1.4rem;
-		cursor: grab;
-		user-select: none;
+		align-items: flex-end;
+		padding: 96px 0 clamp(3.2rem, 9vh, 6rem);
 	}
 
-	.hero-deck.is-dragging {
-		cursor: grabbing;
+	.sx-panel--overview {
+		align-items: center;
+		padding: 110px 0;
 	}
 
-	.hero-orbital-spacer {
-		display: none;
+	.sx-block {
+		max-width: 540px;
 	}
 
-	.hero-content {
-		max-width: 610px;
-		margin: auto 0;
-		padding: 1rem 0 2rem;
-	}
-
-	.hero-callsign {
-		margin: 0 0 0.55rem;
-		font-family: var(--font-display);
-		font-size: clamp(3.4rem, 7.2vw, 6.4rem);
-		font-weight: 800;
-		letter-spacing: 0.08em;
-		line-height: 0.92;
+	.jp-headline {
+		margin: 0 0 1.15rem;
+		font-family: var(--font-body);
+		font-size: clamp(2.15rem, 4.2vw, 3.35rem);
+		font-weight: 900;
+		line-height: 1.24;
+		letter-spacing: -0.02em;
 		color: #ffffff;
-		text-transform: uppercase;
 	}
 
-	.hero-content h1 {
-		margin: 0 0 1.25rem;
-		font-size: clamp(1.85rem, 3.6vw, 2.85rem);
+	.en-headline {
+		margin: 0 0 1.15rem;
+		font-family: var(--font-sx);
+		font-size: clamp(2.8rem, 5.6vw, 4.4rem);
 		font-weight: 700;
-		line-height: 1.26;
-		letter-spacing: -0.01em;
+		line-height: 0.98;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: #ffffff;
 	}
 
-	.hero-lead {
-		max-width: 520px;
-		margin: 0;
-		color: rgba(226, 234, 244, 0.82);
-		font-size: 0.98rem;
+	.sx-sub {
+		max-width: 490px;
+		margin: 0 0 2rem;
+		color: rgba(255, 255, 255, 0.8);
+		font-size: 0.96rem;
 		line-height: 1.8;
 	}
 
-	.hero-cta {
+	.sx-scroll-cue {
+		position: absolute;
+		left: 50%;
+		bottom: 28px;
+		transform: translateX(-50%);
+		padding: 8px;
+		animation: sx-chevron 2.4s ease-in-out infinite;
+	}
+
+	/* Authentic SpaceX Vehicle Overview Table */
+	.sx-overview-col {
+		width: min(540px, 100%);
+	}
+
+	.sx-spec-table {
+		margin: 1.6rem 0 2.4rem;
+		border-top: 1px solid var(--line);
+	}
+
+	.sx-spec-row {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1.5rem;
+		padding: 1.05rem 0;
+		border-bottom: 1px solid var(--line);
+	}
+
+	.sx-spec-row dt {
+		flex-shrink: 0;
+		color: #ffffff;
+		font-family: var(--font-sx);
+		font-size: 0.86rem;
+		font-weight: 700;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+	}
+
+	.sx-spec-row dd {
+		margin: 0;
+		text-align: right;
+		color: var(--ink-soft);
+		font-size: 0.92rem;
+		font-weight: 500;
+	}
+
+	/* SpaceX Minimal Journal List */
+	.sx-journal-section {
+		padding-top: clamp(4rem, 8vw, 7rem);
+	}
+
+	.sx-journal-head {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.9rem;
-		margin-top: 2.1rem;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: 1.5rem;
+		margin-bottom: 2.5rem;
 	}
 
-	/* MISSION CONTROL DOCK */
-	.mission-dock {
-		border: 1px solid var(--line);
-		background: rgba(3, 6, 12, 0.78);
-		backdrop-filter: blur(18px);
+	.sx-journal-head .en-headline {
+		margin-bottom: 0;
 	}
 
-	.telemetry-strip {
-		display: grid;
-		grid-template-columns: 1.35fr 1fr 1fr 1.1fr;
+	.sx-post-list {
+		border-top: 1px solid var(--line);
+		background: rgba(0, 0, 0, 0.72);
+		backdrop-filter: blur(8px);
+	}
+
+	.sx-post-item {
 		border-bottom: 1px solid var(--line-subtle);
 	}
 
-	.tel-cell {
-		padding: 0.68rem 1rem;
-		border-right: 1px solid var(--line-subtle);
-		display: flex;
-		flex-direction: column;
-		gap: 0.18rem;
-	}
-
-	.tel-cell:last-child {
-		border-right: 0;
-	}
-
-	.tel-key {
-		color: var(--dim);
-		font-family: var(--font-mono);
-		font-size: 0.62rem;
-		letter-spacing: 0.16em;
-	}
-
-	.tel-val {
-		color: #ffffff;
-		font-family: var(--font-mono);
-		font-size: 0.78rem;
-		font-weight: 600;
-		letter-spacing: 0.08em;
-	}
-
-	.tel-val.accent {
-		color: var(--accent);
-	}
-
-	.dock-controls-row {
-		padding: 0.65rem 1rem;
-		display: flex;
-		flex-wrap: wrap;
+	.sx-post-link {
+		display: grid;
+		grid-template-columns: 150px minmax(0, 1fr) auto;
+		gap: 1.5rem;
 		align-items: center;
-		justify-content: space-between;
-		gap: 0.8rem;
+		padding: 1.65rem 0;
+		text-decoration: none;
 	}
 
-	.flight-caption {
-		color: var(--ink-soft);
-		font-family: var(--font-mono);
-		font-size: 0.72rem;
-		letter-spacing: 0.08em;
-	}
-
-	.flight-buttons {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.4rem;
-	}
-
-	.ctrl-btn {
-		padding: 0.46rem 0.82rem;
-		border: 1px solid rgba(255, 255, 255, 0.22);
-		border-radius: 0;
-		background: transparent;
-		color: rgba(255, 255, 255, 0.76);
-		font-family: var(--font-mono);
-		font-size: 0.68rem;
+	.sx-post-date {
+		color: var(--muted);
+		font-family: var(--font-sx);
+		font-size: 0.92rem;
 		font-weight: 600;
-		letter-spacing: 0.12em;
-		cursor: pointer;
-		transition:
-			background 180ms ease,
-			color 180ms ease,
-			border-color 180ms ease;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
 	}
 
-	.ctrl-btn:hover {
-		border-color: #ffffff;
+	.sx-post-main h3 {
+		margin: 0 0 0.35rem;
+		font-family: var(--font-body);
+		font-size: 1.15rem;
+		font-weight: 700;
+		letter-spacing: -0.01em;
+		transition: opacity 180ms ease;
+	}
+
+	.sx-post-main p {
+		margin: 0;
+		color: var(--muted);
+		font-size: 0.9rem;
+	}
+
+	.sx-post-cta {
+		padding: 0.55rem 1.2rem;
+		border: 1px solid rgba(255, 255, 255, 0.38);
 		color: #ffffff;
+		font-family: var(--font-sx);
+		font-size: 0.78rem;
+		font-weight: 700;
+		letter-spacing: 0.16em;
+		transition:
+			background 220ms var(--ease-sx),
+			color 220ms var(--ease-sx),
+			border-color 220ms var(--ease-sx);
 	}
 
-	.ctrl-btn.is-active {
+	.sx-post-link:hover .sx-post-cta {
 		background: #ffffff;
 		border-color: #ffffff;
 		color: #000000;
 	}
 
-	.ctrl-btn.burn-btn.is-active {
-		background: var(--burn);
-		border-color: var(--burn);
-		color: #000000;
-	}
-
-	.ctrl-btn.sep-btn {
-		border-color: rgba(56, 189, 248, 0.5);
-		color: var(--accent);
-	}
-
-	.ctrl-btn.sep-btn.is-active {
-		background: var(--accent);
-		border-color: var(--accent);
-		color: #000000;
-	}
-
-	/* TELEMETRY COUNTER STRIP */
-	.spec-strip {
-		margin-top: 2.5rem;
-		display: grid;
-		grid-template-columns: repeat(4, minmax(0, 1fr));
-		border-top: 1px solid var(--line);
-		border-bottom: 1px solid var(--line);
-		background: rgba(3, 6, 12, 0.68);
-		backdrop-filter: blur(12px);
-	}
-
-	.spec-cell {
-		padding: 1.65rem 1.4rem;
-		border-right: 1px solid var(--line-subtle);
-	}
-
-	.spec-cell:last-child {
-		border-right: 0;
-	}
-
-	.spec-top {
-		display: flex;
-		align-items: baseline;
-		gap: 0.55rem;
-		margin-bottom: 0.4rem;
-	}
-
-	.spec-num {
-		font-family: var(--font-display);
-		font-size: clamp(2.2rem, 4vw, 3.2rem);
-		font-weight: 700;
-		line-height: 1;
-		letter-spacing: 0.03em;
-		color: #ffffff;
-	}
-
-	.spec-unit {
-		color: var(--accent);
-		font-family: var(--font-mono);
-		font-size: 0.68rem;
-		letter-spacing: 0.14em;
-	}
-
-	.spec-label {
-		display: block;
-		color: var(--muted);
-		font-family: var(--font-mono);
-		font-size: 0.68rem;
-		letter-spacing: 0.14em;
-	}
-
-	/* MISSION SECTIONS */
-	.mission-section {
-		padding: clamp(5rem, 10vw, 8.5rem) 0 0;
-	}
-
-	.section-head {
-		max-width: 620px;
-		margin-bottom: 2.4rem;
-	}
-
-	.section-head.wide {
-		max-width: none;
-		display: grid;
-		grid-template-columns: minmax(0, 1fr) minmax(280px, 0.75fr);
-		gap: 1.5rem 3rem;
-		align-items: end;
-	}
-
-	.section-head h2 {
-		margin-bottom: 0.6rem;
-	}
-
-	.section-head.wide h2 {
-		margin-bottom: 0;
-	}
-
-	.section-sub {
-		margin: 0;
-		color: var(--muted);
-		font-size: 0.96rem;
-	}
-
-	/* PAYLOAD CARDS (LEFT COLUMN SO 3D CRAFT REMAINS VISIBLE ON RIGHT) */
-	.payload-stack {
-		max-width: 650px;
-		display: grid;
-		gap: 1rem;
-	}
-
-	.payload-card {
-		position: relative;
-		padding: 1.7rem 1.75rem;
-		border: 1px solid var(--line);
-		background: var(--bg-panel);
-		backdrop-filter: blur(18px);
-		transition:
-			border-color 220ms ease,
-			background 220ms ease,
-			transform 220ms var(--ease-sx);
-	}
-
-	.payload-card:hover {
-		border-color: rgba(255, 255, 255, 0.65);
-		background: rgba(8, 14, 26, 0.9);
-		transform: translateX(6px);
-	}
-
-	.crosshair {
-		position: absolute;
-		color: rgba(255, 255, 255, 0.35);
-		font-family: var(--font-mono);
-		font-size: 0.72rem;
-		line-height: 1;
-		pointer-events: none;
-	}
-
-	.crosshair.tl {
-		top: 8px;
-		left: 10px;
-	}
-
-	.crosshair.tr {
-		top: 8px;
-		right: 10px;
-	}
-
-	.payload-meta {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: space-between;
-		gap: 0.5rem;
-		margin-bottom: 0.85rem;
-		padding-top: 0.25rem;
-	}
-
-	.payload-code {
-		color: var(--accent);
-		font-family: var(--font-mono);
-		font-size: 0.7rem;
-		letter-spacing: 0.15em;
-	}
-
-	.payload-class {
-		color: var(--dim);
-		font-family: var(--font-mono);
-		font-size: 0.68rem;
-		letter-spacing: 0.14em;
-	}
-
-	.payload-card h3 {
-		margin-bottom: 0.65rem;
-		font-size: clamp(1.3rem, 2.2vw, 1.65rem);
-	}
-
-	.payload-card h3 a {
-		text-decoration: none;
-	}
-
-	.ext {
-		color: var(--accent);
-		font-size: 0.9em;
-	}
-
-	.payload-card p {
-		margin: 0;
-		color: var(--ink-soft);
-		font-size: 0.95rem;
-	}
-
-	/* STAGE TIMELINE */
-	.stage-grid {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-		display: grid;
-		grid-template-columns: repeat(4, minmax(0, 1fr));
-		border: 1px solid var(--line);
-		background: var(--bg-panel);
-		backdrop-filter: blur(18px);
-	}
-
-	.stage-card {
-		padding: 1.7rem 1.45rem;
-		border-right: 1px solid var(--line);
-		display: flex;
-		flex-direction: column;
-	}
-
-	.stage-card:last-child {
-		border-right: 0;
-	}
-
-	.stage-card.is-active {
-		background: linear-gradient(180deg, rgba(56, 189, 248, 0.14) 0%, rgba(4, 8, 15, 0.4) 100%);
-		box-shadow: inset 0 2px 0 #ffffff;
-	}
-
-	.stage-header {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		margin-bottom: 1rem;
-		font-family: var(--font-mono);
-		font-size: 0.68rem;
-		letter-spacing: 0.14em;
-	}
-
-	.stage-num {
-		color: #ffffff;
-		font-weight: 600;
-	}
-
-	.stage-period {
-		color: var(--accent);
-	}
-
-	.stage-title {
-		display: block;
-		margin-bottom: 0.25rem;
-		font-size: 1.3rem;
-	}
-
-	.stage-role {
-		display: block;
-		margin-bottom: 0.85rem;
-		color: var(--dim);
-		font-family: var(--font-mono);
-		font-size: 0.66rem;
-		letter-spacing: 0.14em;
-	}
-
-	.stage-note {
-		margin: 0;
-		font-size: 0.9rem;
-		line-height: 1.7;
-	}
-
-	/* LAUNCH MANIFEST TABLE */
-	.manifest-table {
-		border: 1px solid var(--line);
-		background: var(--bg-panel);
-		backdrop-filter: blur(20px);
-	}
-
-	.manifest-thead {
-		display: grid;
-		grid-template-columns: 90px 135px 110px minmax(0, 1fr) 96px;
-		gap: 1.2rem;
-		padding: 0.85rem 1.5rem;
-		border-bottom: 1px solid var(--line);
-		color: var(--dim);
-		font-family: var(--font-mono);
-		font-size: 0.66rem;
-		letter-spacing: 0.18em;
-	}
-
-	.manifest-row {
-		border-bottom: 1px solid var(--line-subtle);
-	}
-
-	.manifest-row:last-child {
-		border-bottom: 0;
-	}
-
-	.manifest-link {
-		display: grid;
-		grid-template-columns: 90px 135px 110px minmax(0, 1fr) 96px;
-		gap: 1.2rem;
-		align-items: center;
-		padding: 1.35rem 1.5rem;
-		text-decoration: none;
-		transition: background 200ms ease;
-	}
-
-	.manifest-link:hover {
-		background: rgba(255, 255, 255, 0.05);
-	}
-
-	.manifest-link:hover .col-action,
-	.manifest-link:hover h3 {
-		color: var(--accent);
-	}
-
-	.col-flight {
-		color: #ffffff;
-		font-family: var(--font-mono);
-		font-size: 0.76rem;
-		font-weight: 600;
-		letter-spacing: 0.1em;
-	}
-
-	.col-date {
-		color: var(--muted);
-		font-family: var(--font-mono);
-		font-size: 0.76rem;
-	}
-
-	.col-class {
-		display: inline-block;
-		width: fit-content;
-		padding: 0.2rem 0.5rem;
-		border: 1px solid rgba(255, 255, 255, 0.22);
-		color: #ffffff;
-		font-family: var(--font-mono);
-		font-size: 0.64rem;
-		letter-spacing: 0.14em;
-	}
-
-	.col-main h3 {
-		margin: 0 0 0.3rem;
-		font-size: 1.15rem;
-		transition: color 180ms ease;
-	}
-
-	.col-main p {
-		margin: 0;
-		font-size: 0.88rem;
-	}
-
-	.col-action {
-		text-align: right;
-		color: #ffffff;
-		font-family: var(--font-display);
-		font-size: 0.85rem;
-		font-weight: 700;
-		letter-spacing: 0.16em;
-	}
-
-	.manifest-footer {
-		margin-top: 1.8rem;
-	}
-
-	@media (max-width: 1020px) {
-		.telemetry-strip {
-			grid-template-columns: repeat(2, minmax(0, 1fr));
-		}
-
-		.tel-cell:nth-child(2) {
-			border-right: 0;
-		}
-
-		.tel-cell:nth-child(1),
-		.tel-cell:nth-child(2) {
-			border-bottom: 1px solid var(--line-subtle);
-		}
-
-		.spec-strip,
-		.stage-grid {
-			grid-template-columns: repeat(2, minmax(0, 1fr));
-		}
-
-		.spec-cell:nth-child(2),
-		.stage-card:nth-child(2) {
-			border-right: 0;
-		}
-
-		.spec-cell:nth-child(1),
-		.spec-cell:nth-child(2),
-		.stage-card:nth-child(1),
-		.stage-card:nth-child(2) {
-			border-bottom: 1px solid var(--line);
-		}
-
-		.manifest-thead {
-			display: none;
-		}
-
-		.manifest-link {
-			grid-template-columns: 80px 1fr auto;
-			gap: 0.5rem 1rem;
-		}
-
-		.col-main {
-			grid-column: 1 / -1;
-		}
-	}
-
 	@media (max-width: 860px) {
-		.flight-deck {
-			width: calc(100% - 28px);
+		.sx-home {
+			width: calc(100% - 36px);
 		}
 
-		.hero-deck {
-			min-height: auto;
-			padding-top: 0.5rem;
+		.sx-panel--hero {
+			padding-top: 290px;
+			padding-bottom: 4.5rem;
 		}
 
-		.hero-orbital-spacer {
-			display: block;
-			height: 215px;
+		.sx-panel {
+			min-height: 92svh;
 		}
 
-		.hero-content {
-			padding: 0.5rem 0 1.6rem;
-		}
-
-		.section-head.wide {
-			grid-template-columns: 1fr;
-		}
-
-		.payload-stack {
-			max-width: none;
-		}
-	}
-
-	@media (max-width: 600px) {
-		.telemetry-strip,
-		.spec-strip,
-		.stage-grid {
-			grid-template-columns: 1fr;
-		}
-
-		.tel-cell,
-		.spec-cell,
-		.stage-card {
-			border-right: 0;
-			border-bottom: 1px solid var(--line-subtle);
-		}
-
-		.tel-cell:last-child,
-		.spec-cell:last-child,
-		.stage-card:last-child {
-			border-bottom: 0;
-		}
-
-		.hero-cta {
+		.sx-spec-row {
 			flex-direction: column;
+			gap: 0.25rem;
 		}
 
-		.hero-cta .button,
-		.manifest-footer .button {
-			width: 100%;
+		.sx-spec-row dd {
+			text-align: left;
 		}
 
-		.ctrl-btn {
-			flex: 1 1 calc(50% - 0.4rem);
-			text-align: center;
+		.sx-post-link {
+			grid-template-columns: 1fr;
+			gap: 0.45rem;
 		}
 
-		.manifest-link {
-			grid-template-columns: 1fr auto;
-			padding: 1.15rem 1rem;
-		}
-
-		.col-class {
+		.sx-post-cta {
 			display: none;
 		}
 	}

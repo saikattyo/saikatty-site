@@ -12,38 +12,27 @@ export interface Props {
 	heroImage?: string;
 }
 
-const { title, description, heroImage } = Astro.props;
+const { title, description } = Astro.props;
 ---
 
 <html lang="ja">
 	<head>
-		<BaseHead title={title} description={description} image={heroImage} />
+		<BaseHead title={title} description={description} image="/profile_image_about.jpg" />
 	</head>
 	<body>
 		<Header />
-		<main class="dossier-main">
+		<main class="sx-about-main">
 			<article>
-				<header class="dossier-hero" data-orbital-drag>
+				<header class="sx-about-hero">
 					<NanoStage variant="compact" />
-					<div class="dossier-hero-inner rise">
-						<div class="dossier-copy">
-							<p class="kicker">02 // MISSION DOSSIER</p>
-							<div class="identity-bar">
-								{heroImage && (
-									<img class="dossier-avatar" src={heroImage} alt="斎藤 克哉" width="68" height="68" />
-								)}
-								<div>
-									<p class="callsign">SAIKATTYO</p>
-									<span class="sub-id">CO-FOUNDER // NANOFRONTIER INC.</span>
-								</div>
-							</div>
-							<h1>{title}</h1>
-							<p class="lede">{description}</p>
-						</div>
+					<div class="sx-about-hero-inner rise">
+						<p class="sx-overline">PROFILE // KATSUYA SAITO</p>
+						<h1>ABOUT</h1>
+						<p class="sx-about-lede">{description}</p>
 					</div>
 				</header>
 
-				<div class="prose dossier-body">
+				<div class="prose sx-about-body">
 					<slot />
 				</div>
 			</article>
@@ -53,99 +42,61 @@ const { title, description, heroImage } = Astro.props;
 </html>
 
 <style>
-	.dossier-main {
+	.sx-about-main {
 		width: 100%;
 		max-width: none;
-		padding: 0 0 88px;
+		padding: 0 0 100px !important;
 	}
 
-	.dossier-hero {
+	.sx-about-hero {
 		position: relative;
 		isolation: isolate;
-		min-height: min(64svh, 560px);
+		min-height: 68svh;
 		display: flex;
 		align-items: flex-end;
-		padding: clamp(3rem, 8vw, 5.5rem) max(24px, calc((100% - var(--container)) / 2)) 3.2rem;
-		border-bottom: 1px solid var(--line);
+		padding: 130px max(32px, calc((100% - var(--container)) / 2)) 4rem;
+		border-bottom: 1px solid var(--line-subtle);
 		overflow: hidden;
-		cursor: grab;
 	}
 
-	.dossier-hero.is-dragging {
-		cursor: grabbing;
-	}
-
-	.dossier-hero-inner {
+	.sx-about-hero-inner {
 		position: relative;
 		z-index: 2;
-		width: 100%;
-		max-width: 640px;
+		max-width: 580px;
 	}
 
 	.rise {
-		animation: sx-rise 850ms var(--ease-sx) both;
+		animation: sx-fade-up 850ms var(--ease-sx) both;
 	}
 
-	.identity-bar {
-		display: flex;
-		align-items: center;
-		gap: 1rem;
-		margin-bottom: 1.1rem;
+	.sx-about-hero h1 {
+		margin: 0 0 0.9rem;
+		font-family: var(--font-sx);
+		font-size: clamp(3rem, 6vw, 4.8rem);
+		font-weight: 700;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
 	}
 
-	.dossier-avatar {
-		width: 64px;
-		height: 64px;
-		object-fit: cover;
-		border: 1px solid rgba(255, 255, 255, 0.55);
-	}
-
-	.callsign {
+	.sx-about-lede {
 		margin: 0;
-		font-family: var(--font-display);
-		font-size: clamp(2.1rem, 4.5vw, 3.2rem);
-		font-weight: 800;
-		letter-spacing: 0.12em;
-		line-height: 1;
-		color: #ffffff;
+		color: rgba(255, 255, 255, 0.82);
+		font-size: 1rem;
 	}
 
-	.sub-id {
-		display: block;
-		margin-top: 0.25rem;
-		color: var(--accent);
-		font-family: var(--font-mono);
-		font-size: 0.68rem;
-		letter-spacing: 0.16em;
+	.sx-about-body {
+		width: min(820px, calc(100% - 64px));
+		margin: 4rem auto 0;
 	}
 
-	.dossier-copy h1 {
-		font-size: clamp(1.85rem, 4vw, 2.85rem);
-		margin-bottom: 0.85rem;
-	}
-
-	.lede {
-		margin: 0;
-		color: var(--ink-soft);
-		font-size: 1.02rem;
-	}
-
-	.dossier-body {
-		width: min(860px, calc(100% - 48px));
-		margin: 3rem auto 0;
-		padding: clamp(1.8rem, 4vw, 3.2rem);
-		border: 1px solid var(--line);
-		background: var(--bg-panel);
-	}
-
-	@media (max-width: 720px) {
-		.dossier-hero {
-			padding-top: 210px;
+	@media (max-width: 760px) {
+		.sx-about-hero {
+			padding: 250px 20px 3rem;
 		}
 
-		.dossier-body {
-			width: calc(100% - 28px);
-			margin-top: 1.8rem;
+		.sx-about-body {
+			width: calc(100% - 40px);
+			margin-top: 2.8rem;
 		}
 	}
 </style>

@@ -7,33 +7,28 @@ import FormattedDate from '../components/FormattedDate.astro';
 
 type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, description, pubDate, updatedDate } = Astro.props;
 ---
 
 <html lang="ja">
 	<head>
-		<BaseHead title={title} description={description} image={heroImage} />
+		<BaseHead title={title} description={description} />
 	</head>
 	<body>
 		<Header />
-		<main class="post-main">
-			<article class="post-article">
-				<header class="post-header rise">
-					<a class="back-link" href="/blog">← ALL TRANSMISSIONS</a>
-					<div class="date">
-						<span>TRANSMISSION LOG //</span>
+		<main class="sx-post-main">
+			<article>
+				<header class="sx-post-header rise">
+					<a class="sx-back" href="/blog">← JOURNAL</a>
+					<div class="sx-date">
 						<FormattedDate date={pubDate} />
 						{updatedDate && <span>UPDATED <FormattedDate date={updatedDate} /></span>}
 					</div>
 					<h1>{title}</h1>
 					<p>{description}</p>
 				</header>
-				{heroImage && (
-					<div class="hero-image">
-						<img src={heroImage} alt="" />
-					</div>
-				)}
-				<div class="prose content-shell">
+
+				<div class="prose sx-post-prose">
 					<slot />
 				</div>
 			</article>
@@ -43,78 +38,67 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 </html>
 
 <style>
-	.post-main {
-		width: min(900px, calc(100% - 48px));
+	.sx-post-main {
+		width: min(760px, calc(100% - 64px));
 	}
 
 	.rise {
-		animation: sx-rise 800ms var(--ease-sx) both;
+		animation: sx-fade-up 800ms var(--ease-sx) both;
 	}
 
-	.post-header {
-		padding: clamp(2rem, 5vw, 3.8rem) 0 1.8rem;
+	.sx-post-header {
+		padding: clamp(1.5rem, 4vw, 2.8rem) 0 2.2rem;
 		border-bottom: 1px solid var(--line);
 	}
 
-	.back-link {
-		display: inline-flex;
-		margin-bottom: 1.4rem;
+	.sx-back {
+		display: inline-block;
+		margin-bottom: 1.6rem;
 		color: var(--muted);
-		font-family: var(--font-mono);
-		font-size: 0.74rem;
+		font-family: var(--font-sx);
+		font-size: 0.84rem;
+		font-weight: 700;
 		letter-spacing: 0.16em;
 		text-decoration: none;
 	}
 
-	.back-link:hover {
+	.sx-back:hover {
 		color: #ffffff;
 	}
 
-	.date {
+	.sx-date {
 		display: flex;
-		gap: 0.65rem;
-		flex-wrap: wrap;
-		margin-bottom: 0.9rem;
-		color: var(--accent);
-		font-family: var(--font-mono);
-		font-size: 0.74rem;
-		letter-spacing: 0.14em;
+		gap: 0.8rem;
+		margin-bottom: 0.85rem;
+		color: var(--muted);
+		font-family: var(--font-sx);
+		font-size: 0.92rem;
+		font-weight: 600;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
 	}
 
-	.post-header h1 {
-		font-size: clamp(1.95rem, 4.6vw, 3.2rem);
+	.sx-post-header h1 {
+		font-family: var(--font-body);
+		font-size: clamp(1.85rem, 4.2vw, 2.75rem);
+		font-weight: 900;
+		line-height: 1.3;
+		letter-spacing: -0.02em;
 	}
 
-	.post-header p {
-		max-width: 680px;
-		margin-bottom: 0;
-		color: var(--ink-soft);
-		font-size: 1.02rem;
+	.sx-post-header p {
+		margin: 0;
+		color: var(--muted);
+		font-size: 0.98rem;
 	}
 
-	.hero-image {
-		margin: 2rem 0;
-		border: 1px solid var(--line);
-		overflow: hidden;
+	.sx-post-prose {
+		padding-top: 2.6rem;
 	}
 
-	.hero-image img {
-		display: block;
-		width: 100%;
-		max-height: 440px;
-		object-fit: cover;
-	}
-
-	.content-shell {
-		margin: 2rem auto 0;
-		padding: clamp(1.6rem, 4vw, 3rem);
-		border: 1px solid var(--line);
-		background: var(--bg-panel);
-	}
-
-	@media (max-width: 720px) {
-		.post-main {
-			width: calc(100% - 28px);
+	@media (max-width: 760px) {
+		.sx-post-main {
+			width: calc(100% - 40px);
 		}
 	}
 </style>

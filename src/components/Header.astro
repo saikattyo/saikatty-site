@@ -1,184 +1,181 @@
 ---
+import { PROFILE } from '../consts';
+
 const pathname = Astro.url.pathname;
 const navItems = [
-	{ href: '/', code: '00', label: 'FLIGHT DECK', active: pathname === '/' },
-	{ href: '/blog', code: '01', label: 'TRANSMISSIONS', active: pathname.startsWith('/blog') },
-	{ href: '/about', code: '02', label: 'DOSSIER', active: pathname.startsWith('/about') },
+	{ href: '/', label: 'HOME', active: pathname === '/' },
+	{ href: '/about', label: 'ABOUT', active: pathname.startsWith('/about') },
+	{ href: '/blog', label: 'JOURNAL', active: pathname.startsWith('/blog') },
+	{ href: PROFILE.companyUrl, label: 'NANOFRONTIER', external: true, active: false },
 ];
 ---
 
-<header class="site-header">
-	<nav class="nav-bar" aria-label="メインナビゲーション">
-		<a class="brand" href="/" aria-label="Saikattyo ホーム">
-			<svg class="brand-glyph" viewBox="0 0 36 22" fill="none" aria-hidden="true">
-				<path d="M2 20 C11 9, 22 4, 35 2 C24 7, 14 13, 8 20 Z" fill="currentColor" />
-			</svg>
-			<span class="brand-word">SAIKATTYO</span>
-		</a>
+<header class="sx-header">
+	<div class="sx-header-inner">
+		<div class="sx-left">
+			<a class="sx-wordmark" href="/" aria-label="Saikattyo ホーム">
+				<span class="sx-wordmark-text">SAIKATTYO</span>
+				<svg class="sx-wordmark-arc" viewBox="0 0 64 22" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+					<path d="M0 21 C14 10, 34 3.2, 64 1 C40 5.2, 20 12.2, 7 21 Z" fill="#FFFFFF" />
+				</svg>
+			</a>
 
-		<div class="nav-links">
-			{navItems.map((item) => (
-				<a
-					href={item.href}
-					class:list={[{ 'is-current': item.active }]}
-					aria-current={item.active ? 'page' : undefined}
-				>
-					<span class="nav-code">{item.code}</span>
-					<span>{item.label}</span>
-				</a>
-			))}
+			<nav class="sx-nav" aria-label="メインナビゲーション">
+				{navItems.map((item) => (
+					<a
+						href={item.href}
+						class:list={[{ 'is-current': item.active }]}
+						target={item.external ? '_blank' : undefined}
+						rel={item.external ? 'noopener noreferrer' : undefined}
+						aria-current={item.active ? 'page' : undefined}
+					>
+						{item.label}
+					</a>
+				))}
+			</nav>
 		</div>
 
-		<div class="nav-status" aria-hidden="true">
-			<span class="signal-dot"></span>
-			<span>ORBITAL LINK // TOKYO-SENDAI</span>
-		</div>
-	</nav>
+		<span class="sx-edition-stamp" data-edition-stamp aria-hidden="true"></span>
+	</div>
 </header>
 
 <style>
-	.site-header {
-		position: sticky;
+	.sx-header {
+		position: fixed;
 		top: 0;
-		z-index: 50;
-		border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-		background: rgba(2, 4, 8, 0.72);
-		backdrop-filter: blur(16px);
+		left: 0;
+		right: 0;
+		z-index: 100;
+		background: linear-gradient(180deg, rgba(0, 0, 0, 0.86) 0%, rgba(0, 0, 0, 0.42) 65%, transparent 100%);
 	}
 
-	.nav-bar {
-		width: min(var(--container), calc(100% - 48px));
-		height: 70px;
+	.sx-header-inner {
+		width: min(var(--container), calc(100% - 64px));
+		height: 84px;
 		margin: 0 auto;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		gap: 1.5rem;
+		gap: 2rem;
 	}
 
-	.brand {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.65rem;
-		color: #ffffff;
-		text-decoration: none;
-	}
-
-	.brand-glyph {
-		width: 28px;
-		height: 18px;
-		color: #ffffff;
-	}
-
-	.brand-word {
-		font-family: var(--font-brand);
-		font-size: 1.08rem;
-		font-weight: 700;
-		letter-spacing: 0.28em;
-	}
-
-	.nav-links {
+	.sx-left {
 		display: flex;
 		align-items: center;
-		gap: 1.8rem;
+		gap: 2.6rem;
 	}
 
-	.nav-links a {
+	.sx-wordmark {
 		position: relative;
 		display: inline-flex;
 		align-items: baseline;
-		gap: 0.4rem;
-		padding: 0.4rem 0;
-		color: rgba(255, 255, 255, 0.68);
-		font-family: var(--font-display);
-		font-size: 0.86rem;
-		font-weight: 700;
-		letter-spacing: 0.18em;
+		color: #ffffff;
 		text-decoration: none;
 	}
 
-	.nav-links a::after {
+	.sx-wordmark-text {
+		font-family: 'Space Grotesk', var(--font-sx);
+		font-size: 1.32rem;
+		font-weight: 700;
+		letter-spacing: 0.28em;
+		line-height: 1;
+		color: #ffffff;
+	}
+
+	.sx-wordmark-arc {
+		width: 44px;
+		height: 16px;
+		margin-left: -10px;
+		transform: translateY(-3px);
+		flex-shrink: 0;
+	}
+
+	.sx-nav {
+		display: flex;
+		align-items: center;
+		gap: 1.75rem;
+	}
+
+	.sx-nav a {
+		position: relative;
+		padding: 0.35rem 0;
+		color: #ffffff;
+		font-family: var(--font-sx);
+		font-size: 0.86rem;
+		font-weight: 700;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		text-decoration: none;
+	}
+
+	.sx-nav a::after {
 		content: '';
 		position: absolute;
 		left: 0;
 		right: 0;
-		bottom: -1px;
+		bottom: 0;
 		height: 1px;
 		background: #ffffff;
 		transform: scaleX(0);
 		transform-origin: right center;
-		transition: transform 300ms var(--ease-sx);
+		transition: transform 280ms var(--ease-sx);
 	}
 
-	.nav-links a:hover,
-	.nav-links a.is-current {
-		color: #ffffff;
-	}
-
-	.nav-links a:hover::after,
-	.nav-links a.is-current::after {
+	.sx-nav a:hover::after,
+	.sx-nav a.is-current::after {
 		transform: scaleX(1);
 		transform-origin: left center;
 	}
 
-	.nav-code {
-		color: var(--accent);
+	.sx-edition-stamp {
+		color: rgba(255, 255, 255, 0.52);
 		font-family: var(--font-mono);
 		font-size: 0.68rem;
-		letter-spacing: 0.08em;
-	}
-
-	.nav-status {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.5rem;
-		color: var(--muted);
-		font-family: var(--font-mono);
-		font-size: 0.66rem;
-		letter-spacing: 0.14em;
-	}
-
-	.signal-dot {
-		width: 6px;
-		height: 6px;
-		background: #38bdf8;
-		box-shadow: 0 0 8px #38bdf8;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		white-space: nowrap;
 	}
 
 	@media (max-width: 980px) {
-		.nav-status {
+		.sx-edition-stamp {
 			display: none;
 		}
 	}
 
-	@media (max-width: 680px) {
-		.nav-bar {
-			width: calc(100% - 28px);
-			height: 60px;
-			gap: 0.6rem;
+	@media (max-width: 760px) {
+		.sx-header-inner {
+			width: calc(100% - 32px);
+			height: 68px;
 		}
 
-		.brand-glyph {
-			width: 22px;
-			height: 14px;
+		.sx-left {
+			width: 100%;
+			justify-content: space-between;
+			gap: 0.7rem;
 		}
 
-		.brand-word {
-			font-size: 0.86rem;
-			letter-spacing: 0.18em;
+		.sx-wordmark-text {
+			font-size: 1rem;
+			letter-spacing: 0.2em;
 		}
 
-		.nav-links {
-			gap: 0.85rem;
+		.sx-wordmark-arc {
+			width: 30px;
+			height: 11px;
+			margin-left: -7px;
 		}
 
-		.nav-code {
+		.sx-nav {
+			gap: 0.9rem;
+		}
+
+		.sx-nav a {
+			font-size: 0.78rem;
+			letter-spacing: 0.1em;
+		}
+
+		.sx-nav a[target='_blank'] {
 			display: none;
-		}
-
-		.nav-links a {
-			font-size: 0.76rem;
-			letter-spacing: 0.12em;
 		}
 	}
 </style>
