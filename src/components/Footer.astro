@@ -3,43 +3,49 @@ import { PROFILE, SITE_TITLE } from '../consts';
 
 const today = new Date();
 const links = [
-	{ href: '/', label: 'Home' },
-	{ href: '/blog', label: 'Journal' },
-	{ href: '/about', label: 'About' },
+	{ href: '/', label: '00 FLIGHT DECK' },
+	{ href: '/blog', label: '01 TRANSMISSIONS' },
+	{ href: '/about', label: '02 DOSSIER' },
 ];
 const socials = [
-	{ href: PROFILE.x, label: 'X' },
-	{ href: PROFILE.github, label: 'GitHub' },
-	{ href: PROFILE.linkedin, label: 'LinkedIn' },
-	{ href: PROFILE.companyUrl, label: 'NanoFrontier' },
+	{ href: PROFILE.x, label: 'X / TWITTER' },
+	{ href: PROFILE.github, label: 'GITHUB' },
+	{ href: PROFILE.linkedin, label: 'LINKEDIN' },
+	{ href: PROFILE.companyUrl, label: 'NANOFRONTIER INC.' },
 ];
 ---
 
 <footer class="site-footer">
-	<div class="footer-shell">
-		<div class="footer-copy">
-			<p class="eyebrow">{SITE_TITLE} // PERSONAL ARCHIVE</p>
-			<h2>思考を掃き溜めて、次の一手に変える。</h2>
-			<p>
-				{PROFILE.name} / {PROFILE.handle}。{PROFILE.company}の共同創業者として、ナノ粒子と社会実装のあいだを行き来しながら書いています。
-			</p>
+	<div class="footer-inner">
+		<div class="footer-top">
+			<div class="footer-copy">
+				<p class="eyebrow">{SITE_TITLE} // MISSION ARCHIVE</p>
+				<h2>思考を掃き溜めて、次の一手に変える。</h2>
+				<p>
+					{PROFILE.name}（{PROFILE.handle}）— {PROFILE.company} 共同創業者。
+					ナノ粒子技術と社会実装のあいだを往復しながら記録を残しています。
+				</p>
+			</div>
+
+			<div class="footer-col" aria-label="フッターナビゲーション">
+				<span class="col-head">NAVIGATION</span>
+				{links.map((link) => <a href={link.href}>{link.label}</a>)}
+			</div>
+
+			<div class="footer-col">
+				<span class="col-head">EXTERNAL LINKS</span>
+				{socials.map((link) => (
+					<a href={link.href} target="_blank" rel="noopener noreferrer">
+						{link.label} ↗
+					</a>
+				))}
+			</div>
 		</div>
-		<div class="footer-links" aria-label="フッターナビゲーション">
-			<span class="col-label">Index</span>
-			{links.map((link) => <a href={link.href}>{link.label}</a>)}
+
+		<div class="footer-bottom">
+			<span>&copy; {today.getFullYear()} KATSUYA SAITO // SAIKATTYO</span>
+			<span>35.6762°N 139.6503°E TOKYO — 38.2682°N 140.8694°E SENDAI</span>
 		</div>
-		<div class="social-links">
-			<span class="col-label">Network</span>
-			{socials.map((link) => (
-				<a href={link.href} target="_blank" rel="noopener noreferrer">
-					{link.label} ↗
-				</a>
-			))}
-		</div>
-	</div>
-	<div class="footer-bottom">
-		<span>&copy; {today.getFullYear()} {PROFILE.name}</span>
-		<span class="mono">35.6762°N TOKYO / 38.2682°N SENDAI</span>
 	</div>
 </footer>
 
@@ -47,122 +53,99 @@ const socials = [
 	.site-footer {
 		position: relative;
 		z-index: 2;
-		width: min(var(--container), calc(100% - 40px));
-		margin: 0 auto 32px;
-		padding: clamp(28px, 4vw, 42px);
-		border: 1px solid var(--line);
-		border-radius: var(--radius-lg);
-		background:
-			radial-gradient(circle at 14% 0%, rgba(94, 234, 212, 0.14), transparent 44%),
-			linear-gradient(155deg, rgba(11, 18, 29, 0.92) 0%, rgba(6, 10, 17, 0.96) 100%);
-		box-shadow: var(--shadow);
-		backdrop-filter: blur(20px);
+		border-top: 1px solid var(--line);
+		background: rgba(2, 4, 8, 0.92);
+		backdrop-filter: blur(18px);
 	}
 
-	.footer-shell {
+	.footer-inner {
+		width: min(var(--container), calc(100% - 48px));
+		margin: 0 auto;
+		padding: 56px 0 36px;
+	}
+
+	.footer-top {
 		display: grid;
 		grid-template-columns: minmax(0, 1.5fr) auto auto;
-		gap: 2.4rem;
+		gap: 3rem;
 		align-items: start;
 	}
 
 	.eyebrow {
 		margin-bottom: 0.85rem;
-		color: var(--accent);
+		color: var(--muted);
 		font-family: var(--font-mono);
-		font-size: 0.74rem;
-		font-weight: 600;
-		letter-spacing: 0.16em;
+		font-size: 0.7rem;
+		letter-spacing: 0.2em;
 		text-transform: uppercase;
 	}
 
 	.footer-copy h2 {
-		max-width: 660px;
-		margin-bottom: 1rem;
-		color: var(--ink);
-		font-size: clamp(1.75rem, 3.6vw, 3rem);
+		max-width: 640px;
+		margin-bottom: 0.9rem;
+		font-size: clamp(1.6rem, 3.2vw, 2.5rem);
 	}
 
 	.footer-copy p:last-child {
-		max-width: 600px;
+		max-width: 560px;
 		margin: 0;
-		color: var(--muted);
+		font-size: 0.95rem;
 	}
 
-	.col-label {
-		margin-bottom: 0.35rem;
+	.col-head {
+		margin-bottom: 0.45rem;
 		color: var(--dim);
 		font-family: var(--font-mono);
-		font-size: 0.72rem;
-		letter-spacing: 0.14em;
-		text-transform: uppercase;
+		font-size: 0.68rem;
+		letter-spacing: 0.18em;
 	}
 
-	.footer-links,
-	.social-links {
+	.footer-col {
 		display: flex;
 		flex-direction: column;
-		gap: 0.55rem;
+		gap: 0.6rem;
 	}
 
-	.footer-links a,
-	.social-links a {
-		color: #cbd5e1;
-		font-family: var(--font-brand);
-		font-size: 0.95rem;
+	.footer-col a {
+		color: rgba(255, 255, 255, 0.78);
+		font-family: var(--font-display);
+		font-size: 0.9rem;
 		font-weight: 700;
+		letter-spacing: 0.15em;
 		text-decoration: none;
 	}
 
-	.footer-links a:hover,
-	.social-links a:hover {
-		color: var(--accent);
+	.footer-col a:hover {
+		color: #ffffff;
 	}
 
 	.footer-bottom {
-		margin-top: 2.4rem;
-		padding-top: 1.1rem;
+		margin-top: 3rem;
+		padding-top: 1.25rem;
 		display: flex;
 		justify-content: space-between;
 		gap: 1rem;
-		border-top: 1px solid var(--line);
+		border-top: 1px solid var(--line-subtle);
 		color: var(--dim);
-		font-size: 0.85rem;
-	}
-
-	.mono {
 		font-family: var(--font-mono);
-		font-size: 0.76rem;
-		letter-spacing: 0.08em;
+		font-size: 0.72rem;
+		letter-spacing: 0.12em;
 	}
 
 	@media (max-width: 780px) {
-		.site-footer {
-			width: min(100% - 28px, var(--container));
-			padding: 24px;
+		.footer-inner {
+			width: calc(100% - 28px);
+			padding: 40px 0 28px;
 		}
 
-		.footer-shell {
+		.footer-top {
 			grid-template-columns: 1fr;
-			gap: 1.6rem;
-		}
-
-		.footer-links,
-		.social-links {
-			flex-direction: row;
-			flex-wrap: wrap;
-			align-items: center;
-			gap: 0.75rem 1.15rem;
-		}
-
-		.col-label {
-			width: 100%;
-			margin-bottom: -0.25rem;
+			gap: 2rem;
 		}
 
 		.footer-bottom {
 			flex-direction: column;
-			gap: 0.4rem;
+			gap: 0.5rem;
 		}
 	}
 </style>

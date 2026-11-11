@@ -21,26 +21,29 @@ const { title, description, heroImage } = Astro.props;
 	</head>
 	<body>
 		<Header />
-		<main class="about-main">
+		<main class="dossier-main">
 			<article>
-				<header class="about-hero">
+				<header class="dossier-hero" data-orbital-drag>
 					<NanoStage variant="compact" />
-					<div class="about-hero-inner rise">
-						<div class="about-copy">
-							<p class="kicker">About // Profile</p>
-							<div class="identity-row">
+					<div class="dossier-hero-inner rise">
+						<div class="dossier-copy">
+							<p class="kicker">02 // MISSION DOSSIER</p>
+							<div class="identity-bar">
 								{heroImage && (
-									<img class="avatar" src={heroImage} alt="斎藤 克哉 プロフィール" width="76" height="76" />
+									<img class="dossier-avatar" src={heroImage} alt="斎藤 克哉" width="68" height="68" />
 								)}
-								<p class="brand-signal">Saikattyo</p>
+								<div>
+									<p class="callsign">SAIKATTYO</p>
+									<span class="sub-id">CO-FOUNDER // NANOFRONTIER INC.</span>
+								</div>
 							</div>
 							<h1>{title}</h1>
 							<p class="lede">{description}</p>
 						</div>
-						<div class="about-stage-anchor" data-stage-anchor data-stage-drag aria-hidden="true"></div>
 					</div>
 				</header>
-				<div class="prose about-content">
+
+				<div class="prose dossier-body">
 					<slot />
 				</div>
 			</article>
@@ -50,107 +53,99 @@ const { title, description, heroImage } = Astro.props;
 </html>
 
 <style>
-	.about-main {
+	.dossier-main {
 		width: 100%;
 		max-width: none;
-		padding: 0 0 72px;
+		padding: 0 0 88px;
 	}
 
-	.about-hero {
+	.dossier-hero {
 		position: relative;
 		isolation: isolate;
-		min-height: min(64svh, 580px);
-		display: grid;
-		align-items: center;
-		padding: clamp(2.5rem, 7vw, 5rem) max(20px, calc((100% - var(--container)) / 2));
+		min-height: min(64svh, 560px);
+		display: flex;
+		align-items: flex-end;
+		padding: clamp(3rem, 8vw, 5.5rem) max(24px, calc((100% - var(--container)) / 2)) 3.2rem;
+		border-bottom: 1px solid var(--line);
 		overflow: hidden;
+		cursor: grab;
 	}
 
-	.about-hero-inner {
+	.dossier-hero.is-dragging {
+		cursor: grabbing;
+	}
+
+	.dossier-hero-inner {
 		position: relative;
 		z-index: 2;
-		display: grid;
-		grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
-		gap: 2rem;
-		align-items: center;
+		width: 100%;
+		max-width: 640px;
 	}
 
 	.rise {
-		animation: rise-in 850ms var(--ease-out) both;
+		animation: sx-rise 850ms var(--ease-sx) both;
 	}
 
-	.identity-row {
+	.identity-bar {
 		display: flex;
 		align-items: center;
 		gap: 1rem;
-		margin-bottom: 0.9rem;
+		margin-bottom: 1.1rem;
 	}
 
-	.avatar {
-		width: 68px;
-		height: 68px;
+	.dossier-avatar {
+		width: 64px;
+		height: 64px;
 		object-fit: cover;
-		border-radius: 20px;
-		border: 1px solid var(--line-bright);
-		box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+		border: 1px solid rgba(255, 255, 255, 0.55);
 	}
 
-	.brand-signal {
+	.callsign {
 		margin: 0;
-		font-family: var(--font-brand);
-		font-size: clamp(2rem, 5.5vw, 3.6rem);
+		font-family: var(--font-display);
+		font-size: clamp(2.1rem, 4.5vw, 3.2rem);
 		font-weight: 800;
-		letter-spacing: -0.05em;
-		line-height: 0.95;
-		background: linear-gradient(125deg, #ffffff 15%, #99f6e4 65%, #38bdf8 100%);
-		-webkit-background-clip: text;
-		background-clip: text;
-		color: transparent;
+		letter-spacing: 0.12em;
+		line-height: 1;
+		color: #ffffff;
 	}
 
-	.about-copy h1 {
-		font-size: clamp(1.95rem, 4.6vw, 3.2rem);
+	.sub-id {
+		display: block;
+		margin-top: 0.25rem;
+		color: var(--accent);
+		font-family: var(--font-mono);
+		font-size: 0.68rem;
+		letter-spacing: 0.16em;
+	}
+
+	.dossier-copy h1 {
+		font-size: clamp(1.85rem, 4vw, 2.85rem);
+		margin-bottom: 0.85rem;
 	}
 
 	.lede {
-		max-width: 620px;
 		margin: 0;
-		color: #cbd5e1;
-		font-size: 1.08rem;
+		color: var(--ink-soft);
+		font-size: 1.02rem;
 	}
 
-	.about-stage-anchor {
-		min-height: 300px;
-		cursor: grab;
-		touch-action: pan-y;
-	}
-
-	.about-content {
-		width: min(820px, calc(100% - 40px));
-		margin: -1.2rem auto 0;
-		padding: clamp(1.7rem, 4vw, 3rem);
+	.dossier-body {
+		width: min(860px, calc(100% - 48px));
+		margin: 3rem auto 0;
+		padding: clamp(1.8rem, 4vw, 3.2rem);
 		border: 1px solid var(--line);
-		border-radius: var(--radius-lg);
-		background: var(--surface-strong);
-		box-shadow: var(--shadow);
-		backdrop-filter: blur(20px);
-		position: relative;
-		z-index: 3;
+		background: var(--bg-panel);
 	}
 
-	@media (max-width: 860px) {
-		.about-hero-inner {
-			grid-template-columns: 1fr;
+	@media (max-width: 720px) {
+		.dossier-hero {
+			padding-top: 210px;
 		}
 
-		.about-stage-anchor {
-			order: -1;
-			min-height: 210px;
-		}
-
-		.about-content {
-			width: min(100% - 28px, 820px);
-			margin-top: 0;
+		.dossier-body {
+			width: calc(100% - 28px);
+			margin-top: 1.8rem;
 		}
 	}
 </style>
