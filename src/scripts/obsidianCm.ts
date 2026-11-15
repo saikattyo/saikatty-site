@@ -11,6 +11,8 @@ import {
 	history,
 	historyKeymap,
 	indentWithTab,
+	redo,
+	undo,
 } from '@codemirror/commands';
 import {
 	markdown,
@@ -38,6 +40,7 @@ export interface ObsidianEditorCallbacks {
 	onSaveShortcut: () => void;
 	onTogglePreviewShortcut: () => void;
 	onPasteOrDropFiles: (files: File[]) => void;
+	onFocusChange?: (focused: boolean) => void;
 }
 
 const obsidianHighlightStyle = HighlightStyle.define([
@@ -108,29 +111,34 @@ const obsidianEditorTheme = EditorView.theme(
 	{
 		'&': {
 			backgroundColor: 'transparent',
-			color: '#e5e7eb',
-			fontSize: '16px',
-			height: '100%',
+			color: '#eef2f6',
+			fontSize: '16.5px',
+			height: 'auto',
+			minHeight: '52vh',
 		},
 		'.cm-scroller': {
 			fontFamily: "'Noto Sans JP', 'Atkinson', system-ui, sans-serif",
-			lineHeight: '1.9',
-			padding: '12px 0 120px',
-			overflow: 'auto',
+			lineHeight: '1.92',
+			padding: '6px 0 140px',
+			overflow: 'visible',
 		},
 		'.cm-content': {
 			caretColor: '#ffffff',
 			padding: '4px 0',
 			maxWidth: '740px',
+			minHeight: '48vh',
 		},
 		'&.cm-focused': {
 			outline: 'none',
 		},
 		'.cm-line': {
-			padding: '1px 2px',
+			padding: '2px 0',
 		},
 		'.cm-activeLine': {
-			backgroundColor: 'rgba(255, 255, 255, 0.03)',
+			backgroundColor: 'transparent',
+		},
+		'&.cm-focused .cm-activeLine': {
+			backgroundColor: 'rgba(255, 255, 255, 0.022)',
 		},
 		'.cm-selectionBackground, ::selection': {
 			backgroundColor: 'rgba(56, 189, 248, 0.25) !important',
@@ -266,6 +274,16 @@ export function insertTextAtCursor(view: EditorView, text: string): void {
 		changes: { from, to, insert: text },
 		selection: { anchor: from + text.length },
 	});
+	view.focus();
+}
+
+export function triggerUndo(view: EditorView): void {
+	undo(view);
+	view.focus();
+}
+
+export function triggerRedo(view: EditorView): void {
+	redo(view);
 	view.focus();
 }
 
@@ -415,6 +433,9 @@ export function createObsidianEditor(
 			EditorView.updateListener.of((update) => {
 				if (update.docChanged) {
 					callbacks.onChange(update.state.doc.toString());
+				}
+				if (update.focusChanged) {
+					callbacks.onFocusChange?.(update.view.hasFocus);
 				}
 			}),
 		],

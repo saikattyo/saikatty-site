@@ -7,11 +7,14 @@ import { SITE_TITLE } from '../consts';
 <html lang="ja">
 	<head>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+		<meta
+			name="viewport"
+			content="width=device-width,initial-scale=1,maximum-scale=1"
+		/>
 		<meta name="robots" content="noindex, nofollow" />
 		<meta name="theme-color" content="#000000" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
-		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black" />
 		<meta name="apple-mobile-web-app-title" content="Studio" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="manifest" href="/studio.webmanifest" />
@@ -24,11 +27,12 @@ import { SITE_TITLE } from '../consts';
 		<title>STUDIO | {SITE_TITLE}</title>
 	</head>
 	<body class="studio-body">
-		<div class="studio-shell">
-			<!-- MOBILE BACKDROP -->
-			<div class="sidebar-backdrop" data-sidebar-backdrop hidden></div>
+		<div class="studio-shell" data-studio-shell>
+			<!-- BACKDROPS FOR MOBILE DRAWER & SHEET -->
+			<div class="sheet-backdrop" data-sidebar-backdrop hidden></div>
+			<div class="sheet-backdrop" data-props-backdrop hidden></div>
 
-			<!-- LEFT VAULT SIDEBAR -->
+			<!-- LEFT VAULT SIDEBAR (SLIDE-OVER ON MOBILE) -->
 			<aside class="vault-sidebar" data-studio-sidebar aria-label="日誌・ノート一覧">
 				<div class="vault-head">
 					<a href="/" class="vault-brand" title="公開サイトへ戻る">
@@ -37,17 +41,17 @@ import { SITE_TITLE } from '../consts';
 					</a>
 					<button
 						type="button"
-						class="icon-btn mobile-only"
+						class="sheet-close-btn mobile-only"
 						data-btn-close-sidebar
 						aria-label="サイドバーを閉じる"
 					>
-						✕
+						閉じる
 					</button>
 				</div>
 
 				<div class="vault-primary-actions">
 					<button type="button" class="vault-action-primary" data-btn-daily>
-						＋ 今日の日誌
+						＋ 今日の日誌を書く
 					</button>
 					<div class="vault-action-row">
 						<button type="button" class="vault-action-sub" data-btn-new>
@@ -74,13 +78,13 @@ import { SITE_TITLE } from '../consts';
 					/>
 					<div class="vault-filters" role="tablist" aria-label="公開状態フィルタ">
 						<button type="button" class="filter-pill is-active" data-filter="all">
-							ALL
+							すべて
 						</button>
 						<button type="button" class="filter-pill" data-filter="published">
-							PUBLIC
+							公開中
 						</button>
 						<button type="button" class="filter-pill" data-filter="draft">
-							DRAFT
+							下書き
 						</button>
 					</div>
 				</div>
@@ -95,26 +99,30 @@ import { SITE_TITLE } from '../consts';
 				<div class="vault-foot">
 					<a href="/blog" class="vault-foot-link">公開JOURNALを見る ↗</a>
 					<button type="button" class="vault-foot-btn" data-btn-logout hidden>
-						切断
+						ログアウト
 					</button>
 				</div>
 			</aside>
 
 			<!-- MAIN EDITOR WORKSPACE -->
 			<section class="editor-workspace" aria-label="Markdownエディタ">
-				<!-- TOP COMMAND BAR -->
+				<!-- SAFE-AREA AWARE TOP BAR -->
 				<header class="workspace-topbar">
 					<div class="topbar-left">
+						<!-- Mobile: clean tappable note status chip (opens Settings sheet) -->
 						<button
 							type="button"
-							class="icon-btn mobile-only"
-							data-btn-open-sidebar
-							aria-label="ノート一覧を開く"
+							class="mobile-meta-chip mobile-only"
+							data-btn-mobile-meta
+							title="公開設定・プロパティを開く"
 						>
-							☰
+							<span class="chip-dot" data-mobile-pub-dot></span>
+							<span class="chip-date" data-mobile-date-label>----.--.--</span>
+							<span class="chip-sync" data-mobile-sync-label>同期済</span>
 						</button>
 
-						<label class="pub-switch" title="公開 / 下書き切替">
+						<!-- Desktop controls -->
+						<label class="pub-switch desktop-only" title="公開 / 下書き切替">
 							<input type="checkbox" checked data-input-published />
 							<span class="pub-indicator"></span>
 							<span class="pub-text" data-published-label>公開 (Published)</span>
@@ -122,7 +130,7 @@ import { SITE_TITLE } from '../consts';
 
 						<button
 							type="button"
-							class="top-pill"
+							class="top-pill desktop-only"
 							data-btn-toggle-props
 							title="スラッグ・日付・タグ・アイキャッチ設定"
 						>
@@ -130,17 +138,12 @@ import { SITE_TITLE } from '../consts';
 						</button>
 					</div>
 
-					<div class="topbar-center">
+					<div class="topbar-center desktop-only">
 						<div class="view-switcher" role="toolbar" aria-label="表示モード切替">
 							<button type="button" class="view-btn" data-view-mode="edit" aria-pressed="true">
 								EDIT
 							</button>
-							<button
-								type="button"
-								class="view-btn desktop-only"
-								data-view-mode="split"
-								aria-pressed="false"
-							>
+							<button type="button" class="view-btn" data-view-mode="split" aria-pressed="false">
 								SPLIT
 							</button>
 							<button type="button" class="view-btn" data-view-mode="preview" aria-pressed="false">
@@ -184,20 +187,51 @@ import { SITE_TITLE } from '../consts';
 
 				<!-- LOCAL DRAFT RECOVERY BANNER -->
 				<div class="draft-banner" data-draft-banner hidden>
-					<span>この端末に未アップロードの編集内容が残っています。</span>
+					<span>未アップロードの下書きがこの端末に残っています</span>
 					<div class="draft-banner-actions">
 						<button type="button" class="banner-btn primary" data-btn-restore-draft>
-							復元する
+							復元
 						</button>
 						<button type="button" class="banner-btn" data-btn-discard-draft>
-							破棄する
+							破棄
 						</button>
 					</div>
 				</div>
 
-				<!-- COLLAPSIBLE FRONTMATTER PROPERTIES DRAWER -->
+				<!-- PROPERTIES DRAWER (INLINE ON DESKTOP, NATIVE BOTTOM SHEET ON MOBILE) -->
 				<div class="props-drawer" data-props-drawer hidden>
+					<div class="props-sheet-head mobile-only">
+						<div class="sheet-grabber" aria-hidden="true"></div>
+						<div class="props-sheet-title-row">
+							<strong>ノート設定・管理</strong>
+							<button type="button" class="sheet-close-btn" data-btn-close-props>
+								完了
+							</button>
+						</div>
+					</div>
+
 					<div class="props-grid">
+						<!-- Mobile Public / Draft Switch inside Sheet -->
+						<div class="prop-field prop-wide mobile-only-block">
+							<span>公開ステータス</span>
+							<div class="mobile-pub-segmented">
+								<button
+									type="button"
+									class="seg-btn is-active"
+									data-btn-set-pub="true"
+								>
+									🟢 公開 (Published)
+								</button>
+								<button
+									type="button"
+									class="seg-btn"
+									data-btn-set-pub="false"
+								>
+									🟡 下書き (Draft)
+								</button>
+							</div>
+						</div>
+
 						<label class="prop-field">
 							<span>SLUG (URL / ファイル名)</span>
 							<input
@@ -208,7 +242,7 @@ import { SITE_TITLE } from '../consts';
 							/>
 						</label>
 						<label class="prop-field">
-							<span>DATE (JST 公開日)</span>
+							<span>DATE (公開日)</span>
 							<input type="date" data-input-date />
 						</label>
 						<label class="prop-field">
@@ -236,7 +270,7 @@ import { SITE_TITLE } from '../consts';
 									data-input-hero
 								/>
 								<button type="button" class="top-pill" data-btn-upload-hero>
-									画像アップロード
+									画像選択
 								</button>
 								<input
 									type="file"
@@ -246,80 +280,76 @@ import { SITE_TITLE } from '../consts';
 								/>
 							</div>
 						</div>
-						<div class="prop-field prop-wide mobile-only-block" data-mobile-existing-actions hidden>
-							<span>NOTE ACTIONS</span>
-							<div class="hero-input-row">
-								<button type="button" class="top-pill" data-btn-download-md-mobile>
-									.md バックアップ保存
+
+						<div class="prop-field prop-wide mobile-only-block">
+							<span>ノート操作</span>
+							<div class="mobile-sheet-actions">
+								<a
+									href="/blog"
+									target="_blank"
+									rel="noopener noreferrer"
+									class="sheet-action-btn"
+									data-link-open-live-mobile
+									hidden
+								>
+									公開ページを開く ↗
+								</a>
+								<button
+									type="button"
+									class="sheet-action-btn"
+									data-btn-download-md-mobile
+								>
+									.md ファイルを保存
 								</button>
-								<button type="button" class="top-pill danger-pill" data-btn-delete-open-mobile>
-									このノートを削除
+								<button
+									type="button"
+									class="sheet-action-btn danger"
+									data-btn-delete-open-mobile
+									hidden
+								>
+									このノートを削除…
 								</button>
 							</div>
 						</div>
 					</div>
 				</div>
 
-				<!-- INLINE OBSIDIAN-STYLE TITLE + FORMATTING RIBBON -->
-				<div class="title-and-ribbon">
-					<input
-						type="text"
-						class="inline-title-input"
-						placeholder="無題の日誌（日付ノートは空欄でも自動補完）"
-						data-input-title
-					/>
-
-					<div class="fmt-ribbon" role="toolbar" aria-label="Markdown装飾ツールバー">
-						<button type="button" class="fmt-btn" data-fmt="h2" title="見出し 2">
-							H2
-						</button>
-						<button type="button" class="fmt-btn" data-fmt="h3" title="見出し 3">
-							H3
-						</button>
-						<button type="button" class="fmt-btn" data-fmt="bold" title="太字 (Cmd+B)">
-							B
-						</button>
-						<button type="button" class="fmt-btn" data-fmt="italic" title="斜体 (Cmd+I)">
-							I
-						</button>
-						<button type="button" class="fmt-btn" data-fmt="bullet" title="箇条書き">
-							• List
-						</button>
-						<button type="button" class="fmt-btn" data-fmt="todo" title="チェックリスト">
-							☑ Todo
-						</button>
-						<button type="button" class="fmt-btn" data-fmt="quote" title="引用">
-							❝
-						</button>
-						<button type="button" class="fmt-btn" data-fmt="code" title="インラインコード">
-							&lt;/&gt;
-						</button>
-						<button type="button" class="fmt-btn" data-fmt="link" title="リンク (Cmd+K)">
-							🔗
-						</button>
-						<button type="button" class="fmt-btn" data-fmt="hr" title="区切り線 (---)">
-							―
-						</button>
-						<button type="button" class="fmt-btn" data-fmt="time" title="現在時刻を挿入 (JST)">
-							🕒 時刻
-						</button>
-						<button type="button" class="fmt-btn accent-fmt" data-fmt="image" title="画像を圧縮アップロード">
-							📷 画像追加
-						</button>
-						<input
-							type="file"
-							accept="image/*"
-							multiple
-							data-input-image-file
-							hidden
-						/>
-					</div>
+				<!-- DESKTOP FORMATTING RIBBON (HIDDEN ON MOBILE; MOBILE USES THUMB KEYBOARD BAR) -->
+				<div class="desktop-ribbon-bar desktop-only" role="toolbar" aria-label="Markdown装飾ツールバー">
+					<button type="button" class="fmt-btn" data-fmt="h2">H2</button>
+					<button type="button" class="fmt-btn" data-fmt="h3">H3</button>
+					<button type="button" class="fmt-btn" data-fmt="bold">B</button>
+					<button type="button" class="fmt-btn" data-fmt="italic">I</button>
+					<button type="button" class="fmt-btn" data-fmt="bullet">• List</button>
+					<button type="button" class="fmt-btn" data-fmt="todo">☑ Todo</button>
+					<button type="button" class="fmt-btn" data-fmt="quote">❝ Quote</button>
+					<button type="button" class="fmt-btn" data-fmt="code">&lt;/&gt;</button>
+					<button type="button" class="fmt-btn" data-fmt="link">🔗 Link</button>
+					<button type="button" class="fmt-btn" data-fmt="hr">― HR</button>
+					<button type="button" class="fmt-btn" data-fmt="time">🕒 時刻</button>
+					<button type="button" class="fmt-btn accent-fmt" data-fmt="image">📷 画像追加</button>
 				</div>
 
-				<!-- CODEMIRROR 6 + LIVE PREVIEW SPLIT GRID -->
+				<input
+					type="file"
+					accept="image/*"
+					multiple
+					data-input-image-file
+					hidden
+				/>
+
+				<!-- UNIFIED SCROLLING DOCUMENT + SPLIT PREVIEW -->
 				<div class="workspace-grid" data-workspace-grid data-mode="split">
-					<div class="editor-pane">
-						<div class="cm-mount" data-cm-host></div>
+					<div class="editor-pane" data-editor-scroll>
+						<div class="doc-container">
+							<textarea
+								rows="1"
+								class="inline-title-input"
+								placeholder="無題の日誌（日付ノートは空欄でも自動補完）"
+								data-input-title
+							></textarea>
+							<div class="cm-mount" data-cm-host></div>
+						</div>
 					</div>
 
 					<div class="preview-pane" aria-label="ライブプレビュー">
@@ -331,19 +361,81 @@ import { SITE_TITLE } from '../consts';
 					</div>
 				</div>
 
-				<!-- FOOTER TELEMETRY BAR -->
-				<footer class="workspace-statusbar">
+				<!-- DESKTOP FOOTER STATUS BAR -->
+				<footer class="workspace-statusbar desktop-only">
 					<div class="status-left">
 						<span class="dirty-pill" data-dirty-status data-state="clean">READY</span>
 						<span class="stats-text" data-editor-stats>0 文字 · 1 行</span>
 					</div>
 					<div class="status-right">
-						<span class="shortcut-hint desktop-only">
+						<span class="shortcut-hint">
 							/ でコマンド · ⌘S 保存 · ⌘E プレビュー
 						</span>
 						<span class="deploy-pill" data-deploy-status data-deploy="ready">READY</span>
 					</div>
 				</footer>
+
+				<!-- MOBILE OBSIDIAN FORMATTING BAR (DOCKED IN THUMB ZONE IN EDIT MODE) -->
+				<div
+					class="mobile-Accessory-bar mobile-only"
+					data-mobile-kb-bar
+					role="toolbar"
+					aria-label="モバイル入力ツールバー"
+				>
+					<div class="kb-scroll">
+						<button type="button" class="kb-btn" data-fmt="todo">☑ Todo</button>
+						<button type="button" class="kb-btn" data-fmt="bullet">• 箇条</button>
+						<button type="button" class="kb-btn" data-fmt="h2">H2</button>
+						<button type="button" class="kb-btn" data-fmt="h3">H3</button>
+						<button type="button" class="kb-btn" data-fmt="bold">太字</button>
+						<button type="button" class="kb-btn" data-fmt="time">🕒 時刻</button>
+						<button type="button" class="kb-btn" data-fmt="image">📷 画像</button>
+						<button type="button" class="kb-btn" data-fmt="hr">― 線</button>
+						<button type="button" class="kb-btn" data-fmt="quote">❝ 引用</button>
+						<button type="button" class="kb-btn" data-fmt="code">&lt;/&gt;</button>
+						<button type="button" class="kb-btn" data-fmt="undo" aria-label="元に戻す">↶</button>
+						<button type="button" class="kb-btn" data-fmt="redo" aria-label="やり直す">↷</button>
+					</div>
+					<button type="button" class="kb-done-btn" data-btn-kb-done hidden>
+						完了 ⌄
+					</button>
+				</div>
+
+				<!-- MOBILE ONE-THUMB BOTTOM TAB BAR -->
+				<nav class="mobile-tabbar mobile-only" data-mobile-tabbar aria-label="モバイル操作バー">
+					<button type="button" class="tab-item" data-btn-open-sidebar>
+						<svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<path d="M4 6h16M4 12h16M4 18h10" stroke-linecap="round" />
+						</svg>
+						<span class="tab-label">ノート一覧</span>
+					</button>
+					<button type="button" class="tab-item" data-btn-daily-mobile>
+						<svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<path d="M12 5v14M5 12h14" stroke-linecap="round" />
+						</svg>
+						<span class="tab-label">今日の日誌</span>
+					</button>
+					<button type="button" class="tab-item" data-btn-mobile-preview>
+						<svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z" />
+							<circle cx="12" cy="12" r="3" />
+						</svg>
+						<span class="tab-label" data-mobile-preview-label>プレビュー</span>
+					</button>
+					<button type="button" class="tab-item" data-btn-mobile-settings>
+						<svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<circle cx="12" cy="12" r="3" />
+							<path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.08a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.08a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.08a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z" />
+						</svg>
+						<span class="tab-label">設定・削除</span>
+					</button>
+					<button type="button" class="tab-item tab-save-primary" data-btn-save-mobile>
+						<svg class="tab-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+							<path d="M5 12l5 5L20 7" stroke-linecap="round" stroke-linejoin="round" />
+						</svg>
+						<span class="tab-label" data-mobile-save-label>保存する</span>
+					</button>
+				</nav>
 			</section>
 		</div>
 
@@ -358,10 +450,10 @@ import { SITE_TITLE } from '../consts';
 
 				<div class="auth-tabs">
 					<button type="button" class="auth-tab is-active" data-auth-tab="github-token">
-						GitHub Token (設定不要ですぐ利用)
+						GitHub Token (設定不要)
 					</button>
 					<button type="button" class="auth-tab" data-auth-tab="passphrase">
-						Passphrase (Cloudflare環境変数)
+						Passphrase (合言葉)
 					</button>
 				</div>
 
@@ -384,7 +476,7 @@ import { SITE_TITLE } from '../consts';
 							>
 								GitHubでFine-grained tokenを発行 ↗
 							</a>
-							（Repository: <code>saikatty-site</code> のみ / Permissions: <code>Contents: Read and write</code>）。トークンはこの端末のブラウザ内にのみ保存されます。
+							（Repository: <code>saikatty-site</code> のみ / Permissions: <code>Contents: Read and write</code>）。この端末内にのみ保存されます。
 						</p>
 					</div>
 
@@ -393,13 +485,13 @@ import { SITE_TITLE } from '../consts';
 							<span>STUDIO PASSPHRASE</span>
 							<input
 								type="password"
-								placeholder="Cloudflare Pagesに設定したパスフレーズ"
+								placeholder="Cloudflare Pagesに設定した合言葉"
 								autocomplete="current-password"
 								data-input-passphrase
 							/>
 						</label>
 						<p class="field-help">
-							Cloudflare Pages の環境変数に <code>GITHUB_TOKEN</code> と <code>STUDIO_PASSPHRASE</code> を設定すると、短い合言葉だけでログインできます。
+							Cloudflare Pages の環境変数に <code>GITHUB_TOKEN</code> と <code>STUDIO_PASSPHRASE</code> を設定すると短い合言葉だけで接続できます。
 						</p>
 					</div>
 
@@ -440,7 +532,7 @@ import { SITE_TITLE } from '../consts';
 				<h2 id="delete-modal-title">このノートを削除しますか？</h2>
 				<p class="modal-desc">
 					対象: <strong data-delete-target></strong><br />
-					Git履歴には残りますが、公開サイトおよびノート一覧から削除されます。念のため削除前に手元へ <code>.md</code> 退避も可能です。
+					Git履歴には残りますが、公開サイトおよびノート一覧から削除されます。削除前に手元へ <code>.md</code> 退避も可能です。
 				</p>
 				<div class="modal-actions">
 					<button type="button" class="top-pill" data-btn-delete-backup>
@@ -469,12 +561,21 @@ import { SITE_TITLE } from '../consts';
 </html>
 
 <style is:global>
+	:root {
+		--safe-top: env(safe-area-inset-top, 0px);
+		--safe-bottom: env(safe-area-inset-bottom, 0px);
+		--safe-left: env(safe-area-inset-left, 0px);
+		--safe-right: env(safe-area-inset-right, 0px);
+	}
+
 	.studio-body {
 		margin: 0;
 		height: 100dvh;
 		overflow: hidden;
 		background: #000000;
 		color: #ffffff;
+		overscroll-behavior: none;
+		-webkit-tap-highlight-color: transparent;
 	}
 
 	.studio-body [hidden] {
@@ -482,25 +583,36 @@ import { SITE_TITLE } from '../consts';
 	}
 
 	.studio-shell {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 100dvh;
 		display: grid;
 		grid-template-columns: 290px minmax(0, 1fr);
-		height: 100dvh;
+		grid-template-rows: minmax(0, 1fr);
 		width: 100%;
+		overflow: hidden;
+		will-change: height, transform;
 	}
 
 	/* SIDEBAR */
 	.vault-sidebar {
 		display: flex;
 		flex-direction: column;
-		height: 100dvh;
+		height: 100%;
+		min-height: 0;
+		padding-top: var(--safe-top);
+		padding-bottom: var(--safe-bottom);
+		padding-left: var(--safe-left);
 		border-right: 1px solid rgba(255, 255, 255, 0.14);
-		background: #050608;
-		z-index: 80;
+		background: #06080c;
+		z-index: 90;
 	}
 
 	.vault-head {
-		height: 56px;
-		padding: 0 16px;
+		min-height: 54px;
+		padding: 8px 16px;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
@@ -531,6 +643,19 @@ import { SITE_TITLE } from '../consts';
 		color: #ffffff;
 	}
 
+	.sheet-close-btn {
+		height: 36px;
+		padding: 0 12px;
+		border: 1px solid rgba(255, 255, 255, 0.24);
+		border-radius: 8px;
+		background: rgba(255, 255, 255, 0.06);
+		color: #ffffff;
+		font-family: var(--font-body);
+		font-size: 0.82rem;
+		font-weight: 600;
+		cursor: pointer;
+	}
+
 	.vault-primary-actions {
 		padding: 12px;
 		display: grid;
@@ -539,20 +664,15 @@ import { SITE_TITLE } from '../consts';
 	}
 
 	.vault-action-primary {
-		height: 42px;
-		border: 1.5px solid #ffffff;
+		height: 44px;
+		border: 0;
+		border-radius: 8px;
 		background: #ffffff;
 		color: #000000;
 		font-family: var(--font-body);
-		font-size: 0.88rem;
+		font-size: 0.9rem;
 		font-weight: 700;
-		letter-spacing: 0.04em;
 		cursor: pointer;
-		transition: opacity 160ms ease;
-	}
-
-	.vault-action-primary:hover {
-		opacity: 0.88;
 	}
 
 	.vault-action-row {
@@ -562,19 +682,15 @@ import { SITE_TITLE } from '../consts';
 	}
 
 	.vault-action-sub {
-		height: 36px;
-		border: 1px solid rgba(255, 255, 255, 0.24);
-		background: transparent;
+		height: 40px;
+		border: 1px solid rgba(255, 255, 255, 0.22);
+		border-radius: 8px;
+		background: rgba(255, 255, 255, 0.04);
 		color: #e5e7eb;
 		font-family: var(--font-body);
-		font-size: 0.78rem;
+		font-size: 0.82rem;
 		font-weight: 600;
 		cursor: pointer;
-	}
-
-	.vault-action-sub:hover {
-		border-color: #ffffff;
-		color: #ffffff;
 	}
 
 	.vault-search-box {
@@ -586,9 +702,10 @@ import { SITE_TITLE } from '../consts';
 
 	.vault-search-box input {
 		width: 100%;
-		height: 36px;
-		padding: 0 10px;
+		height: 40px;
+		padding: 0 12px;
 		border: 1px solid rgba(255, 255, 255, 0.18);
+		border-radius: 8px;
 		background: #000000;
 		color: #ffffff;
 		font-size: 16px;
@@ -597,24 +714,25 @@ import { SITE_TITLE } from '../consts';
 	.vault-filters {
 		display: grid;
 		grid-template-columns: repeat(3, 1fr);
-		gap: 4px;
+		gap: 6px;
 	}
 
 	.filter-pill {
-		height: 28px;
+		height: 32px;
 		border: 1px solid rgba(255, 255, 255, 0.14);
+		border-radius: 6px;
 		background: transparent;
-		color: #8e949e;
-		font-family: var(--font-mono);
-		font-size: 0.66rem;
-		letter-spacing: 0.08em;
+		color: #9ca3af;
+		font-family: var(--font-body);
+		font-size: 0.76rem;
+		font-weight: 600;
 		cursor: pointer;
 	}
 
 	.filter-pill.is-active {
 		border-color: #ffffff;
 		color: #ffffff;
-		background: rgba(255, 255, 255, 0.08);
+		background: rgba(255, 255, 255, 0.1);
 	}
 
 	.vault-count-row {
@@ -630,7 +748,7 @@ import { SITE_TITLE } from '../consts';
 
 	.conn-label {
 		color: #9ca3af;
-		max-width: 140px;
+		max-width: 145px;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -639,7 +757,8 @@ import { SITE_TITLE } from '../consts';
 	.vault-list {
 		flex: 1;
 		overflow-y: auto;
-		padding: 4px 8px 16px;
+		-webkit-overflow-scrolling: touch;
+		padding: 4px 10px 20px;
 	}
 
 	.vault-empty {
@@ -653,22 +772,22 @@ import { SITE_TITLE } from '../consts';
 		width: 100%;
 		display: block;
 		text-align: left;
-		padding: 10px 10px;
-		margin-bottom: 2px;
+		padding: 12px 12px;
+		margin-bottom: 4px;
 		border: 1px solid transparent;
+		border-radius: 8px;
 		background: transparent;
 		color: #d1d5db;
 		cursor: pointer;
-		transition: background 140ms ease, border-color 140ms ease;
 	}
 
 	.vault-item:hover {
-		background: rgba(255, 255, 255, 0.04);
+		background: rgba(255, 255, 255, 0.05);
 	}
 
 	.vault-item.is-selected {
-		background: rgba(255, 255, 255, 0.09);
-		border-color: rgba(255, 255, 255, 0.32);
+		background: rgba(255, 255, 255, 0.1);
+		border-color: rgba(255, 255, 255, 0.3);
 		color: #ffffff;
 	}
 
@@ -678,8 +797,8 @@ import { SITE_TITLE } from '../consts';
 		gap: 6px;
 		margin-bottom: 4px;
 		font-family: var(--font-mono);
-		font-size: 0.68rem;
-		color: #8e949e;
+		font-size: 0.7rem;
+		color: #94a3b8;
 	}
 
 	.vault-item-slug {
@@ -688,8 +807,8 @@ import { SITE_TITLE } from '../consts';
 	}
 
 	.status-dot {
-		width: 7px;
-		height: 7px;
+		width: 8px;
+		height: 8px;
 		border-radius: 50%;
 		flex-shrink: 0;
 	}
@@ -703,34 +822,36 @@ import { SITE_TITLE } from '../consts';
 	}
 
 	.vault-item-title {
-		font-size: 0.88rem;
+		font-size: 0.92rem;
 		font-weight: 600;
-		line-height: 1.4;
+		line-height: 1.45;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
 		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
 	}
 
 	.vault-foot {
-		padding: 10px 14px;
+		padding: 12px 14px;
 		border-top: 1px solid rgba(255, 255, 255, 0.1);
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		font-size: 0.78rem;
+		font-size: 0.82rem;
 	}
 
 	.vault-foot-link {
-		color: #9ca3af;
+		color: #cbd5e1;
 		text-decoration: none;
 	}
 
 	.vault-foot-btn {
-		border: 1px solid rgba(255, 255, 255, 0.2);
+		border: 1px solid rgba(255, 255, 255, 0.22);
+		border-radius: 6px;
 		background: transparent;
-		color: #9ca3af;
-		padding: 3px 8px;
-		font-size: 0.72rem;
+		color: #cbd5e1;
+		padding: 5px 10px;
+		font-size: 0.76rem;
 		cursor: pointer;
 	}
 
@@ -738,20 +859,26 @@ import { SITE_TITLE } from '../consts';
 	.editor-workspace {
 		display: flex;
 		flex-direction: column;
-		height: 100dvh;
+		height: 100%;
+		min-height: 0;
 		min-width: 0;
+		overflow: hidden;
 		background: #000000;
 	}
 
 	.workspace-topbar {
-		min-height: 56px;
-		padding: 8px 16px;
+		padding-top: calc(var(--safe-top) + 8px);
+		padding-bottom: 8px;
+		padding-left: max(16px, var(--safe-left));
+		padding-right: max(16px, var(--safe-right));
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 		gap: 10px;
 		border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-		background: #050608;
+		background: #05070a;
+		flex-shrink: 0;
+		z-index: 40;
 	}
 
 	.topbar-left,
@@ -762,22 +889,13 @@ import { SITE_TITLE } from '../consts';
 		gap: 8px;
 	}
 
-	.icon-btn {
-		width: 38px;
-		height: 38px;
-		border: 1px solid rgba(255, 255, 255, 0.22);
-		background: transparent;
-		color: #ffffff;
-		font-size: 1rem;
-		cursor: pointer;
-	}
-
 	.pub-switch {
 		display: inline-flex;
 		align-items: center;
 		gap: 7px;
-		padding: 6px 10px;
-		border: 1px solid rgba(255, 255, 255, 0.18);
+		height: 36px;
+		padding: 0 12px;
+		border: 1px solid rgba(255, 255, 255, 0.2);
 		font-size: 0.78rem;
 		cursor: pointer;
 		user-select: none;
@@ -818,7 +936,7 @@ import { SITE_TITLE } from '../consts';
 		background: transparent;
 		color: #e5e7eb;
 		font-family: var(--font-body);
-		font-size: 0.78rem;
+		font-size: 0.8rem;
 		font-weight: 600;
 		text-decoration: none;
 		cursor: pointer;
@@ -837,12 +955,6 @@ import { SITE_TITLE } from '../consts';
 		color: #fca5a5;
 	}
 
-	.danger-pill:hover {
-		border-color: #ef4444;
-		background: rgba(239, 68, 68, 0.15);
-		color: #fecaca;
-	}
-
 	.view-switcher {
 		display: inline-flex;
 		border: 1px solid rgba(255, 255, 255, 0.2);
@@ -850,7 +962,7 @@ import { SITE_TITLE } from '../consts';
 
 	.view-btn {
 		height: 34px;
-		padding: 0 11px;
+		padding: 0 12px;
 		border: 0;
 		background: transparent;
 		color: #8e949e;
@@ -868,14 +980,14 @@ import { SITE_TITLE } from '../consts';
 
 	.save-cta {
 		height: 38px;
-		padding: 0 16px;
-		border: 1.5px solid #ffffff;
+		padding: 0 18px;
+		border: 0;
+		border-radius: 6px;
 		background: #ffffff;
 		color: #000000;
 		font-family: var(--font-body);
-		font-size: 0.82rem;
+		font-size: 0.84rem;
 		font-weight: 700;
-		letter-spacing: 0.04em;
 		cursor: pointer;
 		white-space: nowrap;
 	}
@@ -887,7 +999,7 @@ import { SITE_TITLE } from '../consts';
 
 	/* DRAFT BANNER */
 	.draft-banner {
-		padding: 8px 18px;
+		padding: 8px 16px;
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
@@ -896,20 +1008,23 @@ import { SITE_TITLE } from '../consts';
 		background: rgba(251, 191, 36, 0.14);
 		border-bottom: 1px solid rgba(251, 191, 36, 0.4);
 		color: #fde68a;
-		font-size: 0.84rem;
+		font-size: 0.82rem;
+		flex-shrink: 0;
 	}
 
 	.draft-banner-actions {
 		display: flex;
-		gap: 8px;
+		gap: 6px;
 	}
 
 	.banner-btn {
-		padding: 4px 10px;
+		padding: 5px 12px;
 		border: 1px solid rgba(253, 230, 138, 0.5);
+		border-radius: 6px;
 		background: transparent;
 		color: #fde68a;
 		font-size: 0.78rem;
+		font-weight: 600;
 		cursor: pointer;
 	}
 
@@ -917,14 +1032,14 @@ import { SITE_TITLE } from '../consts';
 		background: #fbbf24;
 		border-color: #fbbf24;
 		color: #000000;
-		font-weight: 700;
 	}
 
-	/* PROPERTIES DRAWER */
+	/* PROPERTIES DRAWER (DESKTOP INLINE) */
 	.props-drawer {
 		padding: 14px 24px;
 		border-bottom: 1px solid rgba(255, 255, 255, 0.14);
 		background: #07090d;
+		flex-shrink: 0;
 	}
 
 	.props-grid {
@@ -937,7 +1052,7 @@ import { SITE_TITLE } from '../consts';
 	.prop-field {
 		display: flex;
 		flex-direction: column;
-		gap: 4px;
+		gap: 5px;
 	}
 
 	.prop-field.prop-wide {
@@ -945,16 +1060,17 @@ import { SITE_TITLE } from '../consts';
 	}
 
 	.prop-field span {
-		color: #8e949e;
+		color: #94a3b8;
 		font-family: var(--font-mono);
-		font-size: 0.66rem;
-		letter-spacing: 0.12em;
+		font-size: 0.68rem;
+		letter-spacing: 0.1em;
 	}
 
 	.prop-field input {
-		height: 38px;
-		padding: 0 10px;
+		height: 42px;
+		padding: 0 12px;
 		border: 1px solid rgba(255, 255, 255, 0.2);
+		border-radius: 6px;
 		background: #000000;
 		color: #ffffff;
 		font-family: var(--font-body);
@@ -963,7 +1079,7 @@ import { SITE_TITLE } from '../consts';
 
 	.prop-field input[readonly] {
 		color: #9ca3af;
-		background: #0a0c10;
+		background: #0c0f15;
 	}
 
 	.hero-input-row {
@@ -975,49 +1091,25 @@ import { SITE_TITLE } from '../consts';
 		flex: 1;
 	}
 
-	/* INLINE TITLE + FORMATTING RIBBON */
-	.title-and-ribbon {
-		padding: 14px 24px 0;
-		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-		background: #000000;
-	}
-
-	.inline-title-input {
-		width: 100%;
-		border: 0;
-		padding: 4px 0 10px;
-		background: transparent;
-		color: #ffffff;
-		font-family: var(--font-body);
-		font-size: clamp(1.35rem, 2.5vw, 1.95rem);
-		font-weight: 800;
-		letter-spacing: -0.02em;
-		outline: none;
-	}
-
-	.inline-title-input::placeholder {
-		color: #3f4654;
-	}
-
-	.fmt-ribbon {
+	/* DESKTOP RIBBON */
+	.desktop-ribbon-bar {
 		display: flex;
 		align-items: center;
 		gap: 4px;
-		padding: 6px 0 10px;
+		padding: 8px 24px;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+		background: #030406;
 		overflow-x: auto;
-		scrollbar-width: none;
-	}
-
-	.fmt-ribbon::-webkit-scrollbar {
-		display: none;
+		flex-shrink: 0;
 	}
 
 	.fmt-btn {
-		height: 34px;
+		height: 32px;
 		padding: 0 10px;
 		flex-shrink: 0;
 		border: 1px solid rgba(255, 255, 255, 0.14);
-		background: #07090d;
+		border-radius: 4px;
+		background: #080b10;
 		color: #d1d5db;
 		font-family: var(--font-mono);
 		font-size: 0.74rem;
@@ -1031,16 +1123,18 @@ import { SITE_TITLE } from '../consts';
 	}
 
 	.fmt-btn.accent-fmt {
-		border-color: rgba(255, 255, 255, 0.38);
+		border-color: rgba(255, 255, 255, 0.36);
 		color: #ffffff;
 	}
 
-	/* EDITOR / PREVIEW PANES */
+	/* UNIFIED SCROLL DOCUMENT + PREVIEW */
 	.workspace-grid {
 		flex: 1;
 		min-height: 0;
 		display: grid;
 		grid-template-columns: 1fr 1fr;
+		grid-template-rows: minmax(0, 1fr);
+		overflow: hidden;
 	}
 
 	.workspace-grid[data-mode='edit'] {
@@ -1062,20 +1156,51 @@ import { SITE_TITLE } from '../consts';
 	.editor-pane {
 		min-height: 0;
 		height: 100%;
-		padding: 0 24px;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+		padding: 20px 28px 60px;
+	}
+
+	.doc-container {
+		max-width: 740px;
+		margin: 0 auto;
+	}
+
+	/* Multi-line auto-wrapping Obsidian inline title */
+	.inline-title-input {
+		display: block;
+		width: 100%;
+		resize: none;
 		overflow: hidden;
+		border: 0;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+		padding: 0 0 12px;
+		margin: 0 0 12px;
+		background: transparent;
+		color: #ffffff;
+		font-family: var(--font-body);
+		font-size: clamp(1.38rem, 2.5vw, 1.95rem);
+		font-weight: 800;
+		line-height: 1.36;
+		letter-spacing: -0.02em;
+		outline: none;
+	}
+
+	.inline-title-input::placeholder {
+		color: #475061;
 	}
 
 	.cm-mount {
-		height: 100%;
+		min-height: 50vh;
 	}
 
 	.preview-pane {
 		min-height: 0;
 		height: 100%;
 		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
 		border-left: 1px solid rgba(255, 255, 255, 0.1);
-		background: #040507;
+		background: #040508;
 		padding: 24px 28px 120px;
 	}
 
@@ -1088,8 +1213,8 @@ import { SITE_TITLE } from '../consts';
 		margin: 0 0 8px;
 		color: #8e949e;
 		font-family: var(--font-mono);
-		font-size: 0.72rem;
-		letter-spacing: 0.08em;
+		font-size: 0.74rem;
+		letter-spacing: 0.06em;
 	}
 
 	.preview-title {
@@ -1097,12 +1222,12 @@ import { SITE_TITLE } from '../consts';
 		padding-bottom: 16px;
 		border-bottom: 1px solid rgba(255, 255, 255, 0.14);
 		font-family: var(--font-body);
-		font-size: clamp(1.5rem, 2.8vw, 2.2rem);
+		font-size: clamp(1.45rem, 2.8vw, 2.15rem);
 		font-weight: 900;
-		line-height: 1.3;
+		line-height: 1.34;
 	}
 
-	/* STATUS BAR */
+	/* DESKTOP STATUS BAR */
 	.workspace-statusbar {
 		height: 34px;
 		padding: 0 16px;
@@ -1114,6 +1239,7 @@ import { SITE_TITLE } from '../consts';
 		font-family: var(--font-mono);
 		font-size: 0.68rem;
 		color: #8e949e;
+		flex-shrink: 0;
 	}
 
 	.status-left,
@@ -1131,66 +1257,53 @@ import { SITE_TITLE } from '../consts';
 		color: #34d399;
 	}
 
-	.deploy-pill[data-deploy='building'] {
-		color: #38bdf8;
-	}
-
-	.deploy-pill[data-deploy='ready'] {
-		color: #9ca3af;
-	}
-
-	.deploy-pill[data-deploy='failed'] {
-		color: #f87171;
-	}
-
 	/* MODALS & TOAST */
 	.modal-overlay {
 		position: fixed;
 		inset: 0;
-		z-index: 120;
+		z-index: 140;
 		display: grid;
 		place-items: center;
-		padding: 20px;
-		background: rgba(0, 0, 0, 0.84);
+		padding: calc(var(--safe-top) + 16px) 16px calc(var(--safe-bottom) + 16px);
+		background: rgba(0, 0, 0, 0.85);
 		backdrop-filter: blur(10px);
-	}
-
-	.modal-overlay[hidden] {
-		display: none !important;
+		overflow-y: auto;
 	}
 
 	.modal-card {
-		width: min(540px, 100%);
-		padding: 28px;
-		border: 1px solid rgba(255, 255, 255, 0.26);
-		background: #05070b;
+		width: min(520px, 100%);
+		padding: 24px;
+		border: 1px solid rgba(255, 255, 255, 0.24);
+		border-radius: 12px;
+		background: #070a10;
 	}
 
 	.modal-card h2 {
 		font-family: var(--font-body);
-		font-size: 1.5rem;
-		margin-bottom: 0.6rem;
+		font-size: 1.4rem;
+		margin-bottom: 0.5rem;
 	}
 
 	.modal-desc {
-		font-size: 0.9rem;
+		font-size: 0.88rem;
 		color: #cbd5e1;
-		margin-bottom: 1.2rem;
+		margin-bottom: 1.1rem;
 	}
 
 	.auth-tabs {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		gap: 6px;
-		margin-bottom: 16px;
+		margin-bottom: 14px;
 	}
 
 	.auth-tab {
-		padding: 9px 8px;
+		padding: 10px 8px;
 		border: 1px solid rgba(255, 255, 255, 0.18);
+		border-radius: 8px;
 		background: transparent;
 		color: #9ca3af;
-		font-size: 0.76rem;
+		font-size: 0.78rem;
 		font-weight: 600;
 		cursor: pointer;
 	}
@@ -1198,7 +1311,7 @@ import { SITE_TITLE } from '../consts';
 	.auth-tab.is-active {
 		border-color: #ffffff;
 		color: #ffffff;
-		background: rgba(255, 255, 255, 0.08);
+		background: rgba(255, 255, 255, 0.1);
 	}
 
 	.auth-form {
@@ -1219,6 +1332,7 @@ import { SITE_TITLE } from '../consts';
 
 	.repo-advanced {
 		border: 1px solid rgba(255, 255, 255, 0.12);
+		border-radius: 8px;
 		padding: 8px 12px;
 		font-size: 0.78rem;
 		color: #9ca3af;
@@ -1239,6 +1353,7 @@ import { SITE_TITLE } from '../consts';
 		margin: 0;
 		padding: 10px 12px;
 		border: 1px solid rgba(248, 113, 113, 0.5);
+		border-radius: 8px;
 		background: rgba(239, 68, 68, 0.14);
 		color: #fecaca;
 		font-size: 0.84rem;
@@ -1260,9 +1375,10 @@ import { SITE_TITLE } from '../consts';
 	}
 
 	.danger-cta {
-		height: 38px;
+		height: 40px;
 		padding: 0 16px;
-		border: 1px solid #ef4444;
+		border: 0;
+		border-radius: 8px;
 		background: #ef4444;
 		color: #ffffff;
 		font-weight: 700;
@@ -1271,16 +1387,21 @@ import { SITE_TITLE } from '../consts';
 
 	.studio-toast {
 		position: fixed;
-		right: 20px;
-		bottom: 48px;
-		z-index: 150;
-		max-width: min(420px, calc(100vw - 32px));
-		padding: 12px 16px;
-		border: 1px solid #ffffff;
-		background: #05070b;
+		left: 50%;
+		bottom: calc(var(--safe-bottom) + 76px);
+		transform: translateX(-50%);
+		z-index: 160;
+		width: max-content;
+		max-width: calc(100vw - 32px);
+		padding: 11px 18px;
+		border: 1px solid rgba(255, 255, 255, 0.35);
+		border-radius: 999px;
+		background: rgba(10, 14, 22, 0.96);
 		color: #ffffff;
-		font-size: 0.86rem;
-		box-shadow: 0 18px 50px rgba(0, 0, 0, 0.65);
+		font-size: 0.85rem;
+		font-weight: 600;
+		box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+		backdrop-filter: blur(12px);
 	}
 
 	.studio-toast.is-error {
@@ -1288,111 +1409,359 @@ import { SITE_TITLE } from '../consts';
 		color: #fecaca;
 	}
 
-	.mobile-only {
-		display: none;
-	}
-
+	.mobile-only,
 	.mobile-only-block {
 		display: none;
 	}
 
+	/* ========================================================================
+	 * SMARTPHONE / IPHONE ERGONOMIC UX (<= 860px)
+	 * ====================================================================== */
 	@media (max-width: 860px) {
 		.desktop-only {
 			display: none !important;
 		}
 
 		.mobile-only {
-			display: inline-flex;
-			align-items: center;
-			justify-content: center;
+			display: flex;
 		}
 
 		.mobile-only-block:not([hidden]) {
 			display: flex;
 		}
 
-		.save-cta {
-			padding: 0 11px;
-			font-size: 0.76rem;
-		}
-
-		.top-pill {
-			padding: 0 9px;
-			font-size: 0.74rem;
-		}
-
-		.view-btn {
-			padding: 0 8px;
-			font-size: 0.72rem;
-		}
-
 		.studio-shell {
 			grid-template-columns: 1fr;
 		}
 
-		.sidebar-backdrop {
+		.sheet-backdrop {
 			position: fixed;
 			inset: 0;
-			z-index: 75;
-			background: rgba(0, 0, 0, 0.7);
+			z-index: 80;
+			background: rgba(0, 0, 0, 0.72);
+			backdrop-filter: blur(3px);
 		}
 
+		/* Slide-over Vault Drawer */
 		.vault-sidebar {
 			position: fixed;
 			top: 0;
 			left: 0;
 			bottom: 0;
-			width: min(300px, 86vw);
+			width: min(320px, 88vw);
 			transform: translateX(-102%);
 			transition: transform 240ms var(--ease-sx);
+			box-shadow: 20px 0 60px rgba(0, 0, 0, 0.8);
 		}
 
 		.vault-sidebar.is-open {
 			transform: translateX(0);
 		}
 
+		/* Clean Safe-Area Top Header */
 		.workspace-topbar {
-			padding: 6px 10px;
-			gap: 6px;
+			padding-top: calc(var(--safe-top) + 10px);
+			padding-bottom: 10px;
+			padding-left: max(14px, var(--safe-left));
+			padding-right: max(14px, var(--safe-right));
+			background: rgba(8, 11, 16, 0.94);
+			backdrop-filter: blur(16px);
 		}
 
-		.pub-text {
-			display: none;
+		.mobile-meta-chip {
+			height: 40px;
+			padding: 0 12px;
+			align-items: center;
+			gap: 8px;
+			border: 1px solid rgba(255, 255, 255, 0.18);
+			border-radius: 999px;
+			background: rgba(255, 255, 255, 0.05);
+			color: #e5e7eb;
+			font-family: var(--font-body);
+			font-size: 0.8rem;
+			font-weight: 600;
+			cursor: pointer;
 		}
 
-		.props-drawer {
-			padding: 12px 14px;
-			max-height: 52dvh;
-			overflow-y: auto;
+		.chip-dot {
+			width: 8px;
+			height: 8px;
+			border-radius: 50%;
+			background: #34d399;
 		}
 
-		.props-grid {
-			grid-template-columns: 1fr;
+		.chip-dot.is-draft {
+			background: #fbbf24;
 		}
 
-		.prop-field.prop-wide {
-			grid-column: auto;
+		.chip-date {
+			font-family: var(--font-mono);
+			font-size: 0.76rem;
 		}
 
-		.title-and-ribbon {
-			padding: 10px 14px 0;
+		.chip-sync {
+			color: #94a3b8;
+			font-size: 0.74rem;
 		}
 
-		.editor-pane {
-			padding: 0 14px;
+		.chip-sync[data-state='dirty'] {
+			color: #fbbf24;
 		}
 
-		.preview-pane {
-			border-left: 0;
-			padding: 18px 16px 100px;
+		.save-cta {
+			height: 40px;
+			padding: 0 18px;
+			border-radius: 999px;
+			font-size: 0.86rem;
 		}
 
+		/* Single-column writing canvas with generous breathing room */
+		.workspace-grid,
 		.workspace-grid[data-mode='split'] {
 			grid-template-columns: 1fr;
 		}
 
 		.workspace-grid[data-mode='split'] .preview-pane {
 			display: none;
+		}
+
+		.editor-pane {
+			padding: 18px 20px 48px;
+		}
+
+		.inline-title-input {
+			font-size: 1.42rem;
+			line-height: 1.38;
+			padding-bottom: 12px;
+			margin-bottom: 10px;
+		}
+
+		.preview-pane {
+			border-left: 0;
+			padding: 20px 20px 60px;
+		}
+
+		/* Native iOS Bottom Sheet for Properties & Note Actions */
+		.props-drawer {
+			position: fixed;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			z-index: 95;
+			max-height: 84dvh;
+			overflow-y: auto;
+			-webkit-overflow-scrolling: touch;
+			padding: 10px 18px calc(var(--safe-bottom) + 24px);
+			border-top: 1px solid rgba(255, 255, 255, 0.22);
+			border-bottom: 0;
+			border-radius: 20px 20px 0 0;
+			background: #0b0f17;
+			box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.85);
+		}
+
+		.props-sheet-head {
+			flex-direction: column;
+			gap: 8px;
+			margin-bottom: 14px;
+		}
+
+		.sheet-grabber {
+			width: 40px;
+			height: 4px;
+			margin: 2px auto 4px;
+			border-radius: 999px;
+			background: rgba(255, 255, 255, 0.25);
+		}
+
+		.props-sheet-title-row {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			font-size: 1rem;
+		}
+
+		.props-grid {
+			grid-template-columns: 1fr;
+			gap: 14px;
+		}
+
+		.prop-field.prop-wide {
+			grid-column: auto;
+		}
+
+		.mobile-pub-segmented {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 8px;
+		}
+
+		.seg-btn {
+			height: 44px;
+			border: 1px solid rgba(255, 255, 255, 0.18);
+			border-radius: 10px;
+			background: rgba(255, 255, 255, 0.03);
+			color: #9ca3af;
+			font-family: var(--font-body);
+			font-size: 0.84rem;
+			font-weight: 700;
+			cursor: pointer;
+		}
+
+		.seg-btn.is-active {
+			border-color: #ffffff;
+			background: rgba(255, 255, 255, 0.14);
+			color: #ffffff;
+		}
+
+		.mobile-sheet-actions {
+			display: grid;
+			gap: 8px;
+		}
+
+		.sheet-action-btn {
+			height: 46px;
+			padding: 0 16px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			border: 1px solid rgba(255, 255, 255, 0.2);
+			border-radius: 10px;
+			background: rgba(255, 255, 255, 0.04);
+			color: #ffffff;
+			font-family: var(--font-body);
+			font-size: 0.88rem;
+			font-weight: 600;
+			text-decoration: none;
+			cursor: pointer;
+		}
+
+		.sheet-action-btn.danger {
+			border-color: rgba(248, 113, 113, 0.45);
+			background: rgba(239, 68, 68, 0.12);
+			color: #fca5a5;
+		}
+
+		/* ONE-THUMB BOTTOM NAVIGATION BAR */
+		.mobile-tabbar {
+			flex-shrink: 0;
+			display: grid;
+			grid-template-columns: repeat(5, 1fr);
+			gap: 4px;
+			padding: 8px max(8px, var(--safe-right)) calc(var(--safe-bottom) + 8px) max(8px, var(--safe-left));
+			border-top: 1px solid rgba(255, 255, 255, 0.16);
+			background: #080b11;
+			z-index: 45;
+		}
+
+		/* Collapse tab bar while software keyboard is open so screen stays spacious */
+		.studio-shell.is-keyboard-open .mobile-tabbar {
+			display: none;
+		}
+
+		.tab-item {
+			height: 50px;
+			border: 0;
+			border-radius: 10px;
+			background: transparent;
+			color: #e2e8f0;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: 4px;
+			padding: 0 2px;
+			cursor: pointer;
+		}
+
+		.tab-item:active,
+		.tab-item.is-active {
+			color: #ffffff;
+			background: rgba(255, 255, 255, 0.12);
+		}
+
+		.tab-item.tab-save-primary {
+			background: #ffffff;
+			color: #000000;
+		}
+
+		.tab-item.tab-save-primary:active {
+			opacity: 0.85;
+		}
+
+		.tab-svg {
+			width: 20px;
+			height: 20px;
+			flex-shrink: 0;
+		}
+
+		.tab-label {
+			font-family: var(--font-body);
+			font-size: 0.68rem;
+			font-weight: 700;
+			letter-spacing: 0.01em;
+			white-space: nowrap;
+		}
+
+		/* OBSIDIAN MOBILE FORMATTING & KEYBOARD BAR */
+		.mobile-Accessory-bar {
+			flex-shrink: 0;
+			align-items: center;
+			gap: 8px;
+			padding: 7px 10px;
+			border-top: 1px solid rgba(255, 255, 255, 0.14);
+			background: #0c1018;
+			z-index: 50;
+		}
+
+		.studio-shell.is-keyboard-open .mobile-Accessory-bar {
+			padding-bottom: 7px;
+		}
+
+		.kb-scroll {
+			flex: 1;
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			overflow-x: auto;
+			-webkit-overflow-scrolling: touch;
+			scrollbar-width: none;
+		}
+
+		.kb-scroll::-webkit-scrollbar {
+			display: none;
+		}
+
+		.kb-btn {
+			height: 38px;
+			padding: 0 13px;
+			flex-shrink: 0;
+			border: 1px solid rgba(255, 255, 255, 0.18);
+			border-radius: 8px;
+			background: rgba(255, 255, 255, 0.06);
+			color: #f1f5f9;
+			font-family: var(--font-body);
+			font-size: 0.82rem;
+			font-weight: 600;
+			cursor: pointer;
+		}
+
+		.kb-btn:active {
+			background: #ffffff;
+			color: #000000;
+		}
+
+		.kb-done-btn {
+			height: 38px;
+			padding: 0 13px;
+			flex-shrink: 0;
+			border: 0;
+			border-radius: 8px;
+			background: #ffffff;
+			color: #000000;
+			font-family: var(--font-body);
+			font-size: 0.82rem;
+			font-weight: 700;
+			cursor: pointer;
 		}
 
 		.auth-tabs,

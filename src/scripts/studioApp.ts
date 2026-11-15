@@ -26,6 +26,8 @@ import {
 	insertTextAtCursor,
 	replaceTextInDoc,
 	toggleLinePrefix,
+	triggerRedo,
+	triggerUndo,
 	wrapSelectionWith,
 } from './obsidianCm';
 
@@ -83,6 +85,8 @@ export async function mountStudioApp(): Promise<void> {
 	const $ = <T extends HTMLElement>(sel: string) =>
 		document.querySelector<T>(sel)!;
 
+	const shellEl = $<HTMLElement>('[data-studio-shell]');
+
 	// Shell & Auth elements
 	const authOverlay = $<HTMLElement>('[data-auth-overlay]');
 	const authForm = $<HTMLFormElement>('[data-auth-form]');
@@ -101,12 +105,14 @@ export async function mountStudioApp(): Promise<void> {
 	const connBadgeEl = $<HTMLElement>('[data-conn-badge]');
 	const logoutBtn = $<HTMLButtonElement>('[data-btn-logout]');
 
-	// Sidebar elements
+	// Sidebar & Sheet Backdrops
 	const sidebarEl = $<HTMLElement>('[data-studio-sidebar]');
 	const sidebarBackdrop = $<HTMLElement>('[data-sidebar-backdrop]');
+	const propsBackdrop = $<HTMLElement>('[data-props-backdrop]');
 	const openSidebarBtn = $<HTMLButtonElement>('[data-btn-open-sidebar]');
 	const closeSidebarBtn = $<HTMLButtonElement>('[data-btn-close-sidebar]');
 	const dailyNoteBtn = $<HTMLButtonElement>('[data-btn-daily]');
+	const dailyNoteMobileBtn = $<HTMLButtonElement>('[data-btn-daily-mobile]');
 	const newNoteBtn = $<HTMLButtonElement>('[data-btn-new]');
 	const importMdBtn = $<HTMLButtonElement>('[data-btn-import-md]');
 	const importMdInput = $<HTMLInputElement>('[data-input-import-md]');
@@ -117,9 +123,19 @@ export async function mountStudioApp(): Promise<void> {
 	const entryListEl = $<HTMLElement>('[data-entry-list]');
 	const entryCountEl = $<HTMLElement>('[data-entry-count]');
 
-	// Editor workspace elements
-	const titleInput = $<HTMLInputElement>('[data-input-title]');
+	// Editor workspace & Properties Sheet
+	const titleInput = $<HTMLTextAreaElement>('[data-input-title]');
 	const propsToggleBtn = $<HTMLButtonElement>('[data-btn-toggle-props]');
+	const closePropsBtn = $<HTMLButtonElement>('[data-btn-close-props]');
+	const mobileMetaBtn = $<HTMLButtonElement>('[data-btn-mobile-meta]');
+	const mobileSettingsBtn = $<HTMLButtonElement>('[data-btn-mobile-settings]');
+	const mobilePubDot = $<HTMLElement>('[data-mobile-pub-dot]');
+	const mobileDateLabel = $<HTMLElement>('[data-mobile-date-label]');
+	const mobileSyncLabel = $<HTMLElement>('[data-mobile-sync-label]');
+	const pubSegBtns = Array.from(
+		document.querySelectorAll<HTMLButtonElement>('[data-btn-set-pub]')
+	);
+
 	const propsDrawer = $<HTMLElement>('[data-props-drawer]');
 	const slugInput = $<HTMLInputElement>('[data-input-slug]');
 	const dateInput = $<HTMLInputElement>('[data-input-date]');
@@ -137,17 +153,30 @@ export async function mountStudioApp(): Promise<void> {
 	const viewBtns = Array.from(
 		document.querySelectorAll<HTMLButtonElement>('[data-view-mode]')
 	);
+	const mobilePreviewBtn = $<HTMLButtonElement>('[data-btn-mobile-preview]');
+	const mobilePreviewLabel = $<HTMLElement>('[data-mobile-preview-label]');
+
 	const workspaceGrid = $<HTMLElement>('[data-workspace-grid]');
 	const cmHost = $<HTMLElement>('[data-cm-host]');
 	const previewTitleEl = $<HTMLElement>('[data-preview-title]');
 	const previewMetaEl = $<HTMLElement>('[data-preview-meta]');
 	const previewBodyEl = $<HTMLElement>('[data-preview-body]');
 
-	// Action & Formatting controls
+	// Mobile Bottom Bars
+	const mobileTabbar = $<HTMLElement>('[data-mobile-tabbar]');
+	const mobileKbBar = $<HTMLElement>('[data-mobile-kb-bar]');
+	const kbDoneBtn = $<HTMLButtonElement>('[data-btn-kb-done]');
+
+	// Action controls
 	const saveBtn = $<HTMLButtonElement>('[data-btn-save]');
+	const saveMobileBtn = $<HTMLButtonElement>('[data-btn-save-mobile]');
+	const mobileSaveLabel = $<HTMLElement>('[data-mobile-save-label]');
 	const deleteOpenBtn = $<HTMLButtonElement>('[data-btn-delete-open]');
+	const deleteOpenMobileBtn = $<HTMLButtonElement>('[data-btn-delete-open-mobile]');
 	const downloadMdBtn = $<HTMLButtonElement>('[data-btn-download-md]');
+	const downloadMdMobileBtn = $<HTMLButtonElement>('[data-btn-download-md-mobile]');
 	const openLiveLink = $<HTMLAnchorElement>('[data-link-open-live]');
+	const openLiveMobileLink = $<HTMLAnchorElement>('[data-link-open-live-mobile]');
 	const imageFileInput = $<HTMLInputElement>('[data-input-image-file]');
 	const heroFileInput = $<HTMLInputElement>('[data-input-hero-file]');
 
@@ -177,6 +206,8 @@ export async function mountStudioApp(): Promise<void> {
 	let isDirty = false;
 	let isSaving = false;
 	let suppressEditorEvents = false;
+	let cmFocused = false;
+	let titleFocused = false;
 	let pendingRecoverableDraft: LocalDraftSnapshot | null = null;
 	let draftTimer: number | undefined;
 	let deployPollTimer: number | undefined;
@@ -196,6 +227,45 @@ export async function mountStudioApp(): Promise<void> {
 		// Ignore
 	}
 
+	// Track iOS Safari visualViewport so Top Bar & Keyboard Accessory Bar never get pushed off-screen
+	const syncVisualViewport = () => {
+		const vv = window.visualViewport;
+		if (!vv) return;
+		shellEl.style.height = `${Math.round(vv.height)}px`;
+		shellEl.style.transform = `translate3d(0, ${Math.round(vv.offsetTop)}px, 0)`;
+		const kbOpen = window.innerHeight - vv.height > 130;
+		shellEl.classList.toggle('is-keyboard-open', kbOpen);
+		syncMobileBottomBars();
+	};
+
+	if (window.visualViewport) {
+		window.visualViewport.addEventListener('resize', syncVisualViewport);
+		window.visualViewport.addEventListener('scroll', syncVisualViewport);
+	}
+
+	const resizeTitleTextarea = () => {
+		titleInput.style.height = 'auto';
+		titleInput.style.height = `${Math.max(42, titleInput.scrollHeight)}px`;
+	};
+
+	const syncMobileBottomBars = () => {
+		const isMobileViewport = window.innerWidth <= 860;
+		if (!isMobileViewport) {
+			mobileKbBar.hidden = true;
+			mobileTabbar.hidden = true;
+			return;
+		}
+		mobileTabbar.hidden = false;
+		mobileKbBar.hidden = viewMode === 'preview';
+		kbDoneBtn.hidden = !(cmFocused || titleFocused);
+	};
+
+	window.addEventListener('resize', () => {
+		resizeTitleTextarea();
+		syncVisualViewport();
+		syncMobileBottomBars();
+	});
+
 	let toastTimer: number | undefined;
 	const showToast = (msg: string, isError = false) => {
 		toastEl.textContent = msg;
@@ -204,24 +274,51 @@ export async function mountStudioApp(): Promise<void> {
 		window.clearTimeout(toastTimer);
 		toastTimer = window.setTimeout(() => {
 			toastEl.hidden = true;
-		}, 4200);
+		}, 3800);
 	};
 
+	// Mobile Drawers / Sheets open & close helpers
 	const closeMobileSidebar = () => {
 		sidebarEl.classList.remove('is-open');
 		sidebarBackdrop.hidden = true;
 	};
 
 	const openMobileSidebar = () => {
+		closePropsSheet();
 		sidebarEl.classList.add('is-open');
 		sidebarBackdrop.hidden = false;
+	};
+
+	const closePropsSheet = () => {
+		propsDrawer.hidden = true;
+		propsBackdrop.hidden = true;
+		propsToggleBtn.classList.remove('is-active');
+	};
+
+	const togglePropsSheet = () => {
+		const willOpen = propsDrawer.hidden;
+		if (willOpen) {
+			closeMobileSidebar();
+			propsDrawer.hidden = false;
+			if (window.innerWidth <= 860) {
+				propsBackdrop.hidden = false;
+			}
+			propsToggleBtn.classList.add('is-active');
+		} else {
+			closePropsSheet();
+		}
 	};
 
 	openSidebarBtn.addEventListener('click', openMobileSidebar);
 	closeSidebarBtn.addEventListener('click', closeMobileSidebar);
 	sidebarBackdrop.addEventListener('click', closeMobileSidebar);
 
-	// Initialize CodeMirror 6 Obsidian Editor
+	propsToggleBtn.addEventListener('click', togglePropsSheet);
+	mobileMetaBtn.addEventListener('click', togglePropsSheet);
+	mobileSettingsBtn.addEventListener('click', togglePropsSheet);
+	closePropsBtn.addEventListener('click', closePropsSheet);
+	propsBackdrop.addEventListener('click', closePropsSheet);
+
 	let editorView: EditorView;
 
 	const getBodyText = (): string =>
@@ -248,27 +345,37 @@ export async function mountStudioApp(): Promise<void> {
 		const pub = publishedToggle.checked;
 		publishedLabel.textContent = pub ? '公開 (Published)' : '下書き (Draft)';
 		publishedLabel.classList.toggle('is-draft', !pub);
-		saveBtn.textContent = isNewEntry
+
+		mobilePubDot.classList.toggle('is-draft', !pub);
+		mobileDateLabel.textContent = (dateInput.value || formatJstDate()).replace(/-/g, '.');
+
+		pubSegBtns.forEach((btn) => {
+			btn.classList.toggle('is-active', (btn.dataset.btnSetPub === 'true') === pub);
+		});
+
+		const ctaLabel = isNewEntry
 			? pub
-				? '公開アップロード'
+				? '公開する'
 				: '下書き保存'
 			: pub
-				? '更新を反映'
+				? '保存する'
 				: '下書き更新';
+		saveBtn.textContent = ctaLabel;
+		mobileSaveLabel.textContent = ctaLabel;
 
 		if (!isNewEntry && pub && currentSlug) {
-			openLiveLink.href = `/blog/${currentSlug}/`;
+			const liveHref = `/blog/${currentSlug}/`;
+			openLiveLink.href = liveHref;
+			openLiveMobileLink.href = liveHref;
 			openLiveLink.hidden = false;
+			openLiveMobileLink.hidden = false;
 		} else {
 			openLiveLink.hidden = true;
+			openLiveMobileLink.hidden = true;
 		}
 
 		deleteOpenBtn.hidden = isNewEntry;
-		document
-			.querySelectorAll<HTMLElement>('[data-mobile-existing-actions]')
-			.forEach((el) => {
-				el.hidden = isNewEntry;
-			});
+		deleteOpenMobileBtn.hidden = isNewEntry;
 	};
 
 	const renderPreviewAndStats = () => {
@@ -294,7 +401,7 @@ export async function mountStudioApp(): Promise<void> {
 	};
 
 	const setViewMode = (next: 'edit' | 'split' | 'preview') => {
-		if (next === 'split' && window.innerWidth < 860) {
+		if (next === 'split' && window.innerWidth <= 860) {
 			next = viewMode === 'preview' ? 'edit' : 'preview';
 		}
 		viewMode = next;
@@ -304,11 +411,17 @@ export async function mountStudioApp(): Promise<void> {
 			b.classList.toggle('is-active', active);
 			b.setAttribute('aria-pressed', String(active));
 		}
+
+		const isPrev = viewMode === 'preview';
+		mobilePreviewBtn.classList.toggle('is-active', isPrev);
+		mobilePreviewLabel.textContent = isPrev ? '書く' : 'プレビュー';
+
 		try {
 			window.localStorage.setItem(VIEW_MODE_KEY, viewMode);
 		} catch {
 			// Ignore
 		}
+		syncMobileBottomBars();
 		renderPreviewAndStats();
 	};
 
@@ -329,8 +442,10 @@ export async function mountStudioApp(): Promise<void> {
 				baseSha: currentSha,
 			});
 			if (isDirty) {
-				dirtyStatusEl.textContent = '未反映（端末に自動退避済）';
+				dirtyStatusEl.textContent = '未反映（端末退避済）';
 				dirtyStatusEl.dataset.state = 'dirty';
+				mobileSyncLabel.textContent = '未保存';
+				mobileSyncLabel.dataset.state = 'dirty';
 			}
 		}, 250);
 	};
@@ -340,18 +455,22 @@ export async function mountStudioApp(): Promise<void> {
 		isDirty = true;
 		dirtyStatusEl.textContent = '編集中…';
 		dirtyStatusEl.dataset.state = 'dirty';
+		mobileSyncLabel.textContent = '編集中';
+		mobileSyncLabel.dataset.state = 'dirty';
+		updatePublishedUi();
 		renderPreviewAndStats();
 		scheduleLocalDraftSave();
 	};
 
-	const markClean = (label = '同期済み') => {
+	const markClean = (label = '同期済') => {
 		window.clearTimeout(draftTimer);
 		isDirty = false;
 		dirtyStatusEl.textContent = label;
 		dirtyStatusEl.dataset.state = 'clean';
+		mobileSyncLabel.textContent = label;
+		mobileSyncLabel.dataset.state = 'clean';
 	};
 
-	// Guard accidental tab close when dirty
 	window.addEventListener('beforeunload', (e) => {
 		if (isDirty) {
 			e.preventDefault();
@@ -457,6 +576,7 @@ export async function mountStudioApp(): Promise<void> {
 			tagsInput.value = snap.tagsInput || '';
 			publishedToggle.checked = snap.published;
 			setBodyText(snap.body);
+			resizeTitleTextarea();
 			updatePublishedUi();
 			renderPreviewAndStats();
 		} finally {
@@ -467,7 +587,7 @@ export async function mountStudioApp(): Promise<void> {
 	const openExistingEntry = async (slug: string) => {
 		if (!client) return;
 		try {
-			dirtyStatusEl.textContent = '読み込み中…';
+			mobileSyncLabel.textContent = '読込中…';
 			const detail = await client.getEntry(slug);
 			currentSlug = detail.slug;
 			currentSha = detail.sha;
@@ -485,10 +605,9 @@ export async function mountStudioApp(): Promise<void> {
 				body: detail.body,
 			});
 
-			markClean('同期済み');
+			markClean('同期済');
 			renderSidebarList();
 
-			// Check if an unsaved local draft exists for this slug with different content
 			const local = readLocalDraft(detail.slug);
 			if (
 				local &&
@@ -509,9 +628,9 @@ export async function mountStudioApp(): Promise<void> {
 
 	const startNewNote = (opts?: { dailyMode?: boolean }) => {
 		if (!confirmDiscardIfDirty()) return;
+		if (viewMode === 'preview') setViewMode('edit');
 		const daily = resolveDailyNoteSlug(entries.map((e) => e.slug));
 
-		// If user tapped "今日の日誌" and today's entry already exists, open it directly!
 		if (opts?.dailyMode && daily.existsToday) {
 			void openExistingEntry(daily.todaySlug);
 			closeMobileSidebar();
@@ -528,9 +647,7 @@ export async function mountStudioApp(): Promise<void> {
 		draftBanner.hidden = true;
 
 		const defaultTitle = opts?.dailyMode ? `${daily.dateStr} 日誌` : '';
-		const defaultBody = opts?.dailyMode
-			? `**${formatJstTime()}**\n\n`
-			: '';
+		const defaultBody = opts?.dailyMode ? `**${formatJstTime()}**\n\n` : '';
 
 		applySnapshotToForm({
 			slug: targetSlug,
@@ -543,16 +660,16 @@ export async function mountStudioApp(): Promise<void> {
 			body: defaultBody,
 		});
 
-		// Restore unsaved new draft if matching
 		const savedLocal = readLocalDraft(targetSlug);
 		if (savedLocal && savedLocal.body.trim()) {
 			pendingRecoverableDraft = savedLocal;
 			draftBanner.hidden = false;
 		}
 
-		markClean('新規ノート');
+		markClean('新規');
 		renderSidebarList();
 		closeMobileSidebar();
+		closePropsSheet();
 
 		if (opts?.dailyMode) {
 			editorView.focus();
@@ -582,7 +699,6 @@ export async function mountStudioApp(): Promise<void> {
 		showToast('ローカル下書きを破棄しました');
 	});
 
-	// Poll Cloudflare Pages deployment progress briefly after saving/deleting
 	const pollDeployProgress = () => {
 		if (!client) return;
 		window.clearInterval(deployPollTimer);
@@ -619,7 +735,6 @@ export async function mountStudioApp(): Promise<void> {
 		deployPollTimer = window.setInterval(() => void checkOnce(), 5000);
 	};
 
-	// Save / Upload Entry
 	const handleSave = async () => {
 		if (!client || isSaving) return;
 
@@ -627,17 +742,18 @@ export async function mountStudioApp(): Promise<void> {
 		const slugCheck = validateSlug(rawSlug);
 		if (!slugCheck.ok) {
 			propsDrawer.hidden = false;
+			if (window.innerWidth <= 860) propsBackdrop.hidden = false;
 			slugInput.focus();
 			showToast(slugCheck.error, true);
 			return;
 		}
 
 		const body = getBodyText();
-		let title = titleInput.value.trim();
+		let title = titleInput.value.trim().replace(/\s*\n+\s*/g, ' ');
 		if (!title && /^\d{4}-\d{2}-\d{2}/.test(slugCheck.slug)) {
-			// Effortless daily journal fallback if title left blank on a dated note
 			title = `${dateInput.value || slugCheck.slug.slice(0, 10)} 日誌`;
 			titleInput.value = title;
+			resizeTitleTextarea();
 		}
 
 		const frontmatter = {
@@ -660,15 +776,15 @@ export async function mountStudioApp(): Promise<void> {
 			return;
 		}
 
-		// Populate auto-extracted description visually so user sees what was generated
 		if (!descInput.value.trim()) {
 			descInput.value = precheck.normalized.description;
 		}
 
 		isSaving = true;
 		saveBtn.disabled = true;
-		const prevLabel = saveBtn.textContent;
+		saveMobileBtn.disabled = true;
 		saveBtn.textContent = '保存中…';
+		mobileSaveLabel.textContent = '保存中…';
 
 		try {
 			const res = await client.saveEntry({
@@ -690,7 +806,7 @@ export async function mountStudioApp(): Promise<void> {
 			slugInput.readOnly = true;
 			draftBanner.hidden = true;
 
-			markClean('保存完了');
+			markClean('保存済');
 			updatePublishedUi();
 
 			entries = await client.listEntries();
@@ -708,12 +824,11 @@ export async function mountStudioApp(): Promise<void> {
 		} finally {
 			isSaving = false;
 			saveBtn.disabled = false;
-			saveBtn.textContent = prevLabel;
+			saveMobileBtn.disabled = false;
 			updatePublishedUi();
 		}
 	};
 
-	// Upload Images & Import `.md` Files
 	const handleFilesUpload = async (files: File[]) => {
 		if (!client || files.length === 0) return;
 
@@ -722,7 +837,8 @@ export async function mountStudioApp(): Promise<void> {
 				if (!confirmDiscardIfDirty()) return;
 				const text = await file.text();
 				const baseSlug =
-					sanitizeSlug(file.name) || resolveDailyNoteSlug(entries.map((e) => e.slug)).nextFreeSlug;
+					sanitizeSlug(file.name) ||
+					resolveDailyNoteSlug(entries.map((e) => e.slug)).nextFreeSlug;
 				const parsed = parseJournalMarkdown(text, baseSlug);
 				const existing = entries.find((e) => e.slug === baseSlug);
 
@@ -742,10 +858,11 @@ export async function mountStudioApp(): Promise<void> {
 					body: parsed.body,
 				});
 				markDirty();
+				closeMobileSidebar();
 				showToast(
 					existing
-						? `「${file.name}」を読み込みました（保存すると既存の ${baseSlug}.md を更新します）`
-						: `「${file.name}」をインポートしました（保存ボタンで反映）`
+						? `「${file.name}」を読み込みました（保存で上書き更新）`
+						: `「${file.name}」を取り込みました（保存で反映）`
 				);
 				continue;
 			}
@@ -758,7 +875,7 @@ export async function mountStudioApp(): Promise<void> {
 					const alt = file.name.replace(/\.[^.]+$/, '');
 					replaceTextInDoc(editorView, token, `![${alt}](${uploaded.publicUrl})`);
 					markDirty();
-					showToast(`画像をアップロードしました (${uploaded.publicUrl})`);
+					showToast(`画像を挿入しました (${uploaded.publicUrl})`);
 				} catch (err) {
 					replaceTextInDoc(editorView, `${token}\n`, '');
 					const msg =
@@ -769,7 +886,6 @@ export async function mountStudioApp(): Promise<void> {
 		}
 	};
 
-	// Download current note as pure `.md` file (for Obsidian backup or safe pre-delete archive)
 	const downloadCurrentMarkdown = () => {
 		const slug = sanitizeSlug(slugInput.value) || currentSlug || formatJstDate();
 		const serialized = serializeJournalMarkdown(
@@ -798,19 +914,17 @@ export async function mountStudioApp(): Promise<void> {
 		URL.revokeObjectURL(url);
 	};
 
-	// Safe Delete Flow
 	const openDeleteModal = () => {
 		if (isNewEntry || !currentSlug) return;
-		deleteTargetLabel.textContent = `${titleInput.value || currentSlug} (src/content/blog/${currentSlug}.md)`;
+		closePropsSheet();
+		deleteTargetLabel.textContent = `${titleInput.value || currentSlug} (${currentSlug}.md)`;
 		deleteModal.hidden = false;
 	};
+
 	deleteOpenBtn.addEventListener('click', openDeleteModal);
-	document
-		.querySelector<HTMLButtonElement>('[data-btn-delete-open-mobile]')
-		?.addEventListener('click', openDeleteModal);
-	document
-		.querySelector<HTMLButtonElement>('[data-btn-download-md-mobile]')
-		?.addEventListener('click', downloadCurrentMarkdown);
+	deleteOpenMobileBtn.addEventListener('click', openDeleteModal);
+	downloadMdBtn.addEventListener('click', downloadCurrentMarkdown);
+	downloadMdMobileBtn.addEventListener('click', downloadCurrentMarkdown);
 
 	deleteCancelBtn.addEventListener('click', () => {
 		deleteModal.hidden = true;
@@ -818,7 +932,7 @@ export async function mountStudioApp(): Promise<void> {
 
 	deleteBackupBtn.addEventListener('click', () => {
 		downloadCurrentMarkdown();
-		showToast(`${currentSlug}.md をダウンロード退避しました`);
+		showToast(`${currentSlug}.md を保存しました`);
 	});
 
 	deleteConfirmBtn.addEventListener('click', async () => {
@@ -850,19 +964,60 @@ export async function mountStudioApp(): Promise<void> {
 		}
 	});
 
-	// Mount CodeMirror editor
+	// Mount CodeMirror 6 editor
 	editorView = createObsidianEditor(cmHost, '', {
 		onChange: () => markDirty(),
 		onSaveShortcut: () => void handleSave(),
 		onTogglePreviewShortcut: () =>
 			setViewMode(viewMode === 'preview' ? 'edit' : 'preview'),
 		onPasteOrDropFiles: (files) => void handleFilesUpload(files),
+		onFocusChange: (focused) => {
+			cmFocused = focused;
+			window.setTimeout(syncMobileBottomBars, 40);
+		},
 	});
 
-	// Wire toolbar formatting actions
+	titleInput.addEventListener('focus', () => {
+		titleFocused = true;
+		syncMobileBottomBars();
+	});
+	titleInput.addEventListener('blur', () => {
+		titleFocused = false;
+		window.setTimeout(syncMobileBottomBars, 40);
+	});
+	titleInput.addEventListener('keydown', (e) => {
+		if (e.key === 'Enter' && !e.isComposing) {
+			e.preventDefault();
+			editorView.focus();
+		}
+	});
+	titleInput.addEventListener('input', () => {
+		resizeTitleTextarea();
+		markDirty();
+	});
+
+	kbDoneBtn.addEventListener('click', () => {
+		editorView.contentDOM.blur();
+		titleInput.blur();
+		cmFocused = false;
+		titleFocused = false;
+		syncMobileBottomBars();
+	});
+
+	// Wire formatting & Undo/Redo actions without stealing focus from iOS keyboard
 	document.querySelectorAll<HTMLButtonElement>('[data-fmt]').forEach((btn) => {
+		btn.addEventListener('mousedown', (e) => {
+			if (btn.dataset.fmt !== 'image') {
+				e.preventDefault();
+			}
+		});
 		btn.addEventListener('click', () => {
 			const kind = btn.dataset.fmt;
+			if (kind === 'image') {
+				imageFileInput.click();
+				return;
+			}
+			if (viewMode === 'preview') setViewMode('edit');
 			switch (kind) {
 				case 'h2':
 					toggleLinePrefix(editorView, '## ');
@@ -897,8 +1052,11 @@ export async function mountStudioApp(): Promise<void> {
 				case 'time':
 					insertTextAtCursor(editorView, `**${formatJstTime()}** `);
 					break;
-				case 'image':
-					imageFileInput.click();
+				case 'undo':
+					triggerUndo(editorView);
+					break;
+				case 'redo':
+					triggerRedo(editorView);
 					break;
 			}
 		});
@@ -922,15 +1080,15 @@ export async function mountStudioApp(): Promise<void> {
 			const uploaded = await client.uploadImage(file);
 			heroInput.value = uploaded.publicUrl;
 			markDirty();
-			showToast(`アイキャッチ画像を設定しました (${uploaded.publicUrl})`);
+			showToast(`アイキャッチを設定しました (${uploaded.publicUrl})`);
 		} catch (err) {
 			showToast(
-				err instanceof Error ? err.message : 'アイキャッチ画像のアップロードに失敗しました',
+				err instanceof Error ? err.message : 'アイキャッチのアップロードに失敗しました',
 				true
 			);
 		} finally {
 			uploadHeroBtn.disabled = false;
-			uploadHeroBtn.textContent = '画像アップロード';
+			uploadHeroBtn.textContent = '画像選択';
 		}
 	});
 
@@ -942,13 +1100,7 @@ export async function mountStudioApp(): Promise<void> {
 		}
 	});
 
-	// Wire properties & metadata inputs
-	propsToggleBtn.addEventListener('click', () => {
-		propsDrawer.hidden = !propsDrawer.hidden;
-		propsToggleBtn.classList.toggle('is-active', !propsDrawer.hidden);
-	});
-
-	[titleInput, slugInput, dateInput, descInput, tagsInput, heroInput].forEach((el) => {
+	[slugInput, dateInput, descInput, tagsInput, heroInput].forEach((el) => {
 		el.addEventListener('input', () => markDirty());
 	});
 
@@ -957,10 +1109,23 @@ export async function mountStudioApp(): Promise<void> {
 		markDirty();
 	});
 
+	pubSegBtns.forEach((btn) => {
+		btn.addEventListener('click', () => {
+			publishedToggle.checked = btn.dataset.btnSetPub === 'true';
+			updatePublishedUi();
+			markDirty();
+		});
+	});
+
 	dailyNoteBtn.addEventListener('click', () => startNewNote({ dailyMode: true }));
+	dailyNoteMobileBtn.addEventListener('click', () => startNewNote({ dailyMode: true }));
 	newNoteBtn.addEventListener('click', () => startNewNote({ dailyMode: false }));
 	saveBtn.addEventListener('click', () => void handleSave());
-	downloadMdBtn.addEventListener('click', downloadCurrentMarkdown);
+	saveMobileBtn.addEventListener('click', () => void handleSave());
+
+	mobilePreviewBtn.addEventListener('click', () => {
+		setViewMode(viewMode === 'preview' ? 'edit' : 'preview');
+	});
 
 	searchInput.addEventListener('input', () => {
 		searchQuery = searchInput.value;
@@ -983,6 +1148,8 @@ export async function mountStudioApp(): Promise<void> {
 	});
 
 	setViewMode(viewMode);
+	syncVisualViewport();
+	syncMobileBottomBars();
 
 	// Auth Modal Tab Switching
 	let selectedAuthTab: 'passphrase' | 'github-token' = 'github-token';
@@ -1026,7 +1193,6 @@ export async function mountStudioApp(): Promise<void> {
 		entries = await client.listEntries();
 		renderSidebarList();
 
-		// Open URL `?slug=...` if specified, else open latest entry or start today's daily note
 		const urlSlug = new URLSearchParams(window.location.search).get('slug');
 		if (urlSlug && entries.some((e) => e.slug === urlSlug)) {
 			await openExistingEntry(urlSlug);
@@ -1086,10 +1252,10 @@ export async function mountStudioApp(): Promise<void> {
 		client = null;
 		tokenInput.value = '';
 		passphraseInput.value = '';
+		closeMobileSidebar();
 		authOverlay.hidden = false;
 	});
 
-	// Boot sequence
 	capabilities = await detectStudioCapabilities();
 	repoOwnerInput.value = capabilities.owner;
 	repoNameInput.value = capabilities.repo;
@@ -1108,7 +1274,7 @@ export async function mountStudioApp(): Promise<void> {
 			);
 			return;
 		} catch {
-			// Fall through to auth overlay if local-fs unexpected failure
+			// Fall through
 		}
 	}
 
