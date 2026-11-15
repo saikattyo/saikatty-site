@@ -1,0 +1,1403 @@
+---
+import '../styles/global.css';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="ja">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+		<meta name="robots" content="noindex, nofollow" />
+		<meta name="theme-color" content="#000000" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+		<meta name="apple-mobile-web-app-title" content="Studio" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="manifest" href="/studio.webmanifest" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;700;900&family=Space+Grotesk:wght@600;700&display=swap"
+			rel="stylesheet"
+		/>
+		<title>STUDIO | {SITE_TITLE}</title>
+	</head>
+	<body class="studio-body">
+		<div class="studio-shell">
+			<!-- MOBILE BACKDROP -->
+			<div class="sidebar-backdrop" data-sidebar-backdrop hidden></div>
+
+			<!-- LEFT VAULT SIDEBAR -->
+			<aside class="vault-sidebar" data-studio-sidebar aria-label="日誌・ノート一覧">
+				<div class="vault-head">
+					<a href="/" class="vault-brand" title="公開サイトへ戻る">
+						<span class="vault-brand-word">SAIKATTYO</span>
+						<span class="vault-badge">STUDIO</span>
+					</a>
+					<button
+						type="button"
+						class="icon-btn mobile-only"
+						data-btn-close-sidebar
+						aria-label="サイドバーを閉じる"
+					>
+						✕
+					</button>
+				</div>
+
+				<div class="vault-primary-actions">
+					<button type="button" class="vault-action-primary" data-btn-daily>
+						＋ 今日の日誌
+					</button>
+					<div class="vault-action-row">
+						<button type="button" class="vault-action-sub" data-btn-new>
+							＋ 新規ノート
+						</button>
+						<button type="button" class="vault-action-sub" data-btn-import-md>
+							↑ .md 取込
+						</button>
+						<input
+							type="file"
+							accept=".md,.mdx,text/markdown,text/plain"
+							data-input-import-md
+							hidden
+						/>
+					</div>
+				</div>
+
+				<div class="vault-search-box">
+					<input
+						type="search"
+						placeholder="タイトル・タグ・日付で検索…"
+						data-input-search
+						aria-label="ノート検索"
+					/>
+					<div class="vault-filters" role="tablist" aria-label="公開状態フィルタ">
+						<button type="button" class="filter-pill is-active" data-filter="all">
+							ALL
+						</button>
+						<button type="button" class="filter-pill" data-filter="published">
+							PUBLIC
+						</button>
+						<button type="button" class="filter-pill" data-filter="draft">
+							DRAFT
+						</button>
+					</div>
+				</div>
+
+				<div class="vault-count-row">
+					<span data-entry-count>0 NOTES</span>
+					<span class="conn-label" data-conn-badge>CONNECTING</span>
+				</div>
+
+				<div class="vault-list" data-entry-list role="list"></div>
+
+				<div class="vault-foot">
+					<a href="/blog" class="vault-foot-link">公開JOURNALを見る ↗</a>
+					<button type="button" class="vault-foot-btn" data-btn-logout hidden>
+						切断
+					</button>
+				</div>
+			</aside>
+
+			<!-- MAIN EDITOR WORKSPACE -->
+			<section class="editor-workspace" aria-label="Markdownエディタ">
+				<!-- TOP COMMAND BAR -->
+				<header class="workspace-topbar">
+					<div class="topbar-left">
+						<button
+							type="button"
+							class="icon-btn mobile-only"
+							data-btn-open-sidebar
+							aria-label="ノート一覧を開く"
+						>
+							☰
+						</button>
+
+						<label class="pub-switch" title="公開 / 下書き切替">
+							<input type="checkbox" checked data-input-published />
+							<span class="pub-indicator"></span>
+							<span class="pub-text" data-published-label>公開 (Published)</span>
+						</label>
+
+						<button
+							type="button"
+							class="top-pill"
+							data-btn-toggle-props
+							title="スラッグ・日付・タグ・アイキャッチ設定"
+						>
+							プロパティ
+						</button>
+					</div>
+
+					<div class="topbar-center">
+						<div class="view-switcher" role="toolbar" aria-label="表示モード切替">
+							<button type="button" class="view-btn" data-view-mode="edit" aria-pressed="true">
+								EDIT
+							</button>
+							<button
+								type="button"
+								class="view-btn desktop-only"
+								data-view-mode="split"
+								aria-pressed="false"
+							>
+								SPLIT
+							</button>
+							<button type="button" class="view-btn" data-view-mode="preview" aria-pressed="false">
+								PREVIEW
+							</button>
+						</div>
+					</div>
+
+					<div class="topbar-right">
+						<a
+							href="/blog"
+							target="_blank"
+							rel="noopener noreferrer"
+							class="top-pill desktop-only"
+							data-link-open-live
+							hidden
+						>
+							公開ページ ↗
+						</a>
+						<button
+							type="button"
+							class="top-pill desktop-only"
+							data-btn-download-md
+							title="Obsidian互換のMarkdownファイルをダウンロード"
+						>
+							.md 保存
+						</button>
+						<button
+							type="button"
+							class="top-pill danger-pill desktop-only"
+							data-btn-delete-open
+							hidden
+						>
+							削除
+						</button>
+						<button type="button" class="save-cta" data-btn-save>
+							公開アップロード
+						</button>
+					</div>
+				</header>
+
+				<!-- LOCAL DRAFT RECOVERY BANNER -->
+				<div class="draft-banner" data-draft-banner hidden>
+					<span>この端末に未アップロードの編集内容が残っています。</span>
+					<div class="draft-banner-actions">
+						<button type="button" class="banner-btn primary" data-btn-restore-draft>
+							復元する
+						</button>
+						<button type="button" class="banner-btn" data-btn-discard-draft>
+							破棄する
+						</button>
+					</div>
+				</div>
+
+				<!-- COLLAPSIBLE FRONTMATTER PROPERTIES DRAWER -->
+				<div class="props-drawer" data-props-drawer hidden>
+					<div class="props-grid">
+						<label class="prop-field">
+							<span>SLUG (URL / ファイル名)</span>
+							<input
+								type="text"
+								placeholder="2026-11-15"
+								data-input-slug
+								spellcheck="false"
+							/>
+						</label>
+						<label class="prop-field">
+							<span>DATE (JST 公開日)</span>
+							<input type="date" data-input-date />
+						</label>
+						<label class="prop-field">
+							<span>TAGS (カンマ区切り)</span>
+							<input
+								type="text"
+								placeholder="daily, thought, tech"
+								data-input-tags
+							/>
+						</label>
+						<label class="prop-field prop-wide">
+							<span>DESCRIPTION (空欄なら本文先頭から自動生成)</span>
+							<input
+								type="text"
+								placeholder="一覧に表示される短い要約（省略可）"
+								data-input-desc
+							/>
+						</label>
+						<div class="prop-field prop-wide">
+							<span>HERO IMAGE (任意)</span>
+							<div class="hero-input-row">
+								<input
+									type="text"
+									placeholder="/uploads/2026/11/photo.webp"
+									data-input-hero
+								/>
+								<button type="button" class="top-pill" data-btn-upload-hero>
+									画像アップロード
+								</button>
+								<input
+									type="file"
+									accept="image/*"
+									data-input-hero-file
+									hidden
+								/>
+							</div>
+						</div>
+						<div class="prop-field prop-wide mobile-only-block" data-mobile-existing-actions hidden>
+							<span>NOTE ACTIONS</span>
+							<div class="hero-input-row">
+								<button type="button" class="top-pill" data-btn-download-md-mobile>
+									.md バックアップ保存
+								</button>
+								<button type="button" class="top-pill danger-pill" data-btn-delete-open-mobile>
+									このノートを削除
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- INLINE OBSIDIAN-STYLE TITLE + FORMATTING RIBBON -->
+				<div class="title-and-ribbon">
+					<input
+						type="text"
+						class="inline-title-input"
+						placeholder="無題の日誌（日付ノートは空欄でも自動補完）"
+						data-input-title
+					/>
+
+					<div class="fmt-ribbon" role="toolbar" aria-label="Markdown装飾ツールバー">
+						<button type="button" class="fmt-btn" data-fmt="h2" title="見出し 2">
+							H2
+						</button>
+						<button type="button" class="fmt-btn" data-fmt="h3" title="見出し 3">
+							H3
+						</button>
+						<button type="button" class="fmt-btn" data-fmt="bold" title="太字 (Cmd+B)">
+							B
+						</button>
+						<button type="button" class="fmt-btn" data-fmt="italic" title="斜体 (Cmd+I)">
+							I
+						</button>
+						<button type="button" class="fmt-btn" data-fmt="bullet" title="箇条書き">
+							• List
+						</button>
+						<button type="button" class="fmt-btn" data-fmt="todo" title="チェックリスト">
+							☑ Todo
+						</button>
+						<button type="button" class="fmt-btn" data-fmt="quote" title="引用">
+							❝
+						</button>
+						<button type="button" class="fmt-btn" data-fmt="code" title="インラインコード">
+							&lt;/&gt;
+						</button>
+						<button type="button" class="fmt-btn" data-fmt="link" title="リンク (Cmd+K)">
+							🔗
+						</button>
+						<button type="button" class="fmt-btn" data-fmt="hr" title="区切り線 (---)">
+							―
+						</button>
+						<button type="button" class="fmt-btn" data-fmt="time" title="現在時刻を挿入 (JST)">
+							🕒 時刻
+						</button>
+						<button type="button" class="fmt-btn accent-fmt" data-fmt="image" title="画像を圧縮アップロード">
+							📷 画像追加
+						</button>
+						<input
+							type="file"
+							accept="image/*"
+							multiple
+							data-input-image-file
+							hidden
+						/>
+					</div>
+				</div>
+
+				<!-- CODEMIRROR 6 + LIVE PREVIEW SPLIT GRID -->
+				<div class="workspace-grid" data-workspace-grid data-mode="split">
+					<div class="editor-pane">
+						<div class="cm-mount" data-cm-host></div>
+					</div>
+
+					<div class="preview-pane" aria-label="ライブプレビュー">
+						<div class="preview-inner">
+							<p class="preview-meta" data-preview-meta></p>
+							<h1 class="preview-title" data-preview-title></h1>
+							<div class="prose preview-prose" data-preview-body></div>
+						</div>
+					</div>
+				</div>
+
+				<!-- FOOTER TELEMETRY BAR -->
+				<footer class="workspace-statusbar">
+					<div class="status-left">
+						<span class="dirty-pill" data-dirty-status data-state="clean">READY</span>
+						<span class="stats-text" data-editor-stats>0 文字 · 1 行</span>
+					</div>
+					<div class="status-right">
+						<span class="shortcut-hint desktop-only">
+							/ でコマンド · ⌘S 保存 · ⌘E プレビュー
+						</span>
+						<span class="deploy-pill" data-deploy-status data-deploy="ready">READY</span>
+					</div>
+				</footer>
+			</section>
+		</div>
+
+		<!-- AUTHENTICATION / VAULT CONNECTION OVERLAY -->
+		<div class="modal-overlay" data-auth-overlay hidden>
+			<div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
+				<p class="sx-overline">SAIKATTYO STUDIO // VAULT AUTH</p>
+				<h2 id="auth-modal-title">日誌エディタに接続</h2>
+				<p class="modal-desc">
+					PC・スマホのどちらからでも直接 <code>src/content/blog/*.md</code> の作成・編集・画像アップロード・削除を行えます。
+				</p>
+
+				<div class="auth-tabs">
+					<button type="button" class="auth-tab is-active" data-auth-tab="github-token">
+						GitHub Token (設定不要ですぐ利用)
+					</button>
+					<button type="button" class="auth-tab" data-auth-tab="passphrase">
+						Passphrase (Cloudflare環境変数)
+					</button>
+				</div>
+
+				<form data-auth-form class="auth-form">
+					<div data-field-token class="auth-field-group">
+						<label class="prop-field">
+							<span>GITHUB FINE-GRAINED PERSONAL ACCESS TOKEN</span>
+							<input
+								type="password"
+								placeholder="github_pat_..."
+								autocomplete="current-password"
+								data-input-token
+							/>
+						</label>
+						<p class="field-help">
+							<a
+								href="https://github.com/settings/personal-access-tokens/new"
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								GitHubでFine-grained tokenを発行 ↗
+							</a>
+							（Repository: <code>saikatty-site</code> のみ / Permissions: <code>Contents: Read and write</code>）。トークンはこの端末のブラウザ内にのみ保存されます。
+						</p>
+					</div>
+
+					<div data-field-passphrase class="auth-field-group" hidden>
+						<label class="prop-field">
+							<span>STUDIO PASSPHRASE</span>
+							<input
+								type="password"
+								placeholder="Cloudflare Pagesに設定したパスフレーズ"
+								autocomplete="current-password"
+								data-input-passphrase
+							/>
+						</label>
+						<p class="field-help">
+							Cloudflare Pages の環境変数に <code>GITHUB_TOKEN</code> と <code>STUDIO_PASSPHRASE</code> を設定すると、短い合言葉だけでログインできます。
+						</p>
+					</div>
+
+					<details class="repo-advanced">
+						<summary>接続先リポジトリ詳細</summary>
+						<div class="repo-advanced-grid">
+							<label class="prop-field">
+								<span>OWNER</span>
+								<input type="text" value="saikattyo" data-input-owner />
+							</label>
+							<label class="prop-field">
+								<span>REPO</span>
+								<input type="text" value="saikatty-site" data-input-repo />
+							</label>
+							<label class="prop-field">
+								<span>BRANCH</span>
+								<input type="text" value="main" data-input-branch />
+							</label>
+						</div>
+					</details>
+
+					<p class="auth-error" data-auth-error hidden></p>
+
+					<div class="modal-actions">
+						<a href="/" class="top-pill">サイトへ戻る</a>
+						<button type="submit" class="save-cta" data-auth-submit>
+							VAULT に接続
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+
+		<!-- SAFE DELETE CONFIRMATION MODAL -->
+		<div class="modal-overlay" data-delete-modal hidden>
+			<div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
+				<p class="sx-overline">CONFIRM DELETION</p>
+				<h2 id="delete-modal-title">このノートを削除しますか？</h2>
+				<p class="modal-desc">
+					対象: <strong data-delete-target></strong><br />
+					Git履歴には残りますが、公開サイトおよびノート一覧から削除されます。念のため削除前に手元へ <code>.md</code> 退避も可能です。
+				</p>
+				<div class="modal-actions">
+					<button type="button" class="top-pill" data-btn-delete-backup>
+						削除前に .md を退避保存
+					</button>
+					<div class="modal-actions-right">
+						<button type="button" class="top-pill" data-btn-delete-cancel>
+							キャンセル
+						</button>
+						<button type="button" class="danger-cta" data-btn-delete-confirm>
+							完全に削除する
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- TOAST NOTIFICATION -->
+		<div class="studio-toast" data-studio-toast role="status" aria-live="polite" hidden></div>
+
+		<script>
+			import { mountStudioApp } from '../scripts/studioApp';
+			mountStudioApp();
+		</script>
+	</body>
+</html>
+
+<style is:global>
+	.studio-body {
+		margin: 0;
+		height: 100dvh;
+		overflow: hidden;
+		background: #000000;
+		color: #ffffff;
+	}
+
+	.studio-body [hidden] {
+		display: none !important;
+	}
+
+	.studio-shell {
+		display: grid;
+		grid-template-columns: 290px minmax(0, 1fr);
+		height: 100dvh;
+		width: 100%;
+	}
+
+	/* SIDEBAR */
+	.vault-sidebar {
+		display: flex;
+		flex-direction: column;
+		height: 100dvh;
+		border-right: 1px solid rgba(255, 255, 255, 0.14);
+		background: #050608;
+		z-index: 80;
+	}
+
+	.vault-head {
+		height: 56px;
+		padding: 0 16px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	}
+
+	.vault-brand {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		text-decoration: none;
+	}
+
+	.vault-brand-word {
+		font-family: 'Space Grotesk', var(--font-sx);
+		font-size: 0.92rem;
+		font-weight: 700;
+		letter-spacing: 0.22em;
+		color: #ffffff;
+	}
+
+	.vault-badge {
+		padding: 2px 6px;
+		border: 1px solid rgba(255, 255, 255, 0.35);
+		font-family: var(--font-mono);
+		font-size: 0.62rem;
+		letter-spacing: 0.12em;
+		color: #ffffff;
+	}
+
+	.vault-primary-actions {
+		padding: 12px;
+		display: grid;
+		gap: 8px;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+	}
+
+	.vault-action-primary {
+		height: 42px;
+		border: 1.5px solid #ffffff;
+		background: #ffffff;
+		color: #000000;
+		font-family: var(--font-body);
+		font-size: 0.88rem;
+		font-weight: 700;
+		letter-spacing: 0.04em;
+		cursor: pointer;
+		transition: opacity 160ms ease;
+	}
+
+	.vault-action-primary:hover {
+		opacity: 0.88;
+	}
+
+	.vault-action-row {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 8px;
+	}
+
+	.vault-action-sub {
+		height: 36px;
+		border: 1px solid rgba(255, 255, 255, 0.24);
+		background: transparent;
+		color: #e5e7eb;
+		font-family: var(--font-body);
+		font-size: 0.78rem;
+		font-weight: 600;
+		cursor: pointer;
+	}
+
+	.vault-action-sub:hover {
+		border-color: #ffffff;
+		color: #ffffff;
+	}
+
+	.vault-search-box {
+		padding: 10px 12px;
+		display: grid;
+		gap: 8px;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+	}
+
+	.vault-search-box input {
+		width: 100%;
+		height: 36px;
+		padding: 0 10px;
+		border: 1px solid rgba(255, 255, 255, 0.18);
+		background: #000000;
+		color: #ffffff;
+		font-size: 16px;
+	}
+
+	.vault-filters {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 4px;
+	}
+
+	.filter-pill {
+		height: 28px;
+		border: 1px solid rgba(255, 255, 255, 0.14);
+		background: transparent;
+		color: #8e949e;
+		font-family: var(--font-mono);
+		font-size: 0.66rem;
+		letter-spacing: 0.08em;
+		cursor: pointer;
+	}
+
+	.filter-pill.is-active {
+		border-color: #ffffff;
+		color: #ffffff;
+		background: rgba(255, 255, 255, 0.08);
+	}
+
+	.vault-count-row {
+		padding: 8px 14px;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		color: #6b7280;
+		font-family: var(--font-mono);
+		font-size: 0.64rem;
+		letter-spacing: 0.1em;
+	}
+
+	.conn-label {
+		color: #9ca3af;
+		max-width: 140px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.vault-list {
+		flex: 1;
+		overflow-y: auto;
+		padding: 4px 8px 16px;
+	}
+
+	.vault-empty {
+		padding: 24px 12px;
+		color: #6b7280;
+		font-size: 0.85rem;
+		text-align: center;
+	}
+
+	.vault-item {
+		width: 100%;
+		display: block;
+		text-align: left;
+		padding: 10px 10px;
+		margin-bottom: 2px;
+		border: 1px solid transparent;
+		background: transparent;
+		color: #d1d5db;
+		cursor: pointer;
+		transition: background 140ms ease, border-color 140ms ease;
+	}
+
+	.vault-item:hover {
+		background: rgba(255, 255, 255, 0.04);
+	}
+
+	.vault-item.is-selected {
+		background: rgba(255, 255, 255, 0.09);
+		border-color: rgba(255, 255, 255, 0.32);
+		color: #ffffff;
+	}
+
+	.vault-item-top {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		margin-bottom: 4px;
+		font-family: var(--font-mono);
+		font-size: 0.68rem;
+		color: #8e949e;
+	}
+
+	.vault-item-slug {
+		margin-left: auto;
+		color: #64748b;
+	}
+
+	.status-dot {
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		flex-shrink: 0;
+	}
+
+	.status-dot.is-pub {
+		background: #34d399;
+	}
+
+	.status-dot.is-draft {
+		background: #fbbf24;
+	}
+
+	.vault-item-title {
+		font-size: 0.88rem;
+		font-weight: 600;
+		line-height: 1.4;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.vault-foot {
+		padding: 10px 14px;
+		border-top: 1px solid rgba(255, 255, 255, 0.1);
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		font-size: 0.78rem;
+	}
+
+	.vault-foot-link {
+		color: #9ca3af;
+		text-decoration: none;
+	}
+
+	.vault-foot-btn {
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		background: transparent;
+		color: #9ca3af;
+		padding: 3px 8px;
+		font-size: 0.72rem;
+		cursor: pointer;
+	}
+
+	/* MAIN WORKSPACE */
+	.editor-workspace {
+		display: flex;
+		flex-direction: column;
+		height: 100dvh;
+		min-width: 0;
+		background: #000000;
+	}
+
+	.workspace-topbar {
+		min-height: 56px;
+		padding: 8px 16px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 10px;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+		background: #050608;
+	}
+
+	.topbar-left,
+	.topbar-center,
+	.topbar-right {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.icon-btn {
+		width: 38px;
+		height: 38px;
+		border: 1px solid rgba(255, 255, 255, 0.22);
+		background: transparent;
+		color: #ffffff;
+		font-size: 1rem;
+		cursor: pointer;
+	}
+
+	.pub-switch {
+		display: inline-flex;
+		align-items: center;
+		gap: 7px;
+		padding: 6px 10px;
+		border: 1px solid rgba(255, 255, 255, 0.18);
+		font-size: 0.78rem;
+		cursor: pointer;
+		user-select: none;
+	}
+
+	.pub-switch input {
+		display: none;
+	}
+
+	.pub-indicator {
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		background: #34d399;
+	}
+
+	.pub-switch:has(input:not(:checked)) .pub-indicator {
+		background: #fbbf24;
+	}
+
+	.pub-text {
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+		color: #e5e7eb;
+	}
+
+	.pub-text.is-draft {
+		color: #fbbf24;
+	}
+
+	.top-pill {
+		height: 36px;
+		padding: 0 12px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		border: 1px solid rgba(255, 255, 255, 0.24);
+		background: transparent;
+		color: #e5e7eb;
+		font-family: var(--font-body);
+		font-size: 0.78rem;
+		font-weight: 600;
+		text-decoration: none;
+		cursor: pointer;
+		white-space: nowrap;
+	}
+
+	.top-pill:hover,
+	.top-pill.is-active {
+		border-color: #ffffff;
+		color: #ffffff;
+		background: rgba(255, 255, 255, 0.08);
+	}
+
+	.danger-pill {
+		border-color: rgba(248, 113, 113, 0.45);
+		color: #fca5a5;
+	}
+
+	.danger-pill:hover {
+		border-color: #ef4444;
+		background: rgba(239, 68, 68, 0.15);
+		color: #fecaca;
+	}
+
+	.view-switcher {
+		display: inline-flex;
+		border: 1px solid rgba(255, 255, 255, 0.2);
+	}
+
+	.view-btn {
+		height: 34px;
+		padding: 0 11px;
+		border: 0;
+		background: transparent;
+		color: #8e949e;
+		font-family: var(--font-sx);
+		font-size: 0.78rem;
+		font-weight: 700;
+		letter-spacing: 0.12em;
+		cursor: pointer;
+	}
+
+	.view-btn.is-active {
+		background: #ffffff;
+		color: #000000;
+	}
+
+	.save-cta {
+		height: 38px;
+		padding: 0 16px;
+		border: 1.5px solid #ffffff;
+		background: #ffffff;
+		color: #000000;
+		font-family: var(--font-body);
+		font-size: 0.82rem;
+		font-weight: 700;
+		letter-spacing: 0.04em;
+		cursor: pointer;
+		white-space: nowrap;
+	}
+
+	.save-cta:disabled {
+		opacity: 0.5;
+		cursor: wait;
+	}
+
+	/* DRAFT BANNER */
+	.draft-banner {
+		padding: 8px 18px;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px;
+		background: rgba(251, 191, 36, 0.14);
+		border-bottom: 1px solid rgba(251, 191, 36, 0.4);
+		color: #fde68a;
+		font-size: 0.84rem;
+	}
+
+	.draft-banner-actions {
+		display: flex;
+		gap: 8px;
+	}
+
+	.banner-btn {
+		padding: 4px 10px;
+		border: 1px solid rgba(253, 230, 138, 0.5);
+		background: transparent;
+		color: #fde68a;
+		font-size: 0.78rem;
+		cursor: pointer;
+	}
+
+	.banner-btn.primary {
+		background: #fbbf24;
+		border-color: #fbbf24;
+		color: #000000;
+		font-weight: 700;
+	}
+
+	/* PROPERTIES DRAWER */
+	.props-drawer {
+		padding: 14px 24px;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+		background: #07090d;
+	}
+
+	.props-grid {
+		max-width: 960px;
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 12px;
+	}
+
+	.prop-field {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+	}
+
+	.prop-field.prop-wide {
+		grid-column: span 3;
+	}
+
+	.prop-field span {
+		color: #8e949e;
+		font-family: var(--font-mono);
+		font-size: 0.66rem;
+		letter-spacing: 0.12em;
+	}
+
+	.prop-field input {
+		height: 38px;
+		padding: 0 10px;
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		background: #000000;
+		color: #ffffff;
+		font-family: var(--font-body);
+		font-size: 16px;
+	}
+
+	.prop-field input[readonly] {
+		color: #9ca3af;
+		background: #0a0c10;
+	}
+
+	.hero-input-row {
+		display: flex;
+		gap: 8px;
+	}
+
+	.hero-input-row input {
+		flex: 1;
+	}
+
+	/* INLINE TITLE + FORMATTING RIBBON */
+	.title-and-ribbon {
+		padding: 14px 24px 0;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+		background: #000000;
+	}
+
+	.inline-title-input {
+		width: 100%;
+		border: 0;
+		padding: 4px 0 10px;
+		background: transparent;
+		color: #ffffff;
+		font-family: var(--font-body);
+		font-size: clamp(1.35rem, 2.5vw, 1.95rem);
+		font-weight: 800;
+		letter-spacing: -0.02em;
+		outline: none;
+	}
+
+	.inline-title-input::placeholder {
+		color: #3f4654;
+	}
+
+	.fmt-ribbon {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+		padding: 6px 0 10px;
+		overflow-x: auto;
+		scrollbar-width: none;
+	}
+
+	.fmt-ribbon::-webkit-scrollbar {
+		display: none;
+	}
+
+	.fmt-btn {
+		height: 34px;
+		padding: 0 10px;
+		flex-shrink: 0;
+		border: 1px solid rgba(255, 255, 255, 0.14);
+		background: #07090d;
+		color: #d1d5db;
+		font-family: var(--font-mono);
+		font-size: 0.74rem;
+		font-weight: 600;
+		cursor: pointer;
+	}
+
+	.fmt-btn:hover {
+		border-color: #ffffff;
+		color: #ffffff;
+	}
+
+	.fmt-btn.accent-fmt {
+		border-color: rgba(255, 255, 255, 0.38);
+		color: #ffffff;
+	}
+
+	/* EDITOR / PREVIEW PANES */
+	.workspace-grid {
+		flex: 1;
+		min-height: 0;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+	}
+
+	.workspace-grid[data-mode='edit'] {
+		grid-template-columns: 1fr;
+	}
+
+	.workspace-grid[data-mode='edit'] .preview-pane {
+		display: none;
+	}
+
+	.workspace-grid[data-mode='preview'] {
+		grid-template-columns: 1fr;
+	}
+
+	.workspace-grid[data-mode='preview'] .editor-pane {
+		display: none;
+	}
+
+	.editor-pane {
+		min-height: 0;
+		height: 100%;
+		padding: 0 24px;
+		overflow: hidden;
+	}
+
+	.cm-mount {
+		height: 100%;
+	}
+
+	.preview-pane {
+		min-height: 0;
+		height: 100%;
+		overflow-y: auto;
+		border-left: 1px solid rgba(255, 255, 255, 0.1);
+		background: #040507;
+		padding: 24px 28px 120px;
+	}
+
+	.preview-inner {
+		max-width: 720px;
+		margin: 0 auto;
+	}
+
+	.preview-meta {
+		margin: 0 0 8px;
+		color: #8e949e;
+		font-family: var(--font-mono);
+		font-size: 0.72rem;
+		letter-spacing: 0.08em;
+	}
+
+	.preview-title {
+		margin: 0 0 24px;
+		padding-bottom: 16px;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+		font-family: var(--font-body);
+		font-size: clamp(1.5rem, 2.8vw, 2.2rem);
+		font-weight: 900;
+		line-height: 1.3;
+	}
+
+	/* STATUS BAR */
+	.workspace-statusbar {
+		height: 34px;
+		padding: 0 16px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		border-top: 1px solid rgba(255, 255, 255, 0.1);
+		background: #050608;
+		font-family: var(--font-mono);
+		font-size: 0.68rem;
+		color: #8e949e;
+	}
+
+	.status-left,
+	.status-right {
+		display: flex;
+		align-items: center;
+		gap: 14px;
+	}
+
+	.dirty-pill[data-state='dirty'] {
+		color: #fbbf24;
+	}
+
+	.dirty-pill[data-state='clean'] {
+		color: #34d399;
+	}
+
+	.deploy-pill[data-deploy='building'] {
+		color: #38bdf8;
+	}
+
+	.deploy-pill[data-deploy='ready'] {
+		color: #9ca3af;
+	}
+
+	.deploy-pill[data-deploy='failed'] {
+		color: #f87171;
+	}
+
+	/* MODALS & TOAST */
+	.modal-overlay {
+		position: fixed;
+		inset: 0;
+		z-index: 120;
+		display: grid;
+		place-items: center;
+		padding: 20px;
+		background: rgba(0, 0, 0, 0.84);
+		backdrop-filter: blur(10px);
+	}
+
+	.modal-overlay[hidden] {
+		display: none !important;
+	}
+
+	.modal-card {
+		width: min(540px, 100%);
+		padding: 28px;
+		border: 1px solid rgba(255, 255, 255, 0.26);
+		background: #05070b;
+	}
+
+	.modal-card h2 {
+		font-family: var(--font-body);
+		font-size: 1.5rem;
+		margin-bottom: 0.6rem;
+	}
+
+	.modal-desc {
+		font-size: 0.9rem;
+		color: #cbd5e1;
+		margin-bottom: 1.2rem;
+	}
+
+	.auth-tabs {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 6px;
+		margin-bottom: 16px;
+	}
+
+	.auth-tab {
+		padding: 9px 8px;
+		border: 1px solid rgba(255, 255, 255, 0.18);
+		background: transparent;
+		color: #9ca3af;
+		font-size: 0.76rem;
+		font-weight: 600;
+		cursor: pointer;
+	}
+
+	.auth-tab.is-active {
+		border-color: #ffffff;
+		color: #ffffff;
+		background: rgba(255, 255, 255, 0.08);
+	}
+
+	.auth-form {
+		display: grid;
+		gap: 14px;
+	}
+
+	.field-help {
+		margin: 6px 0 0;
+		font-size: 0.78rem;
+		line-height: 1.6;
+		color: #94a3b8;
+	}
+
+	.field-help a {
+		color: #ffffff;
+	}
+
+	.repo-advanced {
+		border: 1px solid rgba(255, 255, 255, 0.12);
+		padding: 8px 12px;
+		font-size: 0.78rem;
+		color: #9ca3af;
+	}
+
+	.repo-advanced summary {
+		cursor: pointer;
+	}
+
+	.repo-advanced-grid {
+		margin-top: 10px;
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 8px;
+	}
+
+	.auth-error {
+		margin: 0;
+		padding: 10px 12px;
+		border: 1px solid rgba(248, 113, 113, 0.5);
+		background: rgba(239, 68, 68, 0.14);
+		color: #fecaca;
+		font-size: 0.84rem;
+	}
+
+	.modal-actions {
+		margin-top: 8px;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 10px;
+	}
+
+	.modal-actions-right {
+		display: flex;
+		gap: 8px;
+		margin-left: auto;
+	}
+
+	.danger-cta {
+		height: 38px;
+		padding: 0 16px;
+		border: 1px solid #ef4444;
+		background: #ef4444;
+		color: #ffffff;
+		font-weight: 700;
+		cursor: pointer;
+	}
+
+	.studio-toast {
+		position: fixed;
+		right: 20px;
+		bottom: 48px;
+		z-index: 150;
+		max-width: min(420px, calc(100vw - 32px));
+		padding: 12px 16px;
+		border: 1px solid #ffffff;
+		background: #05070b;
+		color: #ffffff;
+		font-size: 0.86rem;
+		box-shadow: 0 18px 50px rgba(0, 0, 0, 0.65);
+	}
+
+	.studio-toast.is-error {
+		border-color: #f87171;
+		color: #fecaca;
+	}
+
+	.mobile-only {
+		display: none;
+	}
+
+	.mobile-only-block {
+		display: none;
+	}
+
+	@media (max-width: 860px) {
+		.desktop-only {
+			display: none !important;
+		}
+
+		.mobile-only {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.mobile-only-block:not([hidden]) {
+			display: flex;
+		}
+
+		.save-cta {
+			padding: 0 11px;
+			font-size: 0.76rem;
+		}
+
+		.top-pill {
+			padding: 0 9px;
+			font-size: 0.74rem;
+		}
+
+		.view-btn {
+			padding: 0 8px;
+			font-size: 0.72rem;
+		}
+
+		.studio-shell {
+			grid-template-columns: 1fr;
+		}
+
+		.sidebar-backdrop {
+			position: fixed;
+			inset: 0;
+			z-index: 75;
+			background: rgba(0, 0, 0, 0.7);
+		}
+
+		.vault-sidebar {
+			position: fixed;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			width: min(300px, 86vw);
+			transform: translateX(-102%);
+			transition: transform 240ms var(--ease-sx);
+		}
+
+		.vault-sidebar.is-open {
+			transform: translateX(0);
+		}
+
+		.workspace-topbar {
+			padding: 6px 10px;
+			gap: 6px;
+		}
+
+		.pub-text {
+			display: none;
+		}
+
+		.props-drawer {
+			padding: 12px 14px;
+			max-height: 52dvh;
+			overflow-y: auto;
+		}
+
+		.props-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.prop-field.prop-wide {
+			grid-column: auto;
+		}
+
+		.title-and-ribbon {
+			padding: 10px 14px 0;
+		}
+
+		.editor-pane {
+			padding: 0 14px;
+		}
+
+		.preview-pane {
+			border-left: 0;
+			padding: 18px 16px 100px;
+		}
+
+		.workspace-grid[data-mode='split'] {
+			grid-template-columns: 1fr;
+		}
+
+		.workspace-grid[data-mode='split'] .preview-pane {
+			display: none;
+		}
+
+		.auth-tabs,
+		.repo-advanced-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

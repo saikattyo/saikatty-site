@@ -1,0 +1,18 @@
+{
+  "name": "SAIKATTYO STUDIO — Daily Journal",
+  "short_name": "Studio",
+  "description": "Obsidian-grade Markdown daily journal editor for saikattyo.com",
+  "start_url": "/studio",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
